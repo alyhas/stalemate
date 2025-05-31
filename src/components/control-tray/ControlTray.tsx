@@ -18,11 +18,13 @@ import cn from "classnames";
 
 import { memo, ReactNode, RefObject, useEffect, useRef, useState } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
+// UseMediaStreamResult is needed for changeStreams function argument type
 import { UseMediaStreamResult } from "../../hooks/use-media-stream-mux";
 import { useScreenCapture } from "../../hooks/use-screen-capture";
 import { useWebcam } from "../../hooks/use-webcam";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import AudioPulse from "../audio-pulse/AudioPulse";
+import ControlButton from "../control-button/ControlButton"; // Import ControlButton
 import "./control-tray.scss";
 import SettingsDialog from "../settings-dialog/SettingsDialog";
 
@@ -42,21 +44,7 @@ type MediaStreamButtonProps = {
   stop: () => any;
 };
 
-/**
- * button used for triggering webcam or screen-capture
- */
-const MediaStreamButton = memo(
-  ({ isStreaming, onIcon, offIcon, start, stop }: MediaStreamButtonProps) =>
-    isStreaming ? (
-      <button className="action-button" onClick={stop}>
-        <span className="material-symbols-outlined">{onIcon}</span>
-      </button>
-    ) : (
-      <button className="action-button" onClick={start}>
-        <span className="material-symbols-outlined">{offIcon}</span>
-      </button>
-    )
-);
+// MediaStreamButton component is no longer needed and will be removed.
 
 function ControlTray({
   videoRef,
@@ -163,36 +151,36 @@ function ControlTray({
     <section className="control-tray-component"> {/* Renamed class */}
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
-        <button
-          className={cn("action-button mic-button")} // .action-button now extends .btn
+        <ControlButton
+          icon={muted ? 'mic_off' : 'mic'}
+          label={muted ? 'Unmute' : 'Mute'}
+          active={!muted}
           onClick={() => setMuted(!muted)}
-        >
-          {!muted ? (
-            <span className="material-symbols-outlined filled">mic</span>
-          ) : (
-            <span className="material-symbols-outlined filled">mic_off</span>
-          )}
-        </button>
+          className="mic-button" // Keep specific class for pulse animation
+          disabled={!connected}
+        />
 
-        <div className="action-button no-action outlined">
+        {/* AudioPulse container - styled like a button but not interactive */}
+        {/* Consider if this needs to be a ControlButton with disabled state and custom content */}
+        <div className={cn("control-button no-action outlined", {disabled: !connected})}>
           <AudioPulse volume={volume} active={connected} hover={false} />
         </div>
 
         {supportsVideo && (
           <>
-            <MediaStreamButton
-              isStreaming={screenCapture.isStreaming}
-              start={changeStreams(screenCapture)}
-              stop={changeStreams()}
-              onIcon="cancel_presentation"
-              offIcon="present_to_all"
+            <ControlButton
+              icon={screenCapture.isStreaming ? 'cancel_presentation' : 'present_to_all'}
+              label={screenCapture.isStreaming ? 'Stop Sharing' : 'Share Screen'}
+              active={screenCapture.isStreaming}
+              onClick={screenCapture.isStreaming ? changeStreams() : changeStreams(screenCapture)}
+              disabled={!connected && !screenCapture.isStreaming} // Can't start if not connected
             />
-            <MediaStreamButton
-              isStreaming={webcam.isStreaming}
-              start={changeStreams(webcam)}
-              stop={changeStreams()}
-              onIcon="videocam_off"
-              offIcon="videocam"
+            <ControlButton
+              icon={webcam.isStreaming ? 'videocam_off' : 'videocam'}
+              label={webcam.isStreaming ? 'Stop Webcam' : 'Start Webcam'}
+              active={webcam.isStreaming}
+              onClick={webcam.isStreaming ? changeStreams() : changeStreams(webcam)}
+              disabled={!connected && !webcam.isStreaming} // Can't start if not connected
             />
           </>
         )}
@@ -201,15 +189,15 @@ function ControlTray({
 
       <div className={cn("connection-container", { connected })}>
         <div className="connection-button-container">
-          <button
-            ref={connectButtonRef}
-            className={cn("action-button connect-toggle", { connected })}
+          <ControlButton
+            icon={connected ? 'pause' : 'play_arrow'}
+            label={connected ? 'Disconnect' : 'Connect'}
+            active={connected}
             onClick={connected ? disconnect : connect}
-          >
-            <span className="material-symbols-outlined filled">
-              {connected ? "pause" : "play_arrow"}
-            </span>
-          </button>
+            className="connect-toggle" // Keep specific class if needed for styling
+            // ref={connectButtonRef} // ControlButton does not forward refs by default
+            // If connectButtonRef is essential, ControlButton needs to use React.forwardRef
+          />
         </div>
         <span className="text-indicator">Streaming</span>
       </div>

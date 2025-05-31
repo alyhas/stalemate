@@ -1,0 +1,135 @@
+@import '../../styles/tokens';
+
+.control-button {
+  background-color: transparent;
+  border: 1px solid transparent; // Default: no visible border
+  // border: 1px solid var(--border-color); // Alternative: subtle border always visible
+  padding: $spacing-sm;
+  border-radius: $border-radius;
+  cursor: pointer;
+  color: var(--text-color, $dark-gray); // Use themed text color, fallback to dark-gray
+  position: relative; // For status-indicator and tooltip positioning
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
+
+  &:focus {
+    outline: 2px solid $primary-color; // Standard focus outline
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5; // Standard disabled opacity
+    background-color: transparent; // Ensure no background on disabled
+    color: var(--text-muted, $dark-gray); // Muted color when disabled
+  }
+
+  .control-button-icon {
+    font-size: $font-size-xl; // Icon size (e.g., 24px if base is 16px)
+    // Material Symbols are designed to scale with font-size
+    // No specific margin needed due to button's flex centering
+  }
+
+  .status-indicator {
+    width: 6px;
+    height: 6px;
+    background-color: $primary-color; // Or a specific 'active-indicator-color' token
+    border-radius: 50%;
+    position: absolute;
+    top: $spacing-xs; // Adjust as needed (4px)
+    right: $spacing-xs; // Adjust as needed (4px)
+    // Add a small border to make it pop on various backgrounds
+    // border: 1px solid var(--background-color, $white);
+  }
+
+  // Hover and Active states
+  &:not(:disabled):hover {
+    // Using rgba for generic hover effect, replace with theme variable if available
+    background-color: var(--surface-hover-color, rgba(0, 0, 0, 0.05));
+    // border-color: var(--border-color-hover, $primary-color); // Example: show border on hover
+  }
+
+  &:not(:disabled):active {
+    // Using rgba for generic active effect
+    background-color: var(--surface-active-color, rgba(0, 0, 0, 0.1));
+  }
+
+  // Toggled active state (when props.active is true)
+  &.active:not(:disabled) {
+    background-color: var(--surface-selected-color, #{mix($primary-color, $light-gray, 15%)});
+    // color: $primary-color; // Or change icon color if background is not enough
+    // border-color: $primary-color; // Optional: border for active state
+  }
+
+  // Outlined variant
+  &.outlined {
+    background-color: transparent;
+    border: 1px solid var(--border-color, $border-color); // Use a visible border color
+
+    &:not(:disabled):hover {
+      background-color: var(--surface-hover-color, rgba(0, 0, 0, 0.05));
+      border-color: var(--border-color-hover, $primary-color);
+    }
+    // Active state for outlined button might need specific styling if different from default .active
+    &.active:not(:disabled) {
+      background-color: var(--surface-selected-color, #{mix($primary-color, $light-gray, 15%)});
+      border-color: $primary-color; // Ensure border matches active state
+      color: $primary-color; // Text color might need to change if bg is light
+    }
+  }
+}
+
+// CSS-only Tooltip for [data-tooltip]
+// Note: Tooltips can have issues with overflow if parent containers hide overflow.
+// A JavaScript-based tooltip might be more robust for complex layouts.
+.control-button[data-tooltip] {
+  // No specific style needed on the button itself for the tooltip,
+  // but it must have position: relative (already set).
+
+  &::before, &::after { // ::before for potential triangle, ::after for text
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; // Ensure tooltip doesn't interfere with mouse events on button
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s; // Delay visibility to prevent flicker
+  }
+
+  // Tooltip text bubble
+  &::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%; // Position above the button
+    left: 50%;
+    transform: translateX(-50%) translateY(-($spacing-xs + 2px)); // Center it and add small gap (2px for potential arrow)
+    background-color: $dark-gray; // Tooltip background (use a specific token if available, e.g., $tooltip-bg)
+    color: $light-gray; // Tooltip text color (e.g., $tooltip-text-color)
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    line-height: $line-height-sm; // Ensure consistent line height
+    white-space: nowrap;
+    z-index: 1000; // High z-index to appear above other elements
+  }
+
+  // Optional: Tooltip arrow (simple triangle)
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   bottom: 100%;
+  //   left: 50%;
+  //   transform: translateX(-50%) translateY($spacing-xs); // Position arrow just below the bubble
+  //   border-width: 5px 5px 0 5px; // Triangle shape (top arrow)
+  //   border-style: solid;
+  //   border-color: $dark-gray transparent transparent transparent; // Match tooltip background
+  //   z-index: 1001; // Above the bubble slightly if overlapping
+  // }
+
+  &:hover::after, &:hover::before,
+  &:focus::after, &:focus::before { // Show tooltip on hover and focus for accessibility
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.3s; // Slight delay before showing tooltip
+  }
+}

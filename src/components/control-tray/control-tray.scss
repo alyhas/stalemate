@@ -35,108 +35,90 @@
   }
 }
 
-// General action button style within this component
-.action-button {
-  @extend .btn; // Inherit base button styles
-  // Override with specific styles for this component's buttons
-  background-color: $light-gray; // Was --Neutral-20
-  color: $dark-gray; // Was --Neutral-60
-  font-size: 1.25rem; // Keep if specific, or map to a $font-size token
-  line-height: 1.75rem; // Keep if specific
-  text-transform: lowercase; // Keep if specific
-  // animation: opacity-pulse 3s ease-in infinite; // Kept locally for now
-  width: 48px; // Specific size
-  height: 48px; // Specific size
-  border-radius: 18px; // Specific radius
-  border: 1px solid transparent;
+// General .action-button styles are now removed as ControlButton provides its own base.
+// Specific variant styles like .mic-button and .connect-toggle will apply on top of ControlButton.
 
-  &:focus, &.focus { // Use .focus for consistency with .btn
-    border: 2px solid $light-gray; // Was --Neutral-20
-    outline: 2px solid $dark-gray; // Was --Neutral-80 (approximated)
-    box-shadow: none; // Override default .btn focus shadow if not desired
-  }
-
-  &.outlined {
-    background: $white; // Was --Neutral-2
-    border: 1px solid $light-gray; // Was --Neutral-20
-  }
-
-  &.no-action { // Class for non-interactive button-like elements
-    pointer-events: none;
-  }
-
-  &:hover {
-    background: transparent; // Was rgba(0,0,0,0)
-    border: 1px solid $light-gray; // Was --Neutral-20
-    color: $dark-gray; // Ensure text color is appropriate on transparent bg
-  }
-
-  &.connected { // Style for "connected" state, e.g., connect/disconnect button
-    background: darken($primary-color, 15%); // Was --Blue-800
-    color: $primary-color; // Was --Blue-500
-
-    &:hover {
-      border: 1px solid $primary-color; // Was --Blue-500
-    }
-  }
+// Style for elements that look like a control-button but are not interactive
+.control-button.no-action {
+  pointer-events: none;
 }
 
 // Specific button for microphone
-.mic-button {
-  @extend .action-button; // Inherit from the local .action-button
-  position: relative;
-  background-color: $danger-color; // Was --accent-red
-  z-index: 1;
+// These styles will apply to <ControlButton className="mic-button" ... />
+.control-button.mic-button {
+  // No need to @extend .action-button as that's gone.
+  // ControlButton already has base styles. Add or override specific things for mic.
+  position: relative; // For ::before pseudo-element
+  background-color: $danger-color !important; // Override ControlButton's default/active bg
+  color: $white !important; // Ensure contrast with danger color
+  z-index: 1; // For pseudo-element stacking
+
+  // Ensure hover/active states from ControlButton are either appropriate or overridden here.
+  &:not(:disabled):hover {
+    background-color: lighten($danger-color, 10%) !important;
+  }
+  // Active state from ControlButton might be fine, or override if needed.
+
+  // Focus state for mic-button (if different from default ControlButton focus)
+  &:focus, &.focus {
+    // ControlButton has a default focus. Override if mic needs a specific one.
+    // e.g., outline-color: $danger-color;
+    // For now, assume ControlButton's default focus is acceptable.
+    // If ControlButton's default focus includes a box-shadow, and it's not desired here:
+    // box-shadow: none;
+  }
   color: $white; // Assuming black was for contrast with a lighter red
 
-  &:focus, &.focus {
-    border: 2px solid $light-gray; // Was --Neutral-20
-    outline: 2px solid $danger-color; // Was --Red-500
-    box-shadow: none;
-  }
-
-  &:hover {
-    background-color: lighten($danger-color, 10%); // Was --Red-400
-    color: $white;
-  }
-
-  // Volume pulse animation (remains largely the same, just CSS var name)
-  // Ensure --control-tray-mic-volume is set via JS instead of --volume
+  // Volume pulse animation
   &::before {
     position: absolute;
-    z-index: -1;
-    top: calc(var(--control-tray-mic-volume, 0px) * -1);
+    z-index: -1; // Behind the button's content
+    top: calc(var(--control-tray-mic-volume, 0px) * -1); // Uses CSS variable set by JS
     left: calc(var(--control-tray-mic-volume, 0px) * -1);
     display: block;
     content: "";
     opacity: 0.35;
-    background-color: $danger-color; // Was --Red-500
+    background-color: $danger-color;
     width: calc(100% + var(--control-tray-mic-volume, 0px) * 2);
     height: calc(100% + var(--control-tray-mic-volume, 0px) * 2);
-    border-radius: 24px; // Specific
+    border-radius: 18px; // Match ControlButton's border-radius if pulse should align with it
+    // Or keep 24px if a slightly larger pulse aura is desired. Let's try to match.
+    // border-radius: $border-radius + 6px; // Example: slightly larger than button's radius
     transition: all 0.02s ease-in-out; // Fast transition for pulse effect
+    content: ""; // Required for pseudo-elements
+    opacity: 0.35; // Original opacity
   }
 }
 
 // Disabled state for mic button (styling the ::before pseudo-element)
-.disabled .mic-button::before,
-.mic-button.disabled::before {
+// ControlButton already has a :disabled state for the button itself.
+// This targets the ::before for the pulse animation.
+.control-button.mic-button:disabled::before {
   background: transparent;
 }
 
 // Connect toggle button specifics
-.connect-toggle {
-  // .action-button styles are inherited or applied in TSX
-  &:focus, &.focus {
-    border: 2px solid $light-gray; // Was --Neutral-20
-    outline: 2px solid $dark-gray; // Was --Neutral-80 (approximated)
-    box-shadow: none;
+// Styles for <ControlButton className="connect-toggle" ... />
+.control-button.connect-toggle {
+  // Default ControlButton styles apply.
+  // Override for specific states if ControlButton's defaults aren't enough.
+
+  // Example: If connect-toggle needs different active state color than default ControlButton.active
+  // &.active:not(:disabled) {
+  //   background-color: darken($primary-color, 15%) !important; // Was --Blue-800 for connected
+  //   color: $primary-color !important; // Was --Blue-500 for connected
+  // }
+
+  // Styles for when it's "off" (not connected)
+  &:not(.active):not(:disabled) { // .active is equivalent to "connected" prop
+    background-color: $primary-color !important; // Was --Blue-500 for "off" state
+    color: $white !important; // Was --Neutral-5 for "off" state text
   }
 
-  &:not(.connected) {
-    background-color: $primary-color; // Was --Blue-500
-    color: $white; // Was --Neutral-5
-  }
+  // Focus state (if different from ControlButton default)
+  // &:focus, &.focus {
+  //   outline-color: $primary-color; // Example
+  // }
 }
 
 // Container for connection status (button and text)
