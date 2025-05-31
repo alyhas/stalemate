@@ -1,0 +1,17 @@
+@import '../../styles/tokens';
+
+.toast-container {
+  position: fixed;
+  top: $spacing-lg; // Example: top-right corner, adjust as needed
+  right: $spacing-lg;
+  z-index: 2000; // High z-index to be above most other UI elements
+  width: auto;   // Let width be determined by content (toasts)
+  max-width: calc(100% - #{$spacing-lg * 2}); // Prevent overflow on small screens
+
+  // Considerations for stacking multiple toasts:
+  // display: flex;
+  // flex-direction: column;
+  // align-items: flex-end; // If toasts should align to the right edge of container
+
+  // Individual toasts will have margin-bottom from toast.scss, creating space when stacked.
+}

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import { useRef, useState, ChangeEvent, useEffect } from "react"; // Added useEffect
+import { useRef, useState, ChangeEvent, useEffect } from "react";
 import "./App.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 import SidePanel from "./components/side-panel/SidePanel";
 import ControlTray from "./components/control-tray/ControlTray";
-import ControlButton from "./components/control-button/ControlButton"; // Import ControlButton
+import ControlButton from "./components/control-button/ControlButton";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
+import { ToastProvider } from "./contexts/ToastContext"; // Import ToastProvider
+import ToastContainer from "./components/toast/ToastContainer"; // Import ToastContainer
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -93,11 +95,12 @@ function App() {
             // The effect runs once to attach/detach listeners. Content of ref can change without re-running effect.
 
   return (
-    <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}> {/* Apply sidebar-collapsed class */}
-      <LiveAPIProvider options={apiOptions}>
-        <header className="app-header">
-          <div className="container"> {/* Using fixed-width container for header content */}
-            <div className="header-brand">
+    <ToastProvider> {/* Wrap the application with ToastProvider */}
+      <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}>
+        <LiveAPIProvider options={apiOptions}>
+          <header className="app-header">
+            <div className="container"> {/* Using fixed-width container for header content */}
+              <div className="header-brand">
               {/* Placeholder for Logo - replace with actual <img> or SVG */}
               <h1>Logo</h1> {/* Changed from <strong> to <h1> */}
             </div>
@@ -177,7 +180,9 @@ function App() {
           </div>
         </div>
       </LiveAPIProvider>
+      <ToastContainer /> {/* Place ToastContainer here */}
     </div>
+  </ToastProvider>
   );
 }
 

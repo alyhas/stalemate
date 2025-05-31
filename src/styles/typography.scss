@@ -86,3 +86,24 @@ pre, code, kbd, samp {
   font-family: $font-family-monospace;
   font-size: 1em; // Usually 1em of parent font size
 }
+
+// Text color utilities
+.text-primary { color: $primary-color !important; }
+.text-secondary { color: $secondary-color !important; }
+.text-success { color: $success-color !important; }
+.text-danger { color: $danger-color !important; }
+.text-warning { color: $warning-color !important; } // Be careful with yellow on white for accessibility
+.text-info { color: $info-color !important; }
+.text-light { color: $light-gray !important; } // Careful with this on light backgrounds
+.text-dark { color: $dark-gray !important; }
+// .text-muted is already defined in typography.scss with font-weight-light
+// Let's add a specific color for .text-muted here for consistency with other text utilities.
+// The original .text-light, .text-normal, .text-bold were for font-weight.
+// It's better to have .text-muted for color and keep .font-weight-light for weight.
+// The prompt example for .text-muted was `lighten($dark-gray, 25%)`.
+.text-muted-color { color: lighten($dark-gray, 25%) !important; }
+// Or, if .text-light from above is intended for text on dark backgrounds,
+// then we might need a .text-gray or similar.
+// For now, .text-light uses $light-gray, which is light.
+// And .text-dark uses $dark-gray.
+// The original .text-light for font-weight is fine.
