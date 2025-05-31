@@ -266,14 +266,18 @@ export default function Logger({ filter = "none" }: LoggerProps) {
   const filterFn = filters[filter];
 
   return (
-    <div className="logger">
-      <ul className="logger-list">
-        {logs.filter(filterFn).map((log, key) => {
-          return (
-            <LogEntry MessageComponent={component(log)} log={log} key={key} />
-          );
-        })}
-      </ul>
+    <div className="logger panel"> {/* Added .panel class */}
+      {/* No distinct panel-header content in Logger currently */}
+      {/* <div className="panel-header"><h4>Logs</h4></div> */}
+      <div className="panel-body"> {/* Added .panel-body class */}
+        <ul className="logger-list">
+          {logs.filter(filterFn).map((log, key) => {
+            return (
+              <LogEntry MessageComponent={component(log)} log={log} key={key} />
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

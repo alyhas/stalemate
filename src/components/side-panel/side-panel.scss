@@ -156,9 +156,23 @@
     // width: 400px; // Width is controlled by .app-sidebar
     width: 100%;
     flex-grow: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 0 $spacing-sm $spacing-sm $spacing-sm; // Padding for logger
+    overflow-x: hidden; // Content within should not cause horizontal scroll
+    overflow-y: auto;   // Allow vertical scroll for content like Logger
+    // padding: 0 $spacing-sm $spacing-sm $spacing-sm; // Padding removed, Logger panel will have its own
+    // The Logger component itself is now a panel and will have its own padding.
+    // This container ensures the Logger (or other content) can scroll if it exceeds height.
+    // It might need padding if there are other elements directly within it besides the Logger panel.
+    // For now, assuming Logger panel is the primary child.
+    // Add a small bottom margin/padding if input-container is directly after it without visual gap
+    // Or rely on Logger panel's margin-bottom if set.
+    // Let's ensure it fills available space for the Logger panel to sit in.
+    display: flex; // To make child (Logger panel) take full height if needed
+    flex-direction: column;
+
+    > .logger.panel { // If Logger panel is a direct child
+      flex-grow: 1; // Allow Logger panel to take available vertical space
+      min-height: 0; // Important for flex children that scroll
+    }
   }
 
   .input-container {

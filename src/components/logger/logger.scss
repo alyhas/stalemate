@@ -1,116 +1,166 @@
-.logger {
-  color: var(--gray-300);
-  width: 100%;
-  max-width: 100%;
-  display: block;
+@import '../../styles/tokens'; // For design tokens
+@import '../../styles/components/panels'; // To ensure .panel styles are available if not globally applied
 
-  .logger-list {
-    padding: 0 0px 0 25px;
-    overflow-x: hidden;
-    width: calc(100% - 45px);
+// .logger is now also .panel. The .panel class from components/panels.scss will provide:
+// - background-color
+// - border
+// - border-radius
+// - box-shadow
+// - margin-bottom (if applicable, though Logger is usually contained)
+.logger.panel {
+  // Override or add specific panel styles for Logger if needed
+  // For example, if the default panel margin is not desired:
+  // margin-bottom: 0;
+  // The default panel has its own padding for header/body/footer.
+  // We added a .panel-body div in the TSX.
+
+  // Ensure logger takes full height if its container allows (e.g. in side-panel)
+  height: 100%;
+  display: flex; // Allow panel-body to grow
+  flex-direction: column; // Stack header (if any) and body
+
+  .panel-body {
+    // The .panel-body class from components/panels.scss adds padding (e.g., $spacing-lg).
+    // It should also handle overflow:
+    overflow-y: auto;
+    flex-grow: 1; // Allow panel-body to take available space
+    // Reset any specific logger padding if panel-body's padding is sufficient
+    padding: $spacing-md; // Or use default $spacing-lg from panels.scss, or customize
   }
 
+  .logger-list {
+    list-style-type: none; // Common reset for lists
+    padding: 0; // Reset default ul padding. Spacing is now from panel-body.
+    margin: 0; // Reset default ul margin
+    width: 100%; // Take full width of panel-body
+    // overflow-x: hidden; // Handled by panel-body or individual log entries if needed
+  }
+
+  // Color updates using tokens (examples, assuming these map semantically)
   .user h4 {
-    color: var(--Green-500);
+    color: $success-color; // Was var(--Green-500)
   }
 
   .model h4 {
-    color: var(--Blue-500);
+    color: $info-color; // Was var(--Blue-500)
   }
 
   .rich-log {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
+    // display: flex; // Keep or remove based on desired layout of rich log parts
+    // justify-content: center;
+    gap: $spacing-xs; // Use token
+    display: block; // Keep as block if preferred for rich log entries
 
     pre {
       overflow-x: auto;
+      background-color: var(--code-background-color, darken($light-gray, 5%)); // Theming for code blocks
+      padding: $spacing-sm;
+      border-radius: $border-radius;
     }
 
-    display: block;
-
     h4 {
-      font-size: 14px;
+      font-size: $font-size-base; // Was 14px
       text-transform: uppercase;
-      padding: 8px 0;
+      padding: $spacing-xs 0; // Use token
       margin: 0;
+      font-weight: $font-weight-bold;
     }
 
     h5 {
-      margin: 0;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--Neutral-20);
+      margin: 0 0 $spacing-xs 0; // Use token
+      padding-bottom: $spacing-xs; // Use token
+      border-bottom: $border-width solid var(--border-color); // Use token
+      font-size: $font-size-sm;
+      font-weight: $font-weight-normal;
     }
 
     .part {
-      background: var(--Neutral-5);
-      padding: 14px;
-      margin-bottom: 4px;
-      color: var(--Neutral-90);
-      border-radius: 8px;
+      background: var(--surface-color-inset, darken($light-gray, 2%)); // Slightly different from main panel body bg
+      padding: $spacing-sm; // Use token
+      margin-bottom: $spacing-xs; // Use token
+      color: var(--text-color); // Use token
+      border-radius: $border-radius;
     }
   }
 
   .plain-log {
-    &>* {
-      padding-right: 4px;
+    & > * { // Direct children of .plain-log (li)
+      padding-right: $spacing-xs; // Use token
     }
   }
 
   .inline-code:not(:last-child) {
     font-style: italic;
-
+    // Consider using a specific class for inline code background/padding if needed
+    // background-color: var(--code-inline-background-color, $light-gray);
+    // padding: 0 $spacing-xs;
+    // border-radius: $border-radius-sm;
     &::after {
       content: ", ";
     }
   }
 }
 
-.logger li {
-  display: block;
-  padding: 8px 0;
-  color: var(--Neutral-50, #707577);
-  font-family: "Space Mono";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+// Styling for individual log list items (li)
+.logger li { // This applies to .plain-log items primarily
+  display: block; // Or flex if timestamp/source/message are to be aligned in a row
+  padding: $spacing-xs 0; // Vertical padding for each log entry
+  // color: var(--Neutral-50, #707577); // Default text color for log entries
+  color: var(--text-muted, $dark-gray); // Use a muted text token
+  // font-family: "Space Mono"; // Handled by body or .panel
+  font-size: $font-size-sm; // Was 14px
+  line-height: $line-height-base;
+  // border-bottom: $border-width solid var(--border-color-soft, lighten($border-color, 5%)); // Optional: separator line
+  // &:last-child {
+  //   border-bottom: none;
+  // }
 }
 
 .logger li .timestamp {
-  width: 70px;
+  // width: 70px; // Avoid fixed width if possible, allow natural flow or use flex for alignment
+  display: inline-block; // Or part of a flex layout
+  margin-right: $spacing-sm;
   flex-grow: 0;
   flex-shrink: 0;
-  color: var(--Neutral-50);
+  color: var(--text-muted, lighten($dark-gray, 10%)); // Further muted
 }
 
 .logger li .source {
   flex-shrink: 0;
-  font-weight: bold;
+  font-weight: $font-weight-bold; // Use token
+  margin-right: $spacing-sm;
 }
 
+// Specific source colors using tokens
 .logger li.source-server,
 .logger li.receive {
-  color: var(--Blue-500);
+  // color: var(--Blue-500); // Original
+  color: $info-color; // Use semantic token
+  .source { color: $info-color; } // Ensure source text also gets this color
 }
 
 .logger li.source-client,
 .logger li.send:not(.source-server) {
-  color: var(--Green-500);
+  // color: var(--Green-500); // Original
+  color: $success-color; // Use semantic token
+  .source { color: $success-color; }
 }
 
 .logger li .count {
-  background-color: var(--Neutral-5);
-  font-size: x-small;
-  padding: 0em 0.6em;
-  padding: 0.3em 0.5em;
-  line-height: 1em;
+  background-color: var(--surface-color-inset, darken($light-gray, 2%)); // Use token
+  font-size: $font-size-xs; // Use token
+  padding: $spacing-xs * 0.5 $spacing-xs;
+  line-height: 1;
   vertical-align: middle;
-  border-radius: 8px;
-  color: var(--Blue-500);
+  border-radius: $border-radius;
+  // color: var(--Blue-500); // Original, or use a text color that contrasts with its bg
+  color: $info-color;
+  margin-left: $spacing-xs;
 }
 
 .logger li .message {
-  flex-grow: 1;
-  color: var(--Neutral-50);
+  flex-grow: 1; // If li is flex
+  // color: var(--Neutral-50); // Original
+  color: var(--text-color); // Use standard text color for messages within the log
+  word-break: break-word; // Ensure long messages wrap
 }
