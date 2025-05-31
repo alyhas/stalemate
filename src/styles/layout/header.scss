@@ -23,14 +23,25 @@
 
   // Site Title / Logo area
   .header-brand {
-    font-size: $font-size-xl; // Larger font for brand/title
-    font-weight: $font-weight-bold;
-    color: #fff; // Ensure brand text is white
+    // font-size: $font-size-xl; // Applied to h1 directly
+    // font-weight: $font-weight-bold; // Applied to h1 directly
+    // color: #fff; // Applied to h1 directly
     text-decoration: none;
     margin-right: $spacing-lg; // Space between brand and navigation
 
+    h1 {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: #fff;
+      margin: 0; // Remove default h1 margin
+      line-height: 1.2; // Adjust line height for large font size if needed
+    }
+
     &:hover {
-      color: darken(#fff, 10%); // Slightly darken on hover
+      // Hover effect can be on h1 if it's the link, or on .header-brand if it's a wrapper link
+      h1 {
+        color: darken(#fff, 10%); // Slightly darken on hover
+      }
     }
   }
 
@@ -65,6 +76,13 @@
   .header-actions {
     display: flex;
     align-items: center;
+
+    span { // For connection status text
+      font-size: $font-size-sm; // Smaller font for status text
+      color: $light-gray; // Slightly less prominent color, adjust if #fff is too stark
+      // If $light-gray (token) is too dark on primary-color bg, use a lighter shade:
+      // color: rgba(255, 255, 255, 0.85);
+    }
 
     .btn { // Style buttons in header if needed
       margin-left: $spacing-sm;

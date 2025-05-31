@@ -23,10 +23,22 @@
   // body.sidebar-collapsed & { // Using `&` to refer to .main-content
   //   margin-left: 80px; // Same as collapsed sidebar width
   // }
+
+  // When sidebar is collapsed, main-content should expand to fill available space
+  .app.sidebar-collapsed & { // Targeting .main-content when .app.sidebar-collapsed is a parent
+    @media (min-width: $breakpoint-md) { // Apply only on medium screens and up
+      // Override Bootstrap's column fixed width and allow it to grow
+      width: calc(100% - 80px); // Assuming sidebar is 80px when collapsed
+      // Or, if using flex properties directly on columns:
+      // flex-grow: 1;
+      // flex-basis: auto; // Reset basis from percentage
+      // max-width: none; // Remove max-width if set by column class
+    }
+  }
 }
 
 // If you want a container within the main content area to constrain its width
-.main-content .container,
+.main-content .container, // This will apply within the expanded main-content area
 .main-content .container-fluid {
   // Styles for the container within main-content, if different from default grid container
   // For example, you might want a max-width for the content area itself,
@@ -36,6 +48,48 @@
   // margin-right: auto;
 }
 
+.workspace {
+  // From original .main-app-area in App.scss, adjusted for typical content flow
+  display: flex;
+  flex-direction: column; // Stack primary-content and media-container vertically
+  flex-grow: 1; // Takes available vertical space in main-content if main-content is flex column
+  // align-items: center; // Original, might want to change to stretch or flex-start
+  // justify-content: center; // Original, might want to change to flex-start
+  align-items: stretch; // Stretch children to fill width
+  justify-content: flex-start; // Align children to the top
+  padding: $spacing-lg; // Added padding for the workspace area
+  gap: $spacing-lg; // Added gap between direct children (.primary-content, .media-container)
+
+  // Ensure children can take full width if needed, or define their own widths
+  .primary-content {
+    // Example: could have its own background, padding, etc.
+    // background-color: var(--surface-color);
+    // padding: $spacing-md;
+    // border-radius: $border-radius;
+  }
+
+  .media-container {
+    // Example: ensure it doesn't shrink if primary-content is large
+    // flex-shrink: 0;
+    background-color: var(--surface-color, $light-gray); // Use theme variable or fallback
+    padding: $spacing-md;
+    border-radius: $border-radius;
+    border: $border-width solid var(--border-color, $border-color);
+  }
+
+  .primary-content {
+    background-color: var(--surface-color, $light-gray); // Use theme variable or fallback
+    padding: $spacing-md;
+    border-radius: $border-radius;
+    border: $border-width solid var(--border-color, $border-color);
+
+    h2 { // Already styled globally by typography.scss, but can add specific margin if needed
+      margin-top: 0; // Common practice for titles within a content block
+      margin-bottom: $spacing-md;
+    }
+    // Add styles for h3, p within primary-content if needed
+  }
+}
 
 // Responsive adjustments for main content
 @media (max-width: $breakpoint-lg) { // Same breakpoint used for sidebar collapse/off-canvas

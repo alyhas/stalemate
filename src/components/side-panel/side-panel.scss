@@ -1,244 +1,293 @@
+// SCSS for SidePanel component - internal layout and content visibility
+@import '../../styles/tokens'; // For using design tokens if needed for colors, fonts, etc.
+
 .side-panel {
-  background: var(--Neutral-00);
-  width: 40px;
-  /* when closed */
+  // background: var(--Neutral-00); // Example: Use a token like $surface-color or specific variable
+  background-color: $background-color-light; // Assuming light theme, or use CSS var like var(--surface-color)
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  transition: all 0.2s ease-in;
-  font-family: Arial, sans-serif;
-  border-right: 1px solid var(--gray-600);
-  color: var(--Neutral-90, #e1e2e3);
-  font-family: var(--font-family);
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 160%;
-  /* 20.8px */
+  height: 100%; // Fill the height of .app-sidebar container
+  overflow: hidden; // Important: hide content that overflows during collapse
+  // width: 100%; // Fill width of parent .app-sidebar. Width is controlled by .app-sidebar.
+  // transition: all 0.2s ease-in; // Original transition, review if still needed for things other than width
+  font-family: $font-family-base; // Use token
+  // border-right: 1px solid var(--gray-600); // Border is on .app-sidebar
+  color: var(--text-color); // Use themed text color
+  font-size: $font-size-sm; // Approx 13px
+  line-height: $line-height-base;
 
   .hidden {
     display: none !important;
   }
 
+  // Styles for when the panel is "open" (i.e., !props.collapsed)
   &.open {
     .top {
       h2 {
-        left: 0%;
-        display: block;
         opacity: 1;
+        // transform: translateX(0); // Use opacity for simpler text hide/show
+        // visibility: visible;
       }
+      // Adjust padding or other styles for open state if needed
+    }
+
+    .indicators,
+    .side-panel-container,
+    .input-container {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.2s ease-in 0.1s, visibility 0s linear 0.1s; // Delay to match content hiding
+    }
+
+    .indicators .streaming-indicator span.text { // Assuming text is wrapped in a span
+      opacity: 1;
+      // transform: translateX(0);
+    }
+  }
+
+  // Styles for when the panel is "collapsed" (i.e., props.collapsed is true)
+  &.collapsed {
+    .top {
+      h2 {
+        opacity: 0;
+        // transform: translateX(-100%);
+        // visibility: hidden;
+        // transition: opacity 0.1s ease-out, transform 0.2s ease-out, visibility 0s linear 0.2s;
+      }
+      // Adjust padding for collapsed state if needed
+      // padding: $spacing-sm $spacing-xs; // Example: smaller padding
+    }
+
+    .opener {
+      // transform: translate(0,0); // Reset transform if any
+    }
+
+    .indicators,
+    .side-panel-container,
+    .input-container {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
+    }
+
+    .indicators .streaming-indicator span.text { // Assuming text "Streaming" / "Paused" is wrapped
+      opacity: 0;
+      // transform: translateX(-20px);
+      // transition: opacity 0.1s ease-out, transform 0.1s ease-out;
     }
   }
 
   .top {
     display: flex;
-    width: calc(100% - 45px);
+    // width: calc(100% - 45px); // Let it be 100% and padding control inner space
+    width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px 12px 25px;
-    border-bottom: 1px solid var(--Neutral-20);
+    padding: $spacing-md $spacing-sm; // Use tokens
+    border-bottom: $border-width solid var(--border-color); // Use tokens
+    flex-shrink: 0;
 
     h2 {
-      position: relative;
-      color: var(--Neutral-90, #e1e2e3);
-      font-family: "Google Sans";
-      font-size: 21px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 16px;
-      /* 100% */
-
-      opacity: 0;
-      display: none;
-      left: -100%;
-      transition:
-        opacity 0.2s ease-in,
-        left 0.2s ease-in,
-        display 0.2s ease-in;
-      transition-behavior: allow-discrete;
-
-      @starting-style {
-        left: 0%;
-        opacity: 1;
-      }
+      color: var(--text-color); // Use token
+      // font-family: "Google Sans"; // Consider using $font-family-headings or base
+      font-size: $font-size-lg; // Use token
+      font-weight: $font-weight-bold; // Use token
+      line-height: $line-height-base; // Use token
+      margin: 0; // Remove default margin
+      opacity: 1; // Default for open state
+      transition: opacity 0.2s ease-out 0.1s; // Transition for text
     }
   }
 
   .opener {
-    height: 30px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--text-color); // Use token for icon color
+    font-size: 1.5rem; // Adjust icon size if needed
+    padding: $spacing-xs;
+    height: auto; // Remove fixed height
     transition: transform 0.2s ease-in;
-  }
-
-  &:not(.open) {
-    .side-panel-container {
-      opacity: 0;
-      display: none;
-      transition: all 0.2s ease-in allow-discrete;
-      transition-delay: 0.1s;
-    }
-
-    .indicators .streaming-indicator {
-      width: 30px;
-      opacity: 0;
-    }
-
-    .opener {
-      transform: translate(-50%, 0);
-    }
-
-    .input-container {
-      opacity: 0;
-      display: none;
-      transition: all 0.2s ease-in allow-discrete;
-    }
+    // No specific transform needed here as it's part of .app-sidebar now
   }
 
   .indicators {
     display: flex;
-    padding: 24px 25px;
-    justify-content: flex-end;
-    gap: 21px;
+    padding: $spacing-md $spacing-sm; // Use tokens
+    justify-content: space-between; // Or flex-end if only one item when open
+    gap: $spacing-md; // Use token
+    flex-shrink: 0;
+    align-items: center; // Vertically align items
+
+    .react-select-container { // Target react-select generated container
+      flex-grow: 1; // Allow select to take space
+      min-width: 0; // Fix for flex item overflow
+    }
 
     .streaming-indicator {
       user-select: none;
-      border-radius: 4px;
-      border: 1px solid var(--Neutral-20, #2a2f31);
-      background: var(--Neutral-10, #1c1f21);
+      border-radius: $border-radius;
+      border: $border-width solid var(--border-color);
+      background: var(--surface-color); // Use token
       display: flex;
-      width: 136px;
-      height: 30px;
-      padding-left: 4px;
+      // width: 136px; // Allow width to be flexible or fixed based on content
+      padding: $spacing-xs $spacing-sm;
       justify-content: center;
       align-items: center;
-      gap: 6px;
+      gap: $spacing-xs;
       flex-shrink: 0;
       text-align: center;
-      font-family: "Space Mono";
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-      transition: width 0.2s ease-in;
+      // font-family: "Space Mono"; // Use $font-family-monospace or base
+      font-size: $font-size-sm;
+      transition: opacity 0.2s ease-out 0.1s; // For text part
 
       &.connected {
-        color: var(--Blue-500, #0d9c53);
+        color: $primary-color; // Use token
+      }
+
+      span.text { // Wrap "Streaming" / "Paused" text in a span for separate animation
+        opacity: 1;
+        transition: opacity 0.2s ease-out 0.1s;
       }
     }
   }
 
   .side-panel-container {
-    align-self: flex-end;
-    width: 400px;
+    // width: 400px; // Width is controlled by .app-sidebar
+    width: 100%;
     flex-grow: 1;
     overflow-x: hidden;
     overflow-y: auto;
-    /*scrollbar-gutter: stable both-edges;*/
+    padding: 0 $spacing-sm $spacing-sm $spacing-sm; // Padding for logger
   }
 
   .input-container {
-    height: 50px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    border-top: 1px solid var(--Neutral-20);
-    padding: 14px 25px;
-    overflow: hidden;
+    // height: 50px; // Let height be auto based on content
+    flex-shrink: 0; // Prevent shrinking
+    border-top: $border-width solid var(--border-color);
+    padding: $spacing-md $spacing-sm;
+    overflow: hidden; // Keep hidden for transition effect
+    background-color: var(--surface-color); // Background for input area section
 
     .input-content {
       position: relative;
-      background: var(--Neutral-10);
-      border: 1px solid var(--Neutral-15);
-      height: 22px;
-      border-radius: 10px;
-      padding: 11px 18px;
+      background: var(--background-color); // Input background
+      border: $border-width solid var(--border-color);
+      // height: 22px; // Remove fixed height, let padding define it
+      border-radius: $border-radius;
+      padding: $spacing-sm; // Inner padding for textarea and button container
+      display: flex;
+      align-items: center;
 
       .send-button {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translate(0, -50%);
+        // material-symbols-outlined styles should apply from global CSS
         background: none;
         border: 0;
-        color: var(--Neutral-20);
+        color: var(--text-muted); // Use token
         cursor: pointer;
         transition: color 0.1s ease-in;
-        z-index: 2;
+        padding: $spacing-xs; // Clickable area
+        margin-left: $spacing-sm;
 
         &:hover {
-          color: var(--Neutral-60);
+          color: $primary-color; // Use token
         }
       }
 
       .input-area {
         background: none;
-        color: var(--Neutral-90);
-        field-sizing: content;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 2;
-        display: inline-block;
-        width: calc(100% - 72px);
-        max-height: 20px;
+        color: var(--text-color);
+        // field-sizing: content; // Future CSS, not widely supported
+        width: 100%;
+        flex-grow: 1;
+        // max-height: 20px; // Remove if dynamic height desired
         outline: none;
-        --webkit-box-flex: 1;
-        flex: 1;
-        word-break: break-word;
-        overflow: auto;
-        padding: 14px 18px;
+        padding: $spacing-xs; // Minimal padding for textarea itself
         border: 0;
         resize: none;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: $line-height-base;
       }
 
       .input-content-placeholder {
         position: absolute;
-        left: 0;
-        top: 0;
-        display: flex;
-        align-items: center;
-        z-index: 1;
-        height: 100%;
-        width: 100%;
+        left: $spacing-sm + $spacing-xs; // Match input-area padding
+        top: $spacing-sm + $spacing-xs; // Match input-area padding
+        // display: flex; // Not needed
+        // align-items: center; // Not needed
+        // height: 100%; // Not needed
+        // width: 100%; // Not needed
         pointer-events: none;
         user-select: none;
-        padding: 0px 18px;
+        // padding: 0px 18px; // Remove, use left/top
         white-space: pre-wrap;
+        color: var(--text-muted); // Placeholder color
       }
     }
   }
 }
 
-.side-panel.open {
-  width: 400px;
-  height: 100vh;
+// Remove explicit width settings based on .open, rely on .app-sidebar and its transitions
+// .side-panel.open {
+//   width: 400px; // This is now controlled by .app-sidebar
+// }
+
+// react-select specific styling should be checked if it needs token updates
+// For example, var(--Neutral-15) etc. should be mapped to tokens.
+// This was in a separate react-select.scss import, so may need attention if not done.
+// Assuming base styles for react-select are handled or tokens are injected there.
+
+// Ensure that when the side-panel is collapsed (meaning .app-sidebar is narrow),
+// the text within various elements like titles, indicators, and input placeholders
+// is hidden gracefully. Opacity transitions are preferred.
+// The .collapsed class on .side-panel itself is used above to trigger these.
+
+// Color variables like var(--Neutral-00) should be replaced with SCSS tokens
+// e.g. $background-color-light, $surface-color, etc. or CSS variables from themes.
+// For now, I've used some direct token replacements assuming a light theme context
+// or that CSS variables like --text-color are correctly set by the theme.
+// A full theming pass on this component's specific SCSS might be needed separately.
+
+// Example: Ensure streaming indicator text is hidden when collapsed
+.side-panel.collapsed .indicators .streaming-indicator span.text {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
+  width: 0; // Collapse width of text span
+  display: inline-block; // To allow width change
+  overflow: hidden; // Hide text during transition
+  white-space: nowrap; // Prevent wrapping
 }
 
-.side-panel-responses,
-.side-panel-requests {
-  flex-grow: 1;
-  flex-shrink: 1;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100%;
-  display: block;
-  margin-left: 8px;
+.side-panel.open .indicators .streaming-indicator span.text {
+  opacity: 1;
+  visibility: visible;
+  width: auto; // Allow text to take its natural width
+  transition: opacity 0.2s ease-in 0.1s, width 0.2s ease-in 0.1s;
 }
 
-.top {
-  width: 100%;
-  flex-grow: 0;
-  flex-shrink: 0;
-  height: 30px;
-  display: flex;
-  align-self: flex-end;
-  align-items: center;
-  transition: all 0.2s ease-in;
+// Ensure console h2 is hidden
+.side-panel.collapsed .top h2 {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
+}
+.side-panel.open .top h2 {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease-in 0.1s;
 }
 
-.top button {
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  padding: 4px;
+// Ensure react-select is hidden when collapsed
+.side-panel.collapsed .indicators .react-select-container {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
+}
+
+.side-panel.open .indicators .react-select-container {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease-in 0.1s;
 }

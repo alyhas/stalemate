@@ -115,20 +115,27 @@ body {
 @media (prefers-reduced-motion: no-preference) {
 }
 
+/* Styles for .streaming-console (now .app-container) and its children (main, .main-app-area)
+   are now primarily handled by the new grid layout in App.tsx and associated layout SCSS files
+   (e.g., main-content.scss, sidebar.scss).
+   The following old styles from .streaming-console might be redundant or conflict.
+   Keeping color variables and base body style for now, but removing structural flex stuff.
+*/
+/*
 .streaming-console {
-  background: var(--Neutral-15);
-  color: var(--gray-300);
-  display: flex;
-  height: 100vh;
-  width: 100vw;
+  background: var(--Neutral-15); // This is now on .app-container if needed, or themes handle bg
+  color: var(--gray-300); // Themes should handle text color
+  display: flex; // This is now on .app-container's inner .row
+  height: 100vh; // .app and .app-container can manage height
+  width: 100vw;  // .app and .app-container can manage width
 
   a,
   a:visited,
   a:active {
-    color: var(--gray-300);
+    color: var(--gray-300); // Handled by themes / typography
   }
 
-  .disabled {
+  .disabled { // This utility class could be moved to a _utilities.scss file
     pointer-events: none;
 
     > * {
@@ -136,26 +143,26 @@ body {
     }
   }
 
-  main {
+  main { // Styles for main tag are now in layout/main-content.scss or from grid
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    gap: 1rem;
+    gap: 1rem; // Replaced by $spacing-lg in .workspace
     max-width: 100%;
     overflow: hidden;
   }
 
-  .main-app-area {
+  .main-app-area { // This is now .workspace, styled in main-content.scss
     display: flex;
     flex: 1;
     align-items: center;
     justify-content: center;
   }
 
-  .function-call {
+  .function-call { // This class is not in the new App.tsx structure
     position: absolute;
     top: 0;
     width: 100%;
@@ -163,9 +170,10 @@ body {
     overflow-y: auto;
   }
 }
+*/
 
 /* video player */
-.stream {
+.stream { /* This class was on the video element, now it's .video-stream */
   flex-grow: 1;
   max-width: 90%;
   border-radius: 32px;

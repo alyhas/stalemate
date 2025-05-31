@@ -100,24 +100,39 @@
 }
 
 // Collapsed state for sidebar (example, controlled by a class on a parent or sidebar itself)
-.sidebar-collapsed .app-sidebar {
-  width: 80px; // Width when collapsed
+// This targets .app-sidebar when a parent (e.g. div.app) has .sidebar-collapsed
+.app.sidebar-collapsed .app-sidebar { // Increased specificity by adding .app
+  // Ensure this overrides the column's percentage width from .col-md-3
+  width: 80px !important; // Using !important for now to ensure override.
+  // Or, manage flex properties:
+  // flex-grow: 0;
+  // flex-shrink: 0;
+  // flex-basis: 80px;
+  padding-left: $spacing-xs; // Reduce padding when collapsed
+  padding-right: $spacing-xs;
 
   .sidebar-header .sidebar-title,
-  .sidebar-nav a span:not(.icon), // Hide text, show only icons (if spans are used for text)
+  // Selectively hide text content to show icons, etc.
+  // This part depends on the actual content of SidePanel.tsx.
+  // Assuming SidePanel.tsx itself will use its `collapsed` prop to hide text.
+  // The styles here are for the .app-sidebar container.
+  // The .side-panel component inside .app-sidebar will also react to the `collapsed` prop.
+  // For example, if SidePanel has navigation text:
+  // .sidebar-nav .nav-text { display: none; }
+  // For now, SidePanel.scss handles its internal content hiding.
   .sidebar-footer { // Or hide footer elements
     // display: none; // Or use opacity, visibility for transitions
     opacity: 0;
     visibility: hidden;
   }
 
-  .sidebar-nav a {
-    text-align: center;
-    i, .icon {
-      margin-right: 0;
-    }
-  }
-  // Adjust padding or other styles for collapsed state
+  // Example: if .app-sidebar itself had direct nav links with icons
+  // .sidebar-nav a {
+  //   text-align: center;
+  //   i, .icon {
+  //     margin-right: 0;
+  //   }
+  // }
 }
 
 // Toggle button for sidebar (example, place this outside the sidebar in your HTML)

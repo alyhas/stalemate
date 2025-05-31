@@ -30,9 +30,14 @@ const filterOptions = [
   { value: "none", label: "All" },
 ];
 
-export default function SidePanel() {
+export interface SidePanelProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProps) {
   const { connected, client } = useLiveAPIContext();
-  const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(true); // Removed, use props.collapsed
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
   const { log, logs } = useLoggerStore();
@@ -74,18 +79,18 @@ export default function SidePanel() {
   };
 
   return (
-    <div className={`side-panel ${open ? "open" : ""}`}>
+    // Use `!collapsed` for "open" state, and add "collapsed" class for specific styling if needed
+    <div className={cn("side-panel", { open: !collapsed, collapsed: collapsed })}>
       <header className="top">
         <h2>Console</h2>
-        {open ? (
-          <button className="opener" onClick={() => setOpen(false)}>
-            <RiSidebarFoldLine color="#b4b8bb" />
-          </button>
-        ) : (
-          <button className="opener" onClick={() => setOpen(true)}>
+        {/* Use onToggleCollapse and reflect the collapsed prop */}
+        <button className="opener" onClick={onToggleCollapse}>
+          {collapsed ? (
             <RiSidebarUnfoldLine color="#b4b8bb" />
-          </button>
-        )}
+          ) : (
+            <RiSidebarFoldLine color="#b4b8bb" />
+          )}
+        </button>
       </header>
       <section className="indicators">
         <Select
@@ -117,8 +122,8 @@ export default function SidePanel() {
         />
         <div className={cn("streaming-indicator", { connected })}>
           {connected
-            ? `🔵${open ? " Streaming" : ""}`
-            : `⏸️${open ? " Paused" : ""}`}
+            ? `🔵${!collapsed ? " Streaming" : ""}` // Reflect !collapsed for "open" text
+            : `⏸️${!collapsed ? " Paused" : ""}`}
         </div>
       </section>
       <div className="side-panel-container" ref={loggerRef}>

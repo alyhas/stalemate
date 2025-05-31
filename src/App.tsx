@@ -37,34 +37,74 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // State for sidebar
+
+  // Placeholder for connection status - replace with actual logic
+  const isConnected = true; // Example status
 
   return (
-    <div className="App">
+    <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}> {/* Apply sidebar-collapsed class */}
       <LiveAPIProvider options={apiOptions}>
-        <div className="streaming-console">
-          <SidePanel />
-          <main>
-            <div className="main-app-area">
-              {/* APP goes here */}
-                      <video
-                className={cn("stream", {
-                  hidden: !videoRef.current || !videoStream,
-                })}
-                ref={videoRef}
-                autoPlay
-                playsInline
-              />
+        <header className="app-header">
+          <div className="container"> {/* Using fixed-width container for header content */}
+            <div className="header-brand">
+              {/* Placeholder for Logo - replace with actual <img> or SVG */}
+              <h1>Logo</h1> {/* Changed from <strong> to <h1> */}
             </div>
+            <div className="header-actions">
+              {/* Placeholder for Connection Status */}
+              <span>{isConnected ? "Connected" : "Disconnected"}</span>
+              {/* Add other header actions here if needed */}
+            </div>
+          </div>
+        </header>
 
-            <ControlTray
-              videoRef={videoRef}
-              supportsVideo={true}
-              onVideoStreamChange={setVideoStream}
-              enableEditingSettings={true}
-            >
-              {/* put your own buttons here */}
-            </ControlTray>
-          </main>
+        {/* Changed from "streaming-console" to "app-container" and added "container-fluid" for full width */}
+        <div className="app-container container-fluid">
+          <div className="row">
+            {/* SidePanel wrapped in an aside and grid column, now responsive */}
+            <aside className="app-sidebar col-12 col-md-3">
+              <SidePanel
+                collapsed={sidebarCollapsed}
+                onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+              />
+            </aside>
+
+            {/* Main content area wrapped in main and grid column, now responsive */}
+            <main className="main-content col-12 col-md-9">
+              {/* Changed from "main-app-area" to "workspace" */}
+              <div className="workspace">
+                {/* Added primary-content div for general app content */}
+                <div className="primary-content">
+                  <h2>Primary Content Area</h2>
+                  <p>Other application content will go here.</p>
+                  {/* TODO: Replace with actual application content components */}
+                </div>
+                <div className="media-container">
+                  <video
+                    className={cn("video-stream", { // Changed class from "stream"
+                      hidden: !videoRef.current || !videoStream,
+                    })}
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                  />
+                  <div className="media-controls">
+                    {/* Placeholder for media controls (e.g., custom play/pause, timeline) */}
+                  </div>
+                </div>
+              </div>
+
+              <ControlTray
+                videoRef={videoRef}
+                supportsVideo={true}
+                onVideoStreamChange={setVideoStream}
+                enableEditingSettings={true}
+              >
+                {/* put your own buttons here */}
+              </ControlTray>
+            </main>
+          </div>
         </div>
       </LiveAPIProvider>
     </div>
