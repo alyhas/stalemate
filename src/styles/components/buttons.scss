@@ -1,0 +1,195 @@
+@import '../tokens';
+@import '../typography'; // For font variables if needed, or use base body styles
+
+// Base Button Style
+.btn {
+  display: inline-block;
+  font-weight: $font-weight-normal;
+  color: $dark-gray;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: $border-width solid transparent;
+  padding: $spacing-sm $spacing-md; // 8px 16px
+  font-size: $font-size-base; // 16px
+  line-height: $line-height-base; // 1.5
+  border-radius: $border-radius; // 4px
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus, &.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25); // Example focus style
+  }
+
+  &:disabled, &.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  // For linking purposes if an <a> tag is used with .btn
+  &.disabled,
+  fieldset:disabled & {
+    pointer-events: none;
+  }
+}
+
+// Primary Button
+.btn-primary {
+  color: #fff; // White text
+  background-color: $primary-color;
+  border-color: $primary-color;
+
+  &:hover {
+    color: #fff;
+    background-color: darken($primary-color, 7.5%);
+    border-color: darken($primary-color, 10%);
+  }
+
+  &:focus, &.focus {
+    box-shadow: 0 0 0 0.2rem rgba(darken($primary-color, 10%), 0.5);
+  }
+
+  &:active, &.active {
+    color: #fff;
+    background-color: darken($primary-color, 10%);
+    border-color: darken($primary-color, 12.5%);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+
+  &:disabled, &.disabled {
+    color: #fff;
+    background-color: $primary-color;
+    border-color: $primary-color;
+  }
+}
+
+// Secondary Button
+.btn-secondary {
+  color: #fff; // White text
+  background-color: $secondary-color;
+  border-color: $secondary-color;
+
+  &:hover {
+    color: #fff;
+    background-color: darken($secondary-color, 7.5%);
+    border-color: darken($secondary-color, 10%);
+  }
+
+  &:focus, &.focus {
+    box-shadow: 0 0 0 0.2rem rgba(darken($secondary-color, 10%), 0.5);
+  }
+
+  &:active, &.active {
+    color: #fff;
+    background-color: darken($secondary-color, 10%);
+    border-color: darken($secondary-color, 12.5%);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+
+  &:disabled, &.disabled {
+    color: #fff;
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+  }
+}
+
+// Outline Buttons (Example for Primary)
+.btn-outline-primary {
+  color: $primary-color;
+  border-color: $primary-color;
+
+  &:hover {
+    color: #fff;
+    background-color: $primary-color;
+    border-color: $primary-color;
+  }
+
+  &:focus, &.focus {
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.5);
+  }
+
+  &:active, &.active {
+    color: #fff;
+    background-color: $primary-color;
+    border-color: $primary-color;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+
+  &:disabled, &.disabled {
+    color: $primary-color;
+    background-color: transparent;
+  }
+}
+
+// Outline Buttons (Example for Secondary)
+.btn-outline-secondary {
+  color: $secondary-color;
+  border-color: $secondary-color;
+
+  &:hover {
+    color: #fff;
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+  }
+
+  &:focus, &.focus {
+    box-shadow: 0 0 0 0.2rem rgba($secondary-color, 0.5);
+  }
+
+  &:active, &.active {
+    color: #fff;
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+
+  &:disabled, &.disabled {
+    color: $secondary-color;
+    background-color: transparent;
+  }
+}
+
+
+// Icon-only Button (adjust padding and line-height as needed)
+.btn-icon {
+  padding: $spacing-sm; // Adjust for a more square/circular shape
+  line-height: 1; // Ensure icon is centered
+  width: $font-size-base + ($spacing-sm * 2) + ($border-width * 2); // Approx square based on font-size and padding
+  height: $font-size-base + ($spacing-sm * 2) + ($border-width * 2);
+  // Example: For an icon font or SVG
+  // i, svg {
+  //   vertical-align: middle;
+  // }
+}
+
+// Button Sizes (Examples)
+.btn-sm {
+  padding: $spacing-xs $spacing-sm; // 4px 8px
+  font-size: $font-size-sm; // 14px
+  line-height: $line-height-sm; // 1.2
+  border-radius: $border-radius * 0.8; // ~3px
+}
+
+.btn-lg {
+  padding: $spacing-md $spacing-lg; // 16px 24px
+  font-size: $font-size-lg; // 20px
+  line-height: $line-height-lg; // 1.7
+  border-radius: $border-radius * 1.2; // ~5px
+}
+
+// Block button (full width)
+.btn-block {
+  display: block;
+  width: 100%;
+
+  + .btn-block { // Add spacing if multiple block buttons are stacked
+    margin-top: $spacing-sm;
+  }
+}

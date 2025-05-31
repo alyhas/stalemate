@@ -1,0 +1,108 @@
+@import 'tokens';
+
+// Keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: $box-shadow-sm;
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: $box-shadow-lg;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: $box-shadow-sm;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Animation Classes
+.anim-fade-in {
+  animation-name: fadeIn;
+  animation-duration: 0.5s; // Example duration
+  animation-timing-function: ease-in-out; // Example timing function
+  animation-fill-mode: forwards; // Keep final state
+}
+
+.anim-slide-in-left {
+  animation-name: slideInFromLeft;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.anim-slide-in-right {
+  animation-name: slideInFromRight;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.anim-pulse {
+  animation-name: pulse;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.anim-spin {
+  animation-name: spin;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+// Utility for controlling animation play state (e.g., on hover or via JS)
+.is-animating {
+  // Base styles for elements that can be animated
+}
+
+// Example: Pause animation by default, play on hover
+// .anim-pulse-hover {
+//   animation-name: pulse;
+//   animation-duration: 2s;
+//   animation-timing-function: ease-in-out;
+//   animation-iteration-count: infinite;
+//   animation-play-state: paused; // Paused by default
+//
+//   &:hover {
+//     animation-play-state: running; // Play on hover
+//   }
+// }

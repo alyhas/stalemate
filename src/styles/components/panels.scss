@@ -1,0 +1,126 @@
+@import '../tokens';
+
+// Base Panel Style
+.panel {
+  margin-bottom: $spacing-lg; // Default spacing between panels
+  background-color: #fff; // Default background
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm; // Default subtle shadow
+
+  // Panel Header
+  .panel-header {
+    padding: $spacing-md $spacing-lg; // Generous padding for header
+    border-bottom: $border-width solid $border-color;
+    background-color: $light-gray; // Slight distinction for header background
+    border-top-left-radius: calc(#{$border-radius} - #{$border-width}); // Match panel's border-radius
+    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
+
+    // If using heading tags within panel-header
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: $font-size-lg; // Example: Larger font for panel titles
+    }
+  }
+
+  // Panel Body
+  .panel-body {
+    padding: $spacing-lg; // Content padding
+
+    // Clearfix for floated content within panel body
+    &::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+  }
+
+  // Panel Footer
+  .panel-footer {
+    padding: $spacing-md $spacing-lg;
+    border-top: $border-width solid $border-color;
+    background-color: $light-gray;
+    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
+    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
+
+    // Often used for action buttons or meta information
+    // Example: Align buttons to the right
+    .btn-group, .text-right {
+      text-align: right;
+    }
+  }
+}
+
+// Contextual Panel Variants (using color tokens)
+.panel-primary {
+  border-color: $primary-color;
+  .panel-header {
+    background-color: $primary-color;
+    color: #fff; // White text on primary color
+    border-color: $primary-color; // Ensure header border matches
+  }
+}
+
+.panel-secondary {
+  border-color: $secondary-color;
+  .panel-header {
+    background-color: $secondary-color;
+    color: #fff;
+    border-color: $secondary-color;
+  }
+}
+
+.panel-success {
+  border-color: $success-color;
+  .panel-header {
+    background-color: $success-color;
+    color: #fff;
+    border-color: $success-color;
+  }
+}
+
+.panel-danger {
+  border-color: $danger-color;
+  .panel-header {
+    background-color: $danger-color;
+    color: #fff;
+    border-color: $danger-color;
+  }
+}
+
+.panel-warning {
+  border-color: $warning-color;
+  .panel-header {
+    background-color: $warning-color;
+    color: $dark-gray; // Warning color might be light, use dark text
+    border-color: $warning-color;
+  }
+}
+
+.panel-info {
+  border-color: $info-color;
+  .panel-header {
+    background-color: $info-color;
+    color: #fff;
+    border-color: $info-color;
+  }
+}
+
+// Panel with no shadow
+.panel-no-shadow {
+  box-shadow: none;
+}
+
+// Panel with larger shadow
+.panel-shadow-lg {
+  box-shadow: $box-shadow-lg;
+}
+
+// Panel with no border
+.panel-no-border {
+  border: none;
+  .panel-header, .panel-footer {
+    border-color: transparent; // Remove internal borders too if panel has no border
+  }
+}

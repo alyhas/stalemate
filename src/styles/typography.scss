@@ -1,0 +1,72 @@
+@import 'tokens';
+
+// Font Families
+$font-family-sans-serif: $font-family-base;
+$font-family-serif: Georgia, 'Times New Roman', Times, serif; // Example serif font
+$font-family-monospace: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; // Example monospace font
+
+// Font Sizes (placeholders for responsive scaling)
+$font-size-sm: $font-size-base * 0.875; // 14px
+$font-size-md: $font-size-base; // 16px
+$font-size-lg: $font-size-base * 1.25; // 20px
+$font-size-xl: $font-size-base * 1.5; // 24px
+
+// Font Weights
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+// Line Heights
+$line-height-sm: 1.2;
+$line-height-md: $line-height-base;
+$line-height-lg: 1.7;
+
+// Letter Spacing (example values)
+$letter-spacing-tight: -0.05em;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.05em;
+
+// Basic Text Styling
+body {
+  font-family: $font-family-sans-serif;
+  font-size: $font-size-md;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-md;
+  color: $dark-gray; // Example text color
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-sans-serif; // Or a specific heading font
+  font-weight: $font-weight-bold;
+  line-height: $line-height-sm; // Example heading line height
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-md;
+}
+
+h1 { font-size: $font-size-xl; }
+h2 { font-size: $font-size-lg; }
+h3 { font-size: $font-size-base * 1.125; } // ~18px
+// Add more heading styles as needed
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none; // Or customize
+
+  &:hover {
+    color: darken($primary-color, 10%);
+    text-decoration: underline; // Or customize
+  }
+}
+
+// Utility classes (optional)
+.text-light { font-weight: $font-weight-light; }
+.text-normal { font-weight: $font-weight-normal; }
+.text-bold { font-weight: $font-weight-bold; }
+
+.letter-spacing-tight { letter-spacing: $letter-spacing-tight; }
+.letter-spacing-normal { letter-spacing: $letter-spacing-normal; }
+.letter-spacing-wide { letter-spacing: $letter-spacing-wide; }

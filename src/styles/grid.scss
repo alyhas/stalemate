@@ -1,0 +1,149 @@
+@import 'tokens';
+
+// Grid settings - placeholders, adjust as needed
+$grid-columns: 12;
+$grid-gutter-width: $spacing-md; // Using token for gutter width (16px)
+
+// Breakpoints - placeholders, adjust as needed
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Container
+.container {
+  width: 100%;
+  padding-right: $grid-gutter-width / 2;
+  padding-left: $grid-gutter-width / 2;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: $breakpoint-sm) {
+    max-width: $breakpoint-sm - $grid-gutter-width;
+  }
+  @media (min-width: $breakpoint-md) {
+    max-width: $breakpoint-md - $grid-gutter-width;
+  }
+  @media (min-width: $breakpoint-lg) {
+    max-width: $breakpoint-lg - $grid-gutter-width;
+  }
+  @media (min-width: $breakpoint-xl) {
+    max-width: $breakpoint-xl - $grid-gutter-width;
+  }
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: $grid-gutter-width / 2;
+  padding-left: $grid-gutter-width / 2;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+// Row
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -$grid-gutter-width / 2;
+  margin-left: -$grid-gutter-width / 2;
+}
+
+// Columns - basic structure
+// Generate column classes for each breakpoint if needed, or use a simpler approach
+// This is a basic example for all screen sizes.
+// For a full responsive grid, you'd generate classes like .col-sm-6, .col-md-4, etc.
+
+[class^="col-"], [class*=" col-"] {
+  position: relative;
+  width: 100%;
+  padding-right: $grid-gutter-width / 2;
+  padding-left: $grid-gutter-width / 2;
+}
+
+// Basic column sizing (e.g., .col-6 for 50% width)
+@for $i from 1 through $grid-columns {
+  .col-#{$i} {
+    flex: 0 0 percentage($i / $grid-columns);
+    max-width: percentage($i / $grid-columns);
+  }
+}
+
+// Offset classes (example)
+@for $i from 0 through ($grid-columns - 1) {
+  .offset-#{$i} {
+    margin-left: percentage($i / $grid-columns);
+  }
+}
+
+// Responsive column classes (example for 'md' breakpoint)
+@media (min-width: $breakpoint-md) {
+  @for $i from 1 through $grid-columns {
+    .col-md-#{$i} {
+      flex: 0 0 percentage($i / $grid-columns);
+      max-width: percentage($i / $grid-columns);
+    }
+  }
+  @for $i from 0 through ($grid-columns - 1) {
+    .offset-md-#{$i} {
+      margin-left: percentage($i / $grid-columns);
+    }
+  }
+}
+
+// Add more breakpoints (sm, lg, xl) as needed, following the pattern above.
+// Example for 'sm'
+@media (min-width: $breakpoint-sm) {
+  @for $i from 1 through $grid-columns {
+    .col-sm-#{$i} {
+      flex: 0 0 percentage($i / $grid-columns);
+      max-width: percentage($i / $grid-columns);
+    }
+  }
+  @for $i from 0 through ($grid-columns - 1) {
+    .offset-sm-#{$i} {
+      margin-left: percentage($i / $grid-columns);
+    }
+  }
+}
+
+// Example for 'lg'
+@media (min-width: $breakpoint-lg) {
+  @for $i from 1 through $grid-columns {
+    .col-lg-#{$i} {
+      flex: 0 0 percentage($i / $grid-columns);
+      max-width: percentage($i / $grid-columns);
+    }
+  }
+  @for $i from 0 through ($grid-columns - 1) {
+    .offset-lg-#{$i} {
+      margin-left: percentage($i / $grid-columns);
+    }
+  }
+}
+
+// Example for 'xl'
+@media (min-width: $breakpoint-xl) {
+  @for $i from 1 through $grid-columns {
+    .col-xl-#{$i} {
+      flex: 0 0 percentage($i / $grid-columns);
+      max-width: percentage($i / $grid-columns);
+    }
+  }
+  @for $i from 0 through ($grid-columns - 1) {
+    .offset-xl-#{$i} {
+      margin-left: percentage($i / $grid-columns);
+    }
+  }
+}
+
+// Utility classes for alignment and ordering (optional)
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  > [class^="col-"],
+  > [class*=" col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}

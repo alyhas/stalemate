@@ -1,0 +1,306 @@
+@import '../tokens';
+@import '../typography';
+
+// Base Form Control Styles
+.form-control {
+  display: block;
+  width: 100%;
+  height: calc(#{$line-height-base * 1em} + #{$spacing-sm * 2} + #{$border-width * 2}); // Matches button height by default
+  padding: $spacing-sm $spacing-md;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-base;
+  color: $dark-gray;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm; // Subtle shadow
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &::placeholder {
+    color: lighten($dark-gray, 25%);
+    opacity: 1; // Override Firefox's lower default opacity
+  }
+
+  &:focus {
+    color: $dark-gray;
+    background-color: #fff;
+    border-color: lighten($primary-color, 25%);
+    outline: 0;
+    box-shadow: $box-shadow-sm, 0 0 0 0.2rem rgba($primary-color, 0.25);
+  }
+
+  &:disabled, &[readonly] {
+    background-color: $light-gray;
+    opacity: 0.75; // Slightly more visible than buttons
+    cursor: not-allowed;
+  }
+}
+
+// Text Inputs (input[type="text"], input[type="password"], input[type="email"], etc., textarea)
+input[type="text"].form-control,
+input[type="password"].form-control,
+input[type="email"].form-control,
+input[type="number"].form-control,
+input[type="tel"].form-control,
+input[type="url"].form-control,
+input[type="search"].form-control,
+textarea.form-control {
+  // Specific styles if any, usually covered by .form-control
+}
+
+textarea.form-control {
+  height: auto; // Allow textareas to resize vertically
+  min-height: calc(#{$line-height-base * 2em} + #{$spacing-sm * 2} + #{$border-width * 2}); // Example: at least 2 lines of text
+}
+
+// Selects
+select.form-control {
+  // Default browser appearance is hard to style consistently.
+  // Consider custom select libraries for advanced styling.
+  // Basic appearance override:
+  appearance: none; // Remove default arrow in some browsers
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right $spacing-md center;
+  background-size: 16px 12px; // Adjust size as needed
+  padding-right: $spacing-md * 2.5; // Make space for the arrow
+
+  &:focus {
+    // Optional: change arrow color on focus
+    // background-image: url("data:image/svg+xml,...");
+  }
+
+  &::-ms-expand { // For IE
+    display: none;
+  }
+}
+
+// File Inputs (basic styling, often requires JS for custom appearance)
+.form-control-file {
+  display: block;
+  width: 100%;
+
+  // Custom styling for file inputs is notoriously tricky and often requires JS.
+  // This is a very basic placeholder.
+  // For more advanced styling, you might hide the default input and style a label.
+  // Example:
+  // input[type="file"] {
+  //   opacity: 0;
+  //   position: absolute;
+  //   z-index: -1;
+  // }
+  // .file-label {
+  //   // Style this like a button or other element
+  // }
+}
+
+
+// Checkboxes and Radios (basic custom styling)
+// Hide the browser default checkbox/radio
+.form-check-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px; // Avoid layout issues
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+
+  // Custom appearance for the label or a generated ::before/::after element
+  + .form-check-label {
+    position: relative;
+    padding-left: $spacing-lg; // Space for custom checkbox/radio
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    margin-bottom: $spacing-xs; // Align with other form elements
+
+    &::before { // Custom checkbox/radio box
+      content: "";
+      position: absolute;
+      left: 0;
+      top: ($line-height-base * 1em - $spacing-md) / 2; // Vertically center
+      width: $spacing-md; // 16px
+      height: $spacing-md;
+      border: $border-width solid $border-color;
+      border-radius: $border-radius * 0.5; // Slightly less rounded for checkboxes
+      background-color: #fff;
+      transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    &::after { // Checkmark/dot
+      content: "";
+      position: absolute;
+      left: ($spacing-md - 8px) / 2; // Center the checkmark/dot (assuming 8px wide)
+      top: (($line-height-base * 1em - $spacing-md) / 2) + ($spacing-md - 8px) / 2 - 2px; // Adjust for checkmark shape
+      width: 8px;
+      height: 8px;
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+  }
+
+  &:checked + .form-check-label::before {
+    background-color: $primary-color;
+    border-color: $primary-color;
+  }
+
+  &:checked + .form-check-label::after {
+    opacity: 1;
+  }
+
+  // Checkbox specific (checkmark)
+  &[type="checkbox"] + .form-check-label::after {
+    // Simple checkmark using border
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    width: 5px; // Adjust for visual balance
+    height: 10px;
+    left: 5px; // Adjust
+    top: (($line-height-base * 1em - $spacing-md) / 2) + 2px; // Adjust
+  }
+
+  // Radio specific (dot)
+  &[type="radio"] + .form-check-label::before {
+    border-radius: 50%; // Radios are round
+  }
+  &[type="radio"] + .form-check-label::after {
+    background-color: #fff;
+    border-radius: 50%;
+    width: $spacing-sm; // 8px dot
+    height: $spacing-sm;
+    left: $spacing-xs; // 4px from edge
+    top: (($line-height-base * 1em - $spacing-md) / 2) + $spacing-xs; // 4px from edge
+  }
+
+  &:focus + .form-check-label::before {
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+  }
+
+  &:disabled + .form-check-label {
+    color: lighten($dark-gray, 25%);
+    cursor: not-allowed;
+    &::before {
+      background-color: $light-gray;
+      border-color: lighten($border-color, 10%);
+    }
+  }
+  &:disabled:checked + .form-check-label::before {
+    background-color: lighten($primary-color, 20%);
+    border-color: lighten($primary-color, 20%);
+  }
+}
+
+
+// Input Group (for prepending/appending addons)
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap; // For validation messages or addons wrapping
+  align-items: stretch;
+  width: 100%;
+
+  .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%; // Prevent fixed width from overriding flex behavior
+    min-width: 0; // Same as above
+    margin-bottom: 0;
+
+    &:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.input-group-prepend,
+.input-group-append {
+  display: flex;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: 0; // Allow alignment in wrap scenarios
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-base;
+  color: $dark-gray;
+  text-align: center;
+  white-space: nowrap;
+  background-color: $light-gray;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+}
+
+.input-group-prepend .input-group-text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.input-group-append .input-group-text {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+
+// Validation States
+.is-valid {
+  border-color: $success-color !important; // Override specificity
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba($success-color, 0.25);
+  }
+  // Optional: Add feedback icon
+}
+
+.is-invalid {
+  border-color: $danger-color !important;
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+  }
+}
+
+// Feedback text for validation
+.valid-feedback, .invalid-feedback {
+  display: none; // Hidden by default
+  width: 100%;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm * 0.9; // Slightly smaller
+}
+
+.valid-feedback {
+  color: $success-color;
+}
+.is-valid ~ .valid-feedback { // Show feedback if input is valid and feedback element exists
+  display: block;
+}
+
+.invalid-feedback {
+  color: $danger-color;
+}
+.is-invalid ~ .invalid-feedback { // Show feedback if input is invalid and feedback element exists
+  display: block;
+}
+
+
+// Form groups for layout
+.form-group {
+  margin-bottom: $spacing-md;
+}
+
+.form-label {
+  display: inline-block;
+  margin-bottom: $spacing-xs;
+  font-weight: $font-weight-bold;
+}
