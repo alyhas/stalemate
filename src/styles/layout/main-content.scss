@@ -1,0 +1,77 @@
+@import '../tokens';
+@import '../grid'; // For .container or row/col usage within main content
+
+// Main Content Area
+.main-content {
+  padding: $spacing-lg; // Default padding around the content area
+  // The following margin-left assumes a fixed sidebar. Adjust as needed.
+  // margin-left: 250px; // Default: Same as $sidebar-width if sidebar is fixed and always visible
+  // transition: margin-left 0.3s ease-in-out; // Smooth transition if sidebar collapses
+
+  // If header is fixed, add padding to top to prevent content from being obscured
+  // padding-top: calc(#{$spacing-lg} + 60px); // Assuming header height is approx 60px, adjust as needed
+
+  // Example: Full width content area (if not using a fixed-width container inside)
+  width: 100%; // Or auto if it's a flex item
+
+  // If using flexbox for overall page layout (e.g., body is flex container)
+  // flex-grow: 1; // Allows main content to take available space
+  // min-width: 0; // Fix for flex items that might otherwise overflow
+
+  // When sidebar is collapsed (assuming a class `sidebar-collapsed` on a parent, e.g., <body>)
+  // This example assumes the sidebar width changes, and main-content margin adjusts.
+  // body.sidebar-collapsed & { // Using `&` to refer to .main-content
+  //   margin-left: 80px; // Same as collapsed sidebar width
+  // }
+}
+
+// If you want a container within the main content area to constrain its width
+.main-content .container,
+.main-content .container-fluid {
+  // Styles for the container within main-content, if different from default grid container
+  // For example, you might want a max-width for the content area itself,
+  // even if the .main-content wrapper spans a wider area for other purposes.
+  // max-width: 1200px; // Example max-width for content
+  // margin-left: auto;
+  // margin-right: auto;
+}
+
+
+// Responsive adjustments for main content
+@media (max-width: $breakpoint-lg) { // Same breakpoint used for sidebar collapse/off-canvas
+  .main-content {
+    // If sidebar becomes off-canvas, main content might take full width
+    // margin-left: 0; // Reset margin if sidebar is hidden or overlaid
+
+    // Adjust padding if needed for smaller screens
+    padding: $spacing-md;
+
+    // If header height changes on mobile, adjust padding-top
+    // padding-top: calc(#{$spacing-md} + 50px); // Example: smaller header height
+  }
+}
+
+// Example for a layout where sidebar is part of a flex container with main content
+// This would typically be set on the parent of both .app-sidebar and .main-content
+// .app-layout {
+//   display: flex;
+// }
+//
+// .main-content {
+//   flex-grow: 1;
+//   margin-left: 0; // No margin needed if flex handles positioning
+//   // padding-top for fixed header would still apply
+// }
+//
+// body.sidebar-collapsed .app-sidebar {
+//    width: 80px; /* This is already in sidebar.scss */
+// }
+// No change needed for .main-content margin-left if using flex grow,
+// as the sidebar's shrink/growth will be handled by flexbox.
+
+// It's important to decide on a layout strategy:
+// 1. Fixed sidebar, main content has margin.
+// 2. Flexbox layout for sidebar and main content.
+// 3. Sidebar is off-canvas on some/all screen sizes.
+// The SCSS here provides placeholders for the first option, with notes for others.
+// The actual implementation will depend on the HTML structure and overall layout approach.

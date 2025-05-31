@@ -1,0 +1,158 @@
+@import '../tokens';
+
+// Responsive Embeds / Aspect Ratios
+// Used for embedding videos (e.g., YouTube, Vimeo) or other iframes
+// that need to maintain an aspect ratio as they scale.
+
+.embed-responsive {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+
+  &::before { // This pseudo-element creates the intrinsic ratio
+    display: block;
+    content: "";
+  }
+
+  .embed-responsive-item,
+  iframe,
+  embed,
+  object,
+  video {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+// Common Aspect Ratios
+// Add more as needed. The padding-bottom percentage is (height / width) * 100.
+.embed-responsive-21by9::before {
+  padding-bottom: percentage(9 / 21);
+}
+
+.embed-responsive-16by9::before {
+  padding-bottom: percentage(9 / 16);
+}
+
+.embed-responsive-4by3::before {
+  padding-bottom: percentage(3 / 4);
+}
+
+.embed-responsive-1by1::before {
+  padding-bottom: percentage(1 / 1);
+}
+
+
+// Basic Media Object (classic layout for image/icon next to text content)
+.media {
+  display: flex;
+  align-items: flex-start; // Align items to the top
+  margin-bottom: $spacing-lg; // Default spacing
+
+  .media-figure { // For the image, icon, or video thumbnail
+    margin-right: $spacing-md;
+    // flex-shrink: 0; // Prevent figure from shrinking if media-body content is long
+  }
+
+  .media-body {
+    flex: 1; // Allow body to take up remaining space
+    min-width: 0; // Fix for flexbox bug with long content
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0; // Remove default top margin from headings
+    }
+  }
+}
+
+// Media Player (placeholder for custom video/audio player styling)
+.media-player {
+  position: relative;
+  background-color: $dark-gray; // Default dark background for players
+  border-radius: $border-radius;
+  overflow: hidden; // Ensure controls or overlays stay within bounds
+  box-shadow: $box-shadow;
+
+  video, audio {
+    display: block; // Remove extra space below inline elements
+    width: 100%;
+    height: auto; // Maintain aspect ratio by default
+  }
+
+  // Placeholder for custom controls overlay
+  .media-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: $spacing-sm $spacing-md;
+    background-color: rgba(0, 0, 0, 0.5); // Semi-transparent overlay
+    color: #fff;
+    opacity: 0; // Hidden by default, shown on hover/focus or via JS
+    transition: opacity 0.2s ease-in-out;
+
+    // Example: Play/pause button, progress bar, volume
+    // .btn-play-pause { ... }
+    // .progress-bar { ... }
+    // .volume-control { ... }
+  }
+
+  &:hover .media-controls,
+  &:focus-within .media-controls { // Show controls on hover or when an element inside has focus
+    opacity: 1;
+  }
+}
+
+// Image Framing / Styling
+.img-fluid { // Bootstrap's class name for responsive images
+  max-width: 100%;
+  height: auto;
+}
+
+.img-thumbnail {
+  padding: $spacing-xs;
+  background-color: $light-gray;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+  max-width: 100%;
+  height: auto;
+  box-shadow: $box-shadow-sm;
+}
+
+// Figure element for images with captions
+.figure {
+  display: inline-block; // To allow text-align to center it if needed
+  margin-bottom: $spacing-md;
+
+  .figure-img {
+    margin-bottom: $spacing-sm; // Space between image and caption
+    line-height: 1; // Remove any extra space below the image
+  }
+
+  .figure-caption {
+    font-size: $font-size-sm * 0.9; // Smaller font for captions
+    color: lighten($dark-gray, 20%);
+    text-align: center; // Example: center caption text
+  }
+}
+
+
+// Video Player specific styling (if different from generic media-player)
+.video-player {
+  // Inherits from .media-player or can have its own specific styles
+  // e.g., for custom play button overlay in the center
+  .play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    // Style your play button (e.g., large icon)
+    // z-index: 1; // Ensure it's above the video but below controls if they overlap
+  }
+}

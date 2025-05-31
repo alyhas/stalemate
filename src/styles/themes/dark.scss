@@ -1,0 +1,150 @@
+// Dark Theme Overrides
+// This file redefines color tokens for a dark theme.
+// It should be loaded *after* the base tokens.scss if overriding,
+// or used to generate a separate stylesheet for the dark theme.
+
+// Assuming a parent class like '.theme-dark' will be applied to the <body> or a main wrapper.
+// All overrides will be scoped under this class.
+
+// Import base tokens to know which variables to override.
+// We are not directly importing it to avoid duplicate default definitions if this
+// file is bundled separately. Instead, we are redefining the variables.
+// If this SCSS file is processed in an environment where `tokens.scss` is globally available
+// or if this file *adds* to it (e.g. by being imported into a main SCSS file that then applies the theme class),
+// then direct re-assignment is fine.
+
+// For a simple override, we'll redefine variables.
+// If a more complex system is used (like CSS custom properties or SCSS maps),
+// the approach might differ.
+
+// Dark Theme Color Palette
+$primary-color-dark: #0d6efd; // Example: Bootstrap's primary, can be adjusted for dark theme
+$secondary-color-dark: #6c757d; // Example: Bootstrap's secondary
+$success-color-dark: #198754;
+$danger-color-dark: #dc3545;
+$warning-color-dark: #ffc107;
+$info-color-dark: #0dcaf0;
+
+// Base background and text colors for dark theme
+$background-color-dark: #121212; // Very dark gray, common for dark themes
+$surface-color-dark: #1e1e1e; // Slightly lighter for surfaces like cards, panels
+$on-background-dark: #e0e0e0; // Light gray for text on $background-color-dark
+$on-surface-dark: #f5f5f5; // Even lighter for text on $surface-color-dark
+
+// Redefine tokens for dark theme context
+// These variables will be used by components when the dark theme is active.
+// Option 1: Direct re-assignment (if this file is loaded and processed in the right order)
+// This is simpler if you are generating one CSS file with theme classes.
+
+// $primary-color: $primary-color-dark;
+// $secondary-color: $secondary-color-dark;
+// $success-color: $success-color-dark;
+// $danger-color: $danger-color-dark;
+// $warning-color: $warning-color-dark;
+// $info-color: $info-color-dark;
+
+// $light-gray: #33373a; // Darker version of light-gray for borders, etc.
+// $dark-gray: #adb5bd;   // Lighter version of dark-gray for text or subtle elements
+
+// $border-color: #495057; // Darker border color
+
+// For components:
+// $body-bg: $background-color-dark;
+// $body-color: $on-background-dark;
+// $text-muted-dark: lighten($dark-gray, 10%);
+
+
+// Option 2: Scoped variables using a theme class (more robust for multiple themes)
+// This requires components to use these scoped variables or have their styles generated
+// under the theme class.
+
+.theme-dark {
+  // Core Colors
+  --primary-color: #{$primary-color-dark};
+  --secondary-color: #{$secondary-color-dark};
+  --success-color: #{$success-color-dark};
+  --danger-color: #{$danger-color-dark};
+  --warning-color: #{$warning-color-dark};
+  --info-color: #{$info-color-dark};
+
+  // Backgrounds & Surfaces
+  --background-color: #{$background-color-dark};
+  --surface-color: #{$surface-color-dark}; // For cards, panels, etc.
+  --light-gray: #2a2e33; // Adjusted for dark theme "light" gray
+  --dark-gray: #{$on-background-dark};   // "Dark" gray in dark theme is actually light text
+
+  // Text Colors
+  --text-color: #{$on-background-dark};
+  --text-on-surface-color: #{$on-surface-dark};
+  --text-muted: #868e96; // Muted text in dark theme
+
+  // Borders
+  --border-color: #444950;
+  --border-radius: 4px; // Assuming $border-radius is globally consistent
+  --border-width: 1px;  // Assuming $border-width is globally consistent
+
+  // Shadows (shadows might need to be less pronounced or use different colors)
+  --box-shadow-sm: 0 0.125rem 0.25rem rgba(255, 255, 255, 0.05);
+  --box-shadow: 0 0.5rem 1rem rgba(255, 255, 255, 0.075);
+  --box-shadow-lg: 0 1rem 3rem rgba(255, 255, 255, 0.1);
+
+  // Apply to global elements
+  color-scheme: dark; // Informs browser about the theme, affects form controls etc.
+
+  // Redefine SCSS variables if components directly use them and are compiled under .theme-dark scope
+  // This is if you don't use CSS variables extensively in components yet.
+  $primary-color: var(--primary-color);
+  $secondary-color: var(--secondary-color);
+  $success-color: var(--success-color);
+  $danger-color: var(--danger-color);
+  $warning-color: var(--warning-color);
+  $info-color: var(--info-color);
+  $light-gray: var(--light-gray);
+  $dark-gray: var(--dark-gray); // This now refers to the light text color for "dark gray" elements
+  $border-color: var(--border-color);
+  $box-shadow-sm: var(--box-shadow-sm);
+  $box-shadow: var(--box-shadow);
+  $box-shadow-lg: var(--box-shadow-lg);
+
+  // Base HTML element styling for dark theme
+  // body when .theme-dark is applied (or html.theme-dark)
+  background-color: var(--background-color);
+  color: var(--text-color);
+
+  // Example: Update component variables if they are defined in _tokens.scss
+  // These would then be used by components like buttons, panels, etc.
+  // $button-primary-bg: var(--primary-color);
+  // $button-primary-text: #fff; // Or a calculated contrast color
+  // $panel-bg: var(--surface-color);
+  // $panel-border-color: var(--border-color);
+  // $input-bg: var(--surface-color);
+  // $input-border-color: var(--border-color);
+  // $input-color: var(--text-on-surface-color);
+  // $input-placeholder-color: var(--text-muted);
+
+  // Specific component overrides for dark theme if needed beyond token changes
+  // For example, if a component uses a light image that needs to be inverted or replaced.
+  // .some-component {
+  //   background-image: url('/path/to/dark-theme-image.png');
+  // }
+}
+
+// How to use:
+// 1. Apply `.theme-dark` to your `<body>` or a main wrapper element.
+// 2. Ensure your components are either:
+//    a) Using CSS variables (--primary-color, etc.) defined above.
+//    b) Or, their SCSS is recompiled under the `.theme-dark` scope,
+//       allowing them to pick up the redefined SCSS variables ($primary-color, etc.).
+//
+// For (b), you might have a structure like:
+// main.scss:
+// @import 'tokens';
+// @import 'components/buttons'; // etc.
+//
+// .theme-dark {
+//   @import 'themes/dark'; // Redefines variables
+//   @import 'components/buttons'; // Re-styles buttons with new variables
+//   // ... other components
+// }
+// This approach increases CSS size but works without CSS variables.
+// Using CSS variables is generally more efficient for theming.

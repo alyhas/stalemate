@@ -1,0 +1,115 @@
+@import '../tokens';
+@import '../typography';
+@import '../grid'; // For using container or row/col if needed
+
+// Main Application Header
+.app-header {
+  background-color: $primary-color; // Example: Use primary color for header background
+  color: #fff; // White text on primary background
+  padding: $spacing-md 0; // Vertical padding, no horizontal padding if using a container inside
+  box-shadow: $box-shadow; // Add a subtle shadow for depth
+  // position: fixed; // Uncomment if a fixed header is desired
+  // top: 0;
+  // left: 0;
+  // right: 0;
+  // z-index: 1030; // Ensure it's above other content if fixed
+
+  // Container for content within the header to align with page layout
+  .container, .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; // Example: Logo on left, nav/actions on right
+  }
+
+  // Site Title / Logo area
+  .header-brand {
+    font-size: $font-size-xl; // Larger font for brand/title
+    font-weight: $font-weight-bold;
+    color: #fff; // Ensure brand text is white
+    text-decoration: none;
+    margin-right: $spacing-lg; // Space between brand and navigation
+
+    &:hover {
+      color: darken(#fff, 10%); // Slightly darken on hover
+    }
+  }
+
+  // Navigation within header
+  .header-nav {
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+      display: flex; // Align nav items horizontally
+      align-items: center;
+    }
+
+    li {
+      margin-left: $spacing-md; // Spacing between nav items
+    }
+
+    a {
+      color: #fff; // Nav link color
+      text-decoration: none;
+      font-size: $font-size-base;
+      padding: $spacing-sm $spacing-xs; // Padding for clickable area
+
+      &:hover, &.active {
+        color: darken(#fff, 15%); // Darken on hover or for active link
+        // border-bottom: 2px solid #fff; // Example active/hover indicator
+      }
+    }
+  }
+
+  // Header actions (e.g., user profile, buttons)
+  .header-actions {
+    display: flex;
+    align-items: center;
+
+    .btn { // Style buttons in header if needed
+      margin-left: $spacing-sm;
+    }
+    // Example: User profile link/dropdown
+    .user-profile {
+      margin-left: $spacing-md;
+      // Style for user avatar, name, etc.
+    }
+  }
+}
+
+// Responsive considerations for header (example)
+@media (max-width: $breakpoint-md) {
+  .app-header {
+    .container, .container-fluid {
+      flex-direction: column; // Stack elements vertically on smaller screens
+      align-items: flex-start;
+    }
+
+    .header-brand {
+      margin-bottom: $spacing-sm; // Add space below brand when stacked
+    }
+
+    .header-nav {
+      width: 100%; // Make nav take full width
+      ul {
+        flex-direction: column; // Stack nav items
+        align-items: flex-start;
+      }
+      li {
+        margin-left: 0;
+        margin-bottom: $spacing-xs; // Space between stacked nav items
+        width: 100%;
+      }
+      a {
+        display: block; // Make links full width for easier tapping
+        padding: $spacing-sm 0;
+      }
+    }
+
+    .header-actions {
+      width: 100%;
+      margin-top: $spacing-sm;
+      // Adjust layout of actions if needed
+    }
+  }
+}

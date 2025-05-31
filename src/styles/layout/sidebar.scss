@@ -1,0 +1,154 @@
+@import '../tokens';
+@import '../typography';
+
+// Main Sidebar / Side Panel
+.app-sidebar {
+  width: 250px; // Default sidebar width, can be made variable
+  background-color: $light-gray; // Example: Light gray background
+  border-right: $border-width solid $border-color;
+  padding: $spacing-lg $spacing-md;
+  height: 100vh; // Example: Full viewport height
+  // position: fixed; // Uncomment if a fixed sidebar is desired
+  // left: 0;
+  // top: 0; // Adjust if header is also fixed
+  // bottom: 0;
+  // z-index: 1020; // Below header if header is fixed
+  overflow-y: auto; // Allow scrolling if content exceeds height
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; // For collapsible sidebar
+
+  // Sidebar Header (optional, e.g., for logo or title within sidebar)
+  .sidebar-header {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-lg;
+    border-bottom: $border-width solid lighten($border-color, 5%);
+
+    .sidebar-title {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $dark-gray;
+      // Add any other styling for the title
+    }
+  }
+
+  // Sidebar Navigation
+  .sidebar-nav {
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    li {
+      margin-bottom: $spacing-xs; // Spacing between nav items
+    }
+
+    a {
+      display: block; // Make links take full width for easier clicking
+      padding: $spacing-sm $spacing-md;
+      color: $dark-gray; // Link color
+      text-decoration: none;
+      border-radius: $border-radius;
+      font-size: $font-size-base;
+      transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+
+      &:hover {
+        background-color: darken($light-gray, 5%);
+        color: $primary-color;
+      }
+
+      &.active { // Style for the active navigation link
+        background-color: $primary-color;
+        color: #fff;
+        font-weight: $font-weight-normal;
+
+        // Optional: Add an icon or indicator for active state
+        // i, .icon {
+        //   color: #fff;
+        // }
+      }
+
+      // For icons within nav links
+      i, .icon {
+        margin-right: $spacing-sm;
+        width: 1.25em; // Ensure consistent icon spacing
+        text-align: center;
+      }
+    }
+
+    // Nested navigation (submenus)
+    ul ul {
+      margin-left: $spacing-md; // Indent submenus
+      margin-top: $spacing-xs;
+      font-size: $font-size-sm; // Slightly smaller font for sub-items
+    }
+  }
+
+  // Sidebar Footer (optional, e.g., for settings or logout link)
+  .sidebar-footer {
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: $border-width solid lighten($border-color, 5%);
+    font-size: $font-size-sm;
+    color: lighten($dark-gray, 20%);
+
+    // Example: Small text or links
+    small {
+      display: block;
+      margin-bottom: $spacing-xs;
+    }
+  }
+}
+
+// Collapsed state for sidebar (example, controlled by a class on a parent or sidebar itself)
+.sidebar-collapsed .app-sidebar {
+  width: 80px; // Width when collapsed
+
+  .sidebar-header .sidebar-title,
+  .sidebar-nav a span:not(.icon), // Hide text, show only icons (if spans are used for text)
+  .sidebar-footer { // Or hide footer elements
+    // display: none; // Or use opacity, visibility for transitions
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .sidebar-nav a {
+    text-align: center;
+    i, .icon {
+      margin-right: 0;
+    }
+  }
+  // Adjust padding or other styles for collapsed state
+}
+
+// Toggle button for sidebar (example, place this outside the sidebar in your HTML)
+.sidebar-toggle {
+  // Basic styling for the toggle button
+  // position: fixed; // Or absolute, depending on layout
+  // top: 15px;
+  // left: 260px; // Adjust based on sidebar width
+  // z-index: 1025;
+  // transition: left 0.3s ease-in-out;
+}
+
+.sidebar-collapsed .sidebar-toggle {
+  // left: 90px; // Adjust based on collapsed sidebar width
+}
+
+
+// Responsive: Hide sidebar on smaller screens or transform to off-canvas
+@media (max-width: $breakpoint-lg) { // Example breakpoint
+  .app-sidebar {
+    // By default, it might still be visible.
+    // To hide it and use a toggle (off-canvas):
+    // transform: translateX(-100%);
+    // position: fixed;
+    // z-index: 1100; // Higher z-index for off-canvas
+    // box-shadow: $box-shadow-lg;
+  }
+
+  // .sidebar-open .app-sidebar { // Class to toggle visibility
+  //   transform: translateX(0);
+  // }
+
+  // Adjust main content margin when sidebar is open/closed if it's not fixed overlay
+}

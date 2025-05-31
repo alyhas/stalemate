@@ -1,0 +1,196 @@
+@import '../tokens';
+
+// Base Card Style
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // Fix for flexbox bugs
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+  margin-bottom: $spacing-lg; // Default spacing between cards
+
+  // Card Header
+  .card-header {
+    padding: $spacing-md $spacing-lg;
+    margin-bottom: 0; // Reset default margin for headings
+    background-color: $light-gray;
+    border-bottom: $border-width solid $border-color;
+    border-top-left-radius: calc(#{$border-radius} - #{$border-width});
+    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
+
+    &:first-child { // If header is the first element, ensure its top corners are rounded with the card
+      border-radius: calc(#{$border-radius} - #{$border-width}) calc(#{$border-radius} - #{$border-width}) 0 0;
+    }
+
+    // For h* tags within header
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: $font-size-lg; // Example: Larger font for card titles
+    }
+  }
+
+  // Card Body
+  .card-body {
+    flex: 1 1 auto; // Allow card body to grow and shrink
+    padding: $spacing-lg; // Content padding
+
+    // Clearfix for floated content
+    &::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+  }
+
+  // Card Footer
+  .card-footer {
+    padding: $spacing-md $spacing-lg;
+    background-color: $light-gray;
+    border-top: $border-width solid $border-color;
+    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
+    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
+
+    &:last-child { // If footer is the last element, ensure its bottom corners are rounded
+      border-radius: 0 0 calc(#{$border-radius} - #{$border-width}) calc(#{$border-radius} - #{$border-width});
+    }
+  }
+
+  // Card Title (if not using card-header)
+  .card-title {
+    margin-bottom: $spacing-md; // Space below title if it's in card-body
+    font-size: $font-size-xl; // Example size
+    font-weight: $font-weight-bold;
+  }
+
+  // Card Subtitle
+  .card-subtitle {
+    margin-top: -$spacing-md / 2;
+    margin-bottom: $spacing-sm;
+    color: lighten($dark-gray, 20%);
+    font-size: $font-size-base;
+  }
+
+  // Card Text
+  .card-text:last-child {
+    margin-bottom: 0; // Remove margin from last text element in card-body
+  }
+
+  // Card Links
+  .card-link {
+    color: $primary-color;
+    &:hover {
+      color: darken($primary-color, 10%);
+      text-decoration: none; // Optional: remove underline on hover
+    }
+    + .card-link { // Spacing between multiple links
+      margin-left: $spacing-lg;
+    }
+  }
+
+  // Image caps (top or bottom of card)
+  .card-img-top,
+  .card-img-bottom {
+    width: 100%; // Make image responsive
+    border-style: solid; // Needed for border overrides
+    border-color: $border-color; // Match card border
+  }
+
+  .card-img-top {
+    border-top-left-radius: calc(#{$border-radius} - #{$border-width});
+    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
+    border-width: $border-width $border-width 0 $border-width; // Border only on sides and top if needed
+  }
+
+  .card-img-bottom {
+    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
+    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
+    border-width: 0 $border-width $border-width $border-width; // Border only on sides and bottom
+  }
+
+  // Image overlays
+  .card-img-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: $spacing-lg;
+    border-radius: calc(#{$border-radius} - #{$border-width}); // Match card's inner radius
+  }
+}
+
+// Card Groups (for laying out cards with equal height and width)
+.card-group {
+  display: flex;
+  flex-direction: column; // Stack by default
+
+  .card {
+    margin-bottom: $spacing-md; // Adjust spacing within group
+  }
+
+  @media (min-width: $breakpoint-sm) { // Use grid breakpoints
+    flex-flow: row wrap;
+    margin-right: -$spacing-md / 2; // Negative margin for gutters
+    margin-left: -$spacing-md / 2;
+
+    .card {
+      flex: 1 0 0%; // Basis of 0 to allow equal distribution
+      margin-bottom: 0; // Remove bottom margin when horizontal
+      // Add gutters between cards
+      margin-right: $spacing-md / 2;
+      margin-left: $spacing-md / 2;
+
+      // Ensure cards in the same row have same height
+      // This usually requires JS or more complex CSS (e.g. display: grid on parent)
+      // For now, this sets them up for flex distribution.
+    }
+  }
+}
+
+
+// Contextual Card Variants (similar to panels, but might be more subtle)
+.card-primary {
+  border-color: $primary-color;
+  .card-header {
+    background-color: $primary-color;
+    color: #fff;
+    border-color: $primary-color;
+  }
+}
+
+.card-secondary {
+  border-color: $secondary-color;
+  .card-header {
+    background-color: $secondary-color;
+    color: #fff;
+    border-color: $secondary-color;
+  }
+}
+// Add more contextual variants (success, danger, etc.) as needed, similar to panels.
+
+// Card with no shadow
+.card-no-shadow {
+  box-shadow: none;
+}
+
+// Card with larger shadow
+.card-shadow-lg {
+  box-shadow: $box-shadow-lg;
+}
+
+// Card with no border
+.card-no-border {
+  border: none;
+  .card-header, .card-footer {
+    border-color: transparent;
+  }
+  .card-img-top, .card-img-bottom {
+    border-color: transparent;
+  }
+}

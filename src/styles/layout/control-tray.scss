@@ -1,0 +1,114 @@
+@import '../tokens';
+@import '../components/buttons'; // If using .btn classes directly in the tray
+
+// Control Tray / Action Bar
+.control-tray {
+  background-color: $light-gray; // Example background
+  padding: $spacing-md $spacing-lg;
+  border-top: $border-width solid $border-color; // Or box-shadow for separation
+  // box-shadow: 0 -2px 5px rgba(0,0,0,0.05); // Alternative to border
+  display: flex;
+  align-items: center; // Vertically align items in the tray
+  justify-content: flex-end; // Default: align controls to the right
+
+  // Positioning options:
+  // 1. Static: Part of the normal page flow (e.g., at the bottom of a form section)
+  //    No specific position property needed. Default block behavior.
+
+  // 2. Fixed to bottom of viewport:
+  // position: fixed;
+  // bottom: 0;
+  // left: 0; // Or margin-left to account for a fixed sidebar
+  // right: 0;
+  // z-index: 1000; // Ensure it's above most content but below modals/popups
+
+  // 3. Sticky to bottom of its container (if container has specific height and overflow):
+  // position: sticky;
+  // bottom: 0;
+
+  // Spacing for items within the tray
+  // Using gap for flex items (modern browsers)
+  gap: $spacing-sm;
+
+  // Fallback for older browsers (if not using gap or for non-button elements)
+  > * + * {
+    margin-left: $spacing-sm; // Add space between items
+  }
+
+  // If the tray has sections (e.g., left, center, right aligned groups)
+  .tray-section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm; // Spacing within a section
+
+    &.tray-section-left {
+      margin-right: auto; // Pushes other sections to the right
+    }
+    &.tray-section-center {
+      // margin-left: auto;
+      // margin-right: auto;
+      // Or use justify-content: center on parent if only one section
+    }
+    &.tray-section-right {
+      // margin-left: auto; // Pushes itself to the right (if it's the only one after a left section)
+      // Default behavior if parent is justify-content: flex-end
+    }
+  }
+
+  // Styling for common elements within the tray
+  .btn {
+    // No specific styles needed if using global .btn styles from buttons.scss
+    // However, you might want to adjust margin if not using gap property.
+    // margin-bottom: 0; // Override default button margins if any
+  }
+
+  // Example: For text or labels within the tray
+  .tray-text {
+    font-size: $font-size-sm;
+    color: lighten($dark-gray, 10%);
+  }
+}
+
+// Example: Fixed control tray that accounts for a fixed sidebar
+// This assumes the sidebar has a known width ($sidebar-width from a common var or hardcoded)
+// and a class like `sidebar-present` or `sidebar-fixed` is on the body.
+
+// body.sidebar-fixed .control-tray-fixed-bottom {
+//   left: 250px; // Replace with your actual sidebar width variable
+// }
+//
+// body.sidebar-fixed.sidebar-collapsed .control-tray-fixed-bottom {
+//   left: 80px; // Replace with your actual collapsed sidebar width variable
+// }
+
+
+// Responsive considerations
+@media (max-width: $breakpoint-sm) {
+  .control-tray {
+    padding: $spacing-sm $spacing-md;
+    flex-direction: column; // Stack controls vertically on small screens
+    align-items: stretch; // Make items full width when stacked
+
+    > * + * {
+      margin-left: 0; // Remove horizontal margin
+      margin-top: $spacing-sm; // Add vertical margin
+    }
+
+    .tray-section {
+      justify-content: center; // Center sections when stacked
+      width: 100%;
+      &.tray-section-left, &.tray-section-right {
+        margin-right: 0;
+        margin-left: 0;
+      }
+    }
+
+    .btn {
+      width: 100%; // Make buttons full width when stacked
+      margin-bottom: $spacing-xs; // Add some space between stacked buttons
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
