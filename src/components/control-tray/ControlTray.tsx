@@ -85,7 +85,7 @@ function ControlTray({
   }, [connected]);
   useEffect(() => {
     document.documentElement.style.setProperty(
-      "--volume",
+      "--control-tray-mic-volume", // Renamed CSS variable
       `${Math.max(5, Math.min(inVolume * 200, 8))}px`
     );
   }, [inVolume]);
@@ -160,11 +160,11 @@ function ControlTray({
   };
 
   return (
-    <section className="control-tray">
+    <section className="control-tray-component"> {/* Renamed class */}
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
         <button
-          className={cn("action-button mic-button")}
+          className={cn("action-button mic-button")} // .action-button now extends .btn
           onClick={() => setMuted(!muted)}
         >
           {!muted ? (

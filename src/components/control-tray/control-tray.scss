@@ -1,109 +1,21 @@
-.action-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--Neutral-20);
-  color: var(--Neutral-60);
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  text-transform: lowercase;
-  cursor: pointer;
-  animation: opacity-pulse 3s ease-in infinite;
-  transition: all 0.2s ease-in-out;
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
-  border: 1px solid rgba(0, 0, 0, 0);
-  user-select: none;
-  cursor: pointer;
+@import '../../styles/tokens';
+@import '../../styles/components/buttons'; // To potentially use .btn or its mixins
+@import '../../styles/animations'; // If opacity-pulse were global
 
-  &:focus {
-    border: 2px solid var(--Neutral-20);
-    outline: 2px solid var(--Neutral-80);
-  }
+// Variables from old file (approximate mapping to new tokens)
+// --Neutral-20 -> $light-gray
+// --Neutral-60 -> $dark-gray
+// --Neutral-2 -> #fff (assuming it was very light)
+// --Neutral-80 -> darken($dark-gray, 20%) (approx)
+// --Neutral-30 -> lighten($light-gray, 10%) (approx)
+// --Neutral-5 -> #fff (or very-light-gray like $surface-color-light from themes)
+// --Blue-800 -> darken($primary-color, 15%)
+// --Blue-500 -> $primary-color
+// --accent-red / --Red-500 -> $danger-color
+// --Red-400 -> lighten($danger-color, 10%)
 
-  &.outlined {
-    background: var(--Neutral-2);
-    border: 1px solid var(--Neutral-20);
-  }
-
-  .no-action {
-    pointer-events: none;
-  }
-
-  &:hover {
-    background: rgba(0, 0, 0, 0);
-    border: 1px solid var(--Neutral-20);
-  }
-
-  &.connected {
-    background: var(--Blue-800);
-    color: var(--Blue-500);
-
-    &:hover {
-      border: 1px solid var(--Blue-500);
-    }
-  }
-}
-
-@property --volume {
-  syntax: "length";
-  inherit: false;
-  initial-value: 0px;
-}
-
-.disabled .mic-button,
-.mic-button.disabled {
-  &:before {
-    background: rgba(0, 0, 0, 0);
-  }
-}
-
-.mic-button {
-  position: relative;
-  background-color: var(--accent-red);
-  z-index: 1;
-  color: black;
-  transition: all 0.2s ease-in;
-
-  &:focus {
-    border: 2px solid var(--Neutral-20);
-    outline: 2px solid var(--Red-500);
-  }
-
-  &:hover {
-    background-color: var(--Red-400);
-  }
-
-  &:before {
-    position: absolute;
-    z-index: -1;
-    top: calc(var(--volume) * -1);
-    left: calc(var(--volume) * -1);
-    display: block;
-    content: "";
-    opacity: 0.35;
-    background-color: var(--Red-500);
-    width: calc(100% + var(--volume) * 2);
-    height: calc(100% + var(--volume) * 2);
-    border-radius: 24px;
-    transition: all 0.02s ease-in-out;
-  }
-}
-
-.connect-toggle {
-  &:focus {
-    border: 2px solid var(--Neutral-20);
-    outline: 2px solid var(--Neutral-80);
-  }
-
-  &:not(.connected) {
-    background-color: var(--Blue-500);
-    color: var(--Neutral-5);
-  }
-}
-
-.control-tray {
+// Main container for this specific control tray implementation
+.control-tray-component { // Renamed from .control-tray to avoid conflict with global layout class
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -111,74 +23,185 @@
   display: inline-flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
-  padding-bottom: 18px;
+  gap: $spacing-sm; // 8px
+  padding-bottom: $spacing-lg; // Approx 18px, using token (24px)
 
-  .disabled .action-button,
+  // Class for disabled state on action buttons within this component
+  .disabled .action-button, // Keep this structure if TSX relies on it
   .action-button.disabled {
-    background: rgba(0, 0, 0, 0);
-    border: 1px solid var(--Neutral-30, #404547);
-    color: var(--Neutral-30);
+    background: transparent;
+    border-color: $light-gray; // Was --Neutral-30
+    color: $light-gray; // Was --Neutral-30
+  }
+}
+
+// General action button style within this component
+.action-button {
+  @extend .btn; // Inherit base button styles
+  // Override with specific styles for this component's buttons
+  background-color: $light-gray; // Was --Neutral-20
+  color: $dark-gray; // Was --Neutral-60
+  font-size: 1.25rem; // Keep if specific, or map to a $font-size token
+  line-height: 1.75rem; // Keep if specific
+  text-transform: lowercase; // Keep if specific
+  // animation: opacity-pulse 3s ease-in infinite; // Kept locally for now
+  width: 48px; // Specific size
+  height: 48px; // Specific size
+  border-radius: 18px; // Specific radius
+  border: 1px solid transparent;
+
+  &:focus, &.focus { // Use .focus for consistency with .btn
+    border: 2px solid $light-gray; // Was --Neutral-20
+    outline: 2px solid $dark-gray; // Was --Neutral-80 (approximated)
+    box-shadow: none; // Override default .btn focus shadow if not desired
   }
 
-  .connection-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
+  &.outlined {
+    background: $white; // Was --Neutral-2
+    border: 1px solid $light-gray; // Was --Neutral-20
+  }
 
-    .connection-button-container {
-      border-radius: 27px;
-      border: 1px solid var(--Neutral-30);
-      background: var(--Neutral-5);
-      padding: 10px;
-    }
+  &.no-action { // Class for non-interactive button-like elements
+    pointer-events: none;
+  }
 
-    .text-indicator {
-      font-size: 11px;
-      color: var(--Blue-500);
-      user-select: none;
-    }
+  &:hover {
+    background: transparent; // Was rgba(0,0,0,0)
+    border: 1px solid $light-gray; // Was --Neutral-20
+    color: $dark-gray; // Ensure text color is appropriate on transparent bg
+  }
 
-    &:not(.connected) {
-      .text-indicator {
-        opacity: 0;
-      }
+  &.connected { // Style for "connected" state, e.g., connect/disconnect button
+    background: darken($primary-color, 15%); // Was --Blue-800
+    color: $primary-color; // Was --Blue-500
+
+    &:hover {
+      border: 1px solid $primary-color; // Was --Blue-500
     }
   }
 }
 
-.actions-nav {
-  background: var(--Neutral-5);
-  border: 1px solid var(--Neutral-30);
-  border-radius: 27px;
-  display: inline-flex;
-  gap: 12px;
+// Specific button for microphone
+.mic-button {
+  @extend .action-button; // Inherit from the local .action-button
+  position: relative;
+  background-color: $danger-color; // Was --accent-red
+  z-index: 1;
+  color: $white; // Assuming black was for contrast with a lighter red
+
+  &:focus, &.focus {
+    border: 2px solid $light-gray; // Was --Neutral-20
+    outline: 2px solid $danger-color; // Was --Red-500
+    box-shadow: none;
+  }
+
+  &:hover {
+    background-color: lighten($danger-color, 10%); // Was --Red-400
+    color: $white;
+  }
+
+  // Volume pulse animation (remains largely the same, just CSS var name)
+  // Ensure --control-tray-mic-volume is set via JS instead of --volume
+  &::before {
+    position: absolute;
+    z-index: -1;
+    top: calc(var(--control-tray-mic-volume, 0px) * -1);
+    left: calc(var(--control-tray-mic-volume, 0px) * -1);
+    display: block;
+    content: "";
+    opacity: 0.35;
+    background-color: $danger-color; // Was --Red-500
+    width: calc(100% + var(--control-tray-mic-volume, 0px) * 2);
+    height: calc(100% + var(--control-tray-mic-volume, 0px) * 2);
+    border-radius: 24px; // Specific
+    transition: all 0.02s ease-in-out; // Fast transition for pulse effect
+  }
+}
+
+// Disabled state for mic button (styling the ::before pseudo-element)
+.disabled .mic-button::before,
+.mic-button.disabled::before {
+  background: transparent;
+}
+
+// Connect toggle button specifics
+.connect-toggle {
+  // .action-button styles are inherited or applied in TSX
+  &:focus, &.focus {
+    border: 2px solid $light-gray; // Was --Neutral-20
+    outline: 2px solid $dark-gray; // Was --Neutral-80 (approximated)
+    box-shadow: none;
+  }
+
+  &:not(.connected) {
+    background-color: $primary-color; // Was --Blue-500
+    color: $white; // Was --Neutral-5
+  }
+}
+
+// Container for connection status (button and text)
+.connection-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  overflow: clip;
-  padding: 10px;
+  gap: $spacing-xs; // 4px
 
-  transition: all 0.6s ease-in;
+  .connection-button-container {
+    border-radius: 27px; // Specific
+    border: 1px solid $light-gray; // Was --Neutral-30
+    background: $white; // Was --Neutral-5
+    padding: $spacing-sm; // 10px, using token (8px)
+  }
 
-  &>* {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 1rem;
+  .text-indicator {
+    font-size: $font-size-sm * 0.8; // Approx 11px, using token (14px*0.8=11.2px)
+    color: $primary-color; // Was --Blue-500
+    user-select: none;
+  }
+
+  &:not(.connected) {
+    .text-indicator {
+      opacity: 0;
+    }
   }
 }
 
-@keyframes opacity-pulse {
-  0% {
-    opacity: 0.9;
-  }
+// Navigation section for actions
+.actions-nav {
+  background: $white; // Was --Neutral-5
+  border: 1px solid $light-gray; // Was --Neutral-30
+  border-radius: 27px; // Specific
+  display: inline-flex;
+  gap: $spacing-sm; // 12px, using token (8px, or $spacing-md for 16px)
+  align-items: center;
+  overflow: hidden; // Was clip, overflow:hidden is more standard
+  padding: $spacing-sm; // 10px, using token (8px)
+  transition: all 0.6s ease-in; // Keep transition
 
-  50% {
-    opacity: 1;
+  > * { // Direct children
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: $spacing-md; // Was 1rem (16px)
   }
+}
 
-  100% {
-    opacity: 0.9;
-  }
+// Local animation, could be moved to animations.scss if used elsewhere
+@keyframes control-tray-opacity-pulse {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+// Apply the animation to buttons if desired (was on .action-button by default)
+// .action-button {
+//   animation: control-tray-opacity-pulse 3s ease-in infinite;
+// }
+
+// CSS Property for mic volume animation
+@property --control-tray-mic-volume {
+  syntax: "<length>";
+  inherit: false;
+  initial-value: 0px;
 }

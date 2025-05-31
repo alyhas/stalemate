@@ -1,0 +1,58 @@
+// Main SCSS entry point for the design system
+
+// 1. Core & Base Styles
+@import 'tokens';
+@import 'typography';
+@import 'grid';
+@import 'animations';
+
+// 2. Layout Styles
+// Note: Order might matter if there are dependencies between layout files.
+@import 'layout/header';
+@import 'layout/sidebar';
+@import 'layout/main-content';
+@import 'layout/control-tray';
+// Add other layout files here if any (e.g., footer.scss)
+
+// 3. Component Styles
+// Note: Order might matter if components depend on each other.
+@import 'components/buttons';
+@import 'components/inputs';
+@import 'components/panels';
+@import 'components/cards';
+@import 'components/media';
+// Add other component files here
+
+// 4. Theme Styles
+// These should typically come last, especially if they override default styles
+// or provide styles scoped under theme classes (e.g., .theme-dark, .theme-light).
+@import 'themes/light'; // Default theme styles (if .theme-light is used)
+@import 'themes/dark';  // Dark theme styles (if .theme-dark is used)
+
+// Global styles (if any, that don't fit into other categories)
+// html {
+//   font-size: 16px; // Base font size, if not set in typography
+// }
+
+// body {
+//   margin: 0;
+//   // Apply a default theme if desired, e.g., .theme-light
+//   // Or, this can be set dynamically via JS on the body tag.
+//   // @extend .theme-light; // If you want light theme by default via SCSS extend
+// }
+
+// Utility classes (if any global utility classes are needed)
+// .hidden {
+//   display: none !important;
+// }
+// .visually-hidden {
+//   position: absolute;
+//   width: 1px;
+//   height: 1px;
+//   padding: 0;
+//   margin: -1px;
+//   overflow: hidden;
+//   clip: rect(0, 0, 0, 0);
+//   white-space: nowrap;
+//   border: 0;
+// }

@@ -1,0 +1,88 @@
+// Light Theme Styles
+// This file defines color tokens specifically for a light theme.
+// It's useful if `tokens.scss` is considered a base/default and you want an explicit light theme
+// or if `tokens.scss` might evolve to be theme-agnostic.
+
+// Light Theme Color Palette (Primarily reusing default token values)
+// These are placeholders; they should ideally match your initial $primary-color etc. from tokens.scss
+$primary-color-light: #007bff; // Default primary
+$secondary-color-light: #6c757d; // Default secondary
+$success-color-light: #28a745;
+$danger-color-light: #dc3545;
+$warning-color-light: #ffc107;
+$info-color-light: #17a2b8;
+
+// Base background and text colors for light theme
+$background-color-light: #ffffff; // White background
+$surface-color-light: #f8f9fa;   // Light gray for surfaces like cards, panels (Bootstrap's $light)
+$on-background-light: #212529;   // Dark gray for text on $background-color-light (Bootstrap's $dark)
+$on-surface-light: #343a40;    // Slightly lighter dark gray for text on $surface-color-light
+
+.theme-light {
+  // Core Colors
+  --primary-color: #{$primary-color-light};
+  --secondary-color: #{$secondary-color-light};
+  --success-color: #{$success-color-light};
+  --danger-color: #{$danger-color-light};
+  --warning-color: #{$warning-color-light};
+  --info-color: #{$info-color-light};
+
+  // Backgrounds & Surfaces
+  --background-color: #{$background-color-light};
+  --surface-color: #{$surface-color-light};
+  --light-gray: #f8f9fa; // Standard light gray
+  --dark-gray: #343a40;    // Standard dark gray
+
+  // Text Colors
+  --text-color: #{$on-background-light};
+  --text-on-surface-color: #{$on-surface-light};
+  --text-muted: #6c757d; // Standard muted text (Bootstrap's $gray-600)
+
+  // Borders
+  --border-color: #dee2e6; // Standard border color (Bootstrap's $gray-300)
+  --border-radius: 4px;
+  --border-width: 1px;
+
+  // Shadows (Standard shadows for light theme)
+  --box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+  // Apply to global elements
+  color-scheme: light; // Informs browser about the theme
+
+  // Redefine SCSS variables if components directly use them and are compiled under .theme-light scope
+  // This ensures that if `tokens.scss` defaults were different or if it becomes theme-agnostic,
+  // the light theme explicitly sets its values.
+  $primary-color: var(--primary-color);
+  $secondary-color: var(--secondary-color);
+  $success-color: var(--success-color);
+  $danger-color: var(--danger-color);
+  $warning-color: var(--warning-color);
+  $info-color: var(--info-color);
+  $light-gray: var(--light-gray);
+  $dark-gray: var(--dark-gray);
+  $border-color: var(--border-color);
+  $box-shadow-sm: var(--box-shadow-sm);
+  $box-shadow: var(--box-shadow);
+  $box-shadow-lg: var(--box-shadow-lg);
+
+  // Base HTML element styling for light theme
+  background-color: var(--background-color);
+  color: var(--text-color);
+
+  // Component variable overrides for light theme (if they were different from default tokens)
+  // $button-primary-bg: var(--primary-color);
+  // $button-primary-text: #fff;
+  // $panel-bg: var(--surface-color);
+  // $panel-border-color: var(--border-color);
+  // $input-bg: var(--background-color); // e.g., inputs might be same as main background
+  // $input-border-color: var(--border-color);
+  // $input-color: var(--text-color);
+  // $input-placeholder-color: var(--text-muted);
+}
+
+// If `tokens.scss` *is* the light theme by default, and components already use its variables,
+// then applying `.theme-light` might not change much unless specific overrides are added here
+// that differ from the initial `tokens.scss` values.
+// This file serves as an explicit declaration of the light theme.
