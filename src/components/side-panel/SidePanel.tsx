@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import "./react-select.scss";
+// import "./react-select.scss"; // Removed react-select.scss import
 import cn from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ChangeEvent } from "react"; // Added ChangeEvent
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
-import Select from "react-select";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
 import Logger, { LoggerFilterType } from "../logger/Logger";
+import ControlButton from "../control-button/ControlButton"; // Import ControlButton
 import "./side-panel.scss";
 
 const filterOptions = [
   { value: "conversations", label: "Conversations" },
   { value: "tools", label: "Tool Use" },
   { value: "none", label: "All" },
-];
+] as const; // Add 'as const' for stricter typing of option.value
 
 export interface SidePanelProps {
   collapsed: boolean;
@@ -37,17 +37,22 @@ export interface SidePanelProps {
 
 export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProps) {
   const { connected, client } = useLiveAPIContext();
-  // const [open, setOpen] = useState(true); // Removed, use props.collapsed
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
   const { log, logs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
-  const [selectedOption, setSelectedOption] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [activeTab, setActiveTab] = useState<LoggerFilterType>('none'); // State for active tab
+  const [searchTerm, setSearchTerm] = useState(''); // New state for search term
+  const inputRef = useRef<HTMLTextAreaElement>(null); // Already correctly typed
+
+  // Auto-expand textarea height
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'; // Reset height to shrink if text is deleted
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+    }
+  }, [textInput]);
 
   //scroll the log to the bottom when new logs come in
   useEffect(() => {
@@ -92,34 +97,45 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
           )}
         </button>
       </header>
+
+      {/* Tab Navigation UI */}
+      <div className="log-tabs">
+        {filterOptions.map(option => (
+          <button
+            key={option.value}
+            className={cn('log-tab-button', { active: activeTab === option.value })}
+            onClick={() => setActiveTab(option.value as LoggerFilterType)} // Cast value
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Log Search Toolbar */}
+      <div className="log-search-toolbar">
+        <div className="search-input-wrapper">
+          <input
+            type="text"
+            className="log-search-input"
+            placeholder="Search logs..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              className="clear-search-button material-symbols-outlined"
+              onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
+            >
+              close
+            </button>
+          )}
+        </div>
+      </div>
+
       <section className="indicators">
-        <Select
-          className="react-select"
-          classNamePrefix="react-select"
-          styles={{
-            control: (baseStyles) => ({
-              ...baseStyles,
-              background: "var(--Neutral-15)",
-              color: "var(--Neutral-90)",
-              minHeight: "33px",
-              maxHeight: "33px",
-              border: 0,
-            }),
-            option: (styles, { isFocused, isSelected }) => ({
-              ...styles,
-              backgroundColor: isFocused
-                ? "var(--Neutral-30)"
-                : isSelected
-                  ? "var(--Neutral-20)"
-                  : undefined,
-            }),
-          }}
-          defaultValue={selectedOption}
-          options={filterOptions}
-          onChange={(e) => {
-            setSelectedOption(e);
-          }}
-        />
+        {/* Select component removed, this section might be removed or repurposed if only streaming indicator remains */}
+        {/* For now, keeping it for the streaming indicator */}
         <div className={cn("streaming-indicator", { connected })}>
           {connected
             ? `🔵${!collapsed ? " Streaming" : ""}` // Reflect !collapsed for "open" text
@@ -128,7 +144,8 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
       </section>
       <div className="side-panel-container" ref={loggerRef}>
         <Logger
-          filter={(selectedOption?.value as LoggerFilterType) || "none"}
+          filter={activeTab}
+          searchTerm={searchTerm} // Pass searchTerm to Logger
         />
       </div>
       <div className={cn("input-container", { disabled: !connected })}>
@@ -143,8 +160,9 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
                 handleSubmit();
               }
             }}
-            onChange={(e) => setTextInput(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setTextInput(e.target.value)}
             value={textInput}
+            rows={1} // Start with a single row
           ></textarea>
           <span
             className={cn("input-content-placeholder", {
@@ -153,13 +171,13 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
           >
             Type&nbsp;something...
           </span>
-
-          <button
-            className="send-button material-symbols-outlined filled"
+          <ControlButton
+            icon="send"
+            label="Send message"
             onClick={handleSubmit}
-          >
-            send
-          </button>
+            disabled={!textInput.trim() || !connected} // Disable if no text or not connected
+            // active={!!textInput.trim()} // Optional: style when active
+          />
         </div>
       </div>
     </div>

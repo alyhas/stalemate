@@ -25,23 +25,26 @@
     .top {
       h2 {
         opacity: 1;
-        // transform: translateX(0); // Use opacity for simpler text hide/show
-        // visibility: visible;
       }
-      // Adjust padding or other styles for open state if needed
     }
 
+    .log-tabs,
+    .log-search-toolbar, // Added .log-search-toolbar
     .indicators,
     .side-panel-container,
     .input-container {
       opacity: 1;
       visibility: visible;
-      transition: opacity 0.2s ease-in 0.1s, visibility 0s linear 0.1s; // Delay to match content hiding
+      transition: opacity 0.2s ease-in 0.1s, visibility 0s linear 0.1s, height 0.2s ease-in 0.1s, margin 0.2s ease-in 0.1s, padding 0.2s ease-in 0.1s;
+    }
+
+    .log-tabs, .log-search-toolbar { // Specific styles for opening these
+      height: auto;
+      // Restore margins/paddings if they change on collapse
     }
 
     .indicators .streaming-indicator span.text { // Assuming text is wrapped in a span
       opacity: 1;
-      // transform: translateX(0);
     }
   }
 
@@ -50,30 +53,37 @@
     .top {
       h2 {
         opacity: 0;
-        // transform: translateX(-100%);
-        // visibility: hidden;
-        // transition: opacity 0.1s ease-out, transform 0.2s ease-out, visibility 0s linear 0.2s;
       }
-      // Adjust padding for collapsed state if needed
-      // padding: $spacing-sm $spacing-xs; // Example: smaller padding
     }
 
     .opener {
       // transform: translate(0,0); // Reset transform if any
     }
 
+    .log-tabs,
+    .log-search-toolbar, // Added .log-search-toolbar
     .indicators,
     .side-panel-container,
     .input-container {
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
+      transition: opacity 0.1s ease-out, visibility 0s linear 0.1s, height 0.1s ease-out, margin 0.1s ease-out, padding 0.1s ease-out;
     }
+
+    .log-tabs, .log-search-toolbar { // Specific styles for collapsing these
+      height: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+    .log-tabs { // Keep border hidden for tabs when collapsed
+        border-bottom-width: 0;
+    }
+
 
     .indicators .streaming-indicator span.text { // Assuming text "Streaming" / "Paused" is wrapped
       opacity: 0;
-      // transform: translateX(-20px);
-      // transition: opacity 0.1s ease-out, transform 0.1s ease-out;
     }
   }
 
@@ -99,6 +109,100 @@
     }
   }
 
+  // Tab Styles for Logger Filter
+  .log-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color, $border-color);
+    flex-shrink: 0;
+    padding: 0 $spacing-sm; // Horizontal padding
+    opacity: 1; // Base for transition
+    visibility: visible; // Base for transition
+    height: auto; // Base for transition - or specific calculated height
+    // transition for opacity, visibility, height, margin, padding (defined in .open/.collapsed)
+  }
+
+  .log-search-toolbar {
+    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm; // Top, Hori, Bottom
+    flex-shrink: 0;
+    opacity: 1; // Base for transition
+    visibility: visible; // Base for transition
+    height: auto; // Base for transition
+    // Transitions will be handled by .open / .collapsed general rules
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .log-search-input {
+    width: 100%;
+    padding: $spacing-sm;
+    padding-right: $spacing-xl; // Space for the clear button
+    border: 1px solid var(--border-color, $border-color);
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    background-color: var(--input-background-color, $white); // Themeable input background
+    color: var(--text-color, $dark-gray); // Themeable text color
+    line-height: $line-height-base;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+    }
+  }
+
+  .clear-search-button {
+    position: absolute;
+    right: $spacing-xs;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted, $dark-gray);
+    cursor: pointer;
+    font-size: $font-size-lg;
+    padding: $spacing-xs;
+    line-height: 1;
+
+    &:hover {
+      color: var(--text-color, $dark-gray);
+    }
+  }
+
+  .log-tab-button {
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--text-muted, $dark-gray);
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    position: relative;
+    transition: color 0.2s ease;
+    margin-bottom: -1px; // Overlap parent's border-bottom
+
+    &:hover {
+      color: var(--text-color, $dark-gray);
+    }
+
+    &.active {
+      color: var(--primary-color, $primary-color);
+      font-weight: $font-weight-bold;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--primary-color, $primary-color);
+      }
+    }
+  }
+
   .opener {
     background: transparent;
     border: 0;
@@ -114,15 +218,12 @@
   .indicators {
     display: flex;
     padding: $spacing-md $spacing-sm; // Use tokens
-    justify-content: space-between; // Or flex-end if only one item when open
+    justify-content: flex-end; // Align streaming indicator to the right as Select is gone
     gap: $spacing-md; // Use token
     flex-shrink: 0;
     align-items: center; // Vertically align items
 
-    .react-select-container { // Target react-select generated container
-      flex-grow: 1; // Allow select to take space
-      min-width: 0; // Fix for flex item overflow
-    }
+    // .react-select-container style block is now removed.
 
     .streaming-indicator {
       user-select: none;
@@ -191,37 +292,34 @@
       border-radius: $border-radius;
       padding: $spacing-sm; // Inner padding for textarea and button container
       display: flex;
-      align-items: center;
+      align-items: flex-end; // Align items to the bottom, good for multi-line textarea
+      gap: $spacing-sm; // Gap between textarea and button
 
-      .send-button {
-        // material-symbols-outlined styles should apply from global CSS
-        background: none;
-        border: 0;
-        color: var(--text-muted); // Use token
-        cursor: pointer;
-        transition: color 0.1s ease-in;
-        padding: $spacing-xs; // Clickable area
-        margin-left: $spacing-sm;
+      // .send-button styles are removed as it's replaced by ControlButton
 
-        &:hover {
-          color: $primary-color; // Use token
-        }
-      }
-
-      .input-area {
-        background: none;
-        color: var(--text-color);
-        // field-sizing: content; // Future CSS, not widely supported
-        width: 100%;
-        flex-grow: 1;
-        // max-height: 20px; // Remove if dynamic height desired
-        outline: none;
-        padding: $spacing-xs; // Minimal padding for textarea itself
-        border: 0;
-        resize: none;
-        font-family: inherit;
-        font-size: inherit;
+      .input-area { // Textarea
+        flex-grow: 1; // Take available space
+        width: 100%; // Ensure it tries to fill
+        background-color: var(--input-background-color, $white);
+        color: var(--text-color, $dark-gray);
+        border: 1px solid var(--border-color, $border-color);
+        border-radius: $border-radius;
+        padding: $spacing-sm;
+        font-family: $font-family-base;
+        font-size: $font-size-base;
         line-height: $line-height-base;
+        resize: none; // Disable manual resize
+        overflow-y: hidden; // Hide scrollbar, height adjusts automatically
+        // min-height: calc(#{$line-height-base} * #{$font-size-base} + #{$spacing-sm} * 2 + 2px); // Approx 1 line
+        min-height: 2.5rem; // Approx height for a single line with padding
+        // max-height: calc((#{$line-height-base} * #{$font-size-base} * 6) + #{$spacing-sm} * 2 + 2px); // ~6 lines
+        // Consider adding overflow: auto; if max-height is set and content exceeds it.
+
+        &:focus {
+          border-color: $primary-color;
+          outline: none;
+          // box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25); // Optional focus shadow
+        }
       }
 
       .input-content-placeholder {
@@ -293,15 +391,5 @@
   transition: opacity 0.2s ease-in 0.1s;
 }
 
-// Ensure react-select is hidden when collapsed
-.side-panel.collapsed .indicators .react-select-container {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
-}
-
-.side-panel.open .indicators .react-select-container {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.2s ease-in 0.1s;
-}
+// Styles for .react-select-container in open/collapsed states are removed.
+// The main .react-select-container style block should be removed separately if still present.
