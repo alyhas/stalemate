@@ -70,9 +70,15 @@
 
   .media-container {
     // Example: ensure it doesn't shrink if primary-content is large
-    // flex-shrink: 0;
+    // flex-shrink: 0; // If primary-content could push it too small
+    flex-grow: 1; // Allows it to take available vertical space in the workspace
+    display: flex; // Needed to manage video element's size/alignment within
+    flex-direction: column; // Stack video and controls
+    justify-content: center; // Center video vertically if it doesn't fill height
+    align-items: center; // Center video horizontally
+    min-height: 200px; // Example minimum height
     background-color: var(--surface-color, $light-gray); // Use theme variable or fallback
-    padding: $spacing-md;
+    padding: $spacing-md; // Padding for the frame around the video
     border-radius: $border-radius;
     border: $border-width solid var(--border-color, $border-color);
   }

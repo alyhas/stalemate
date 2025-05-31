@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { useRef, useState } from "react";
+import { useRef, useState, ChangeEvent, useEffect } from "react"; // Added useEffect
 import "./App.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 import SidePanel from "./components/side-panel/SidePanel";
 import ControlTray from "./components/control-tray/ControlTray";
+import ControlButton from "./components/control-button/ControlButton"; // Import ControlButton
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -38,9 +39,58 @@ function App() {
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // State for sidebar
+  const [isPipMode, setIsPipMode] = useState(false); // State for PiP mode
 
   // Placeholder for connection status - replace with actual logic
   const isConnected = true; // Example status
+
+  const togglePipMode = async () => {
+    if (!videoRef.current) return;
+
+    if (document.pictureInPictureEnabled) {
+      if (!document.pictureInPictureElement) {
+        try {
+          await videoRef.current.requestPictureInPicture();
+          // setIsPipMode(true); // State will be updated by event listener
+        } catch (error) {
+          console.error("Error entering PiP mode:", error);
+        }
+      } else {
+        try {
+          await document.exitPictureInPicture();
+          // setIsPipMode(false); // State will be updated by event listener
+        } catch (error) {
+          console.error("Error exiting PiP mode:", error);
+        }
+      }
+    } else {
+      console.warn("Picture-in-Picture is not enabled in this browser.");
+    }
+  };
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement || !document.pictureInPictureEnabled) return; // Also check if PiP is enabled
+
+    const handleEnterPip = () => setIsPipMode(true);
+    const handleLeavePip = () => setIsPipMode(false);
+
+    videoElement.addEventListener('enterpictureinpicture', handleEnterPip);
+    videoElement.addEventListener('leavepictureinpicture', handleLeavePip);
+
+    // Initial check in case PiP was already active when component mounted or page reloaded
+    if (document.pictureInPictureElement === videoElement) {
+      setIsPipMode(true);
+    } else {
+      setIsPipMode(false);
+    }
+
+    return () => {
+      videoElement.removeEventListener('enterpictureinpicture', handleEnterPip);
+      videoElement.removeEventListener('leavepictureinpicture', handleLeavePip);
+    };
+  }, []); // videoRef.current is not a reactive dependency for the effect setup itself.
+            // The effect runs once to attach/detach listeners. Content of ref can change without re-running effect.
 
   return (
     <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}> {/* Apply sidebar-collapsed class */}
@@ -80,9 +130,14 @@ function App() {
                   <p>Other application content will go here.</p>
                   {/* TODO: Replace with actual application content components */}
                 </div>
-                <div className="media-container">
+                <div className={cn("media-container", {
+                  // "active" class could be used if there are specific styles when videoStream is present
+                  // For now, visibility is handled by cn({ hidden: ... }) on video-stream itself.
+                  // active: !!videoStream,
+                  "picture-in-picture": isPipMode
+                })}>
                   <video
-                    className={cn("video-stream", { // Changed class from "stream"
+                    className={cn("video-stream", {
                       hidden: !videoRef.current || !videoStream,
                     })}
                     ref={videoRef}
@@ -90,7 +145,16 @@ function App() {
                     playsInline
                   />
                   <div className="media-controls">
-                    {/* Placeholder for media controls (e.g., custom play/pause, timeline) */}
+                    {/* PiP Toggle Button, only show if PiP is supported and video is active */}
+                    {document.pictureInPictureEnabled && videoStream && (
+                      <ControlButton
+                        icon={isPipMode ? "fullscreen_exit" : "picture_in_picture_alt"}
+                        label={isPipMode ? "Exit Picture-in-Picture" : "Enter Picture-in-Picture"}
+                        onClick={togglePipMode}
+                        active={isPipMode}
+                      />
+                    )}
+                    {/* Other media controls can go here */}
                   </div>
                 </div>
               </div>

@@ -156,3 +156,52 @@
     // z-index: 1; // Ensure it's above the video but below controls if they overlap
   }
 }
+
+// Styles for the application's main video display area
+.media-container {
+  background-color: var(--media-background-color, #000); // Default to black, can be themed
+  padding: $spacing-xs; // Small padding to act as part of the frame
+  border-radius: $border-radius; // Consistent border radius
+  border: 1px solid var(--media-border-color, $dark-gray); // Subtle border
+  box-shadow: $box-shadow-sm; // Optional: a very subtle shadow for depth
+  width: 100%; // Take full width of its parent in .workspace
+  // max-width: 800px; // Example max-width if needed
+  margin: 0 auto; // Center if max-width is applied
+  display: flex; // To help center video or manage aspect ratio if needed
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; // Ensure border-radius clips video stream
+
+  // Styles for when PiP mode is active (from issue example)
+  &.picture-in-picture {
+    // Example: .video-stream might be hidden or styled differently
+    // .video-stream { display: none; }
+    // background-image: url('/pip-placeholder.svg'); // Show a placeholder
+    // background-repeat: no-repeat;
+    // background-position: center;
+    // background-size: contain;
+    // For now, just a visual cue:
+    border-style: dashed;
+  }
+
+  // Styles for when videoStream is present (from App.tsx logic, not directly from issue example class)
+  // This class would be dynamically applied in App.tsx if needed, e.g. if videoStream is not null.
+  // For now, assuming .video-stream visibility is handled by `cn({ hidden: !videoStream })` in App.tsx.
+  // &.active {
+  //   // Styles when video is active
+  // }
+}
+
+.video-stream {
+  display: block;
+  width: 100%;
+  height: 100%; // Fill the .media-container height
+  max-height: 100%; // Fill the .media-container height
+  object-fit: contain; // Maintain aspect ratio within the container bounds
+  // The border-radius should ideally match the container's inner radius.
+  // If .media-container has padding: $spacing-xs, this is correct.
+  // If .media-container padding is $spacing-md (from main-content.scss), this should be calc(#{$border-radius} - #{$spacing-md})
+  // For now, assume $spacing-xs is the effective inner padding for the video frame.
+  border-radius: calc(#{$border-radius} - #{$spacing-xs});
+  background-color: #111; // Fallback/letterbox color
+}
