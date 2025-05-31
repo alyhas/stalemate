@@ -12,7 +12,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function;
   -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
 
   &:focus {

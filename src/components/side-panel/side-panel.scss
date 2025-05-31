@@ -180,7 +180,7 @@
     font-size: $font-size-base;
     font-family: $font-family-base;
     position: relative;
-    transition: color 0.2s ease;
+    transition: color $default-transition-duration $default-transition-timing-function;
     margin-bottom: -1px; // Overlap parent's border-bottom
 
     &:hover {

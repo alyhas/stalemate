@@ -1,0 +1,42 @@
+@import '../tokens';
+@import '../animations';
+
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs; // Space between dots
+
+  span {
+    display: inline-block;
+    width: 8px;  // Dot size
+    height: 8px; // Dot size
+    background-color: var(--text-color-muted, $dark-gray); // Dot color, themeable
+    border-radius: 50%;
+    opacity: 0.3; // Initial state for animation
+    animation: typingDotsFade 1.4s infinite ease-in-out both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0s; // Or remove, as 'both' fill mode and initial opacity cover it
+    }
+  }
+}
+
+// Styles for .activity-indicator-container and .activity-text if text prop is used
+// These are defined here to be imported by the component's SCSS.
+.activity-indicator-container {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  vertical-align: middle; // Good for inline usage
+}
+
+.activity-text {
+  font-size: $font-size-sm; // Slightly smaller than base
+  color: var(--text-color-muted, $dark-gray); // Themeable
+}

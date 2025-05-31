@@ -21,7 +21,9 @@
 @import 'components/panels';
 @import 'components/cards';
 @import 'components/media';
-@import 'components/control-button/control-button'; // Added ControlButton
+@import 'components/control-button/control-button';
+@import 'components/loader';
+@import 'components/activity-indicator'; // Added ActivityIndicator
 // Add other component files here
 
 // 4. Theme Styles

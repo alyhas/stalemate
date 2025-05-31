@@ -102,8 +102,14 @@ function App() {
               <h1>Logo</h1> {/* Changed from <strong> to <h1> */}
             </div>
             <div className="header-actions">
-              {/* Placeholder for Connection Status */}
-              <span>{isConnected ? "Connected" : "Disconnected"}</span>
+              <div className={cn("connection-status-indicator", { "connected": isConnected, "disconnected": !isConnected })}>
+                <span className="material-symbols-outlined connection-status-icon">
+                  {isConnected ? "wifi" : "wifi_off"}
+                </span>
+                <span className="connection-status-text">
+                  {isConnected ? "Connected" : "Disconnected"}
+                </span>
+              </div>
               {/* Add other header actions here if needed */}
             </div>
           </div>

@@ -17,7 +17,10 @@
   border: $border-width solid $border-color;
   border-radius: $border-radius;
   box-shadow: $box-shadow-sm; // Subtle shadow
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  // Using variables from animations.scss for consistency, keeping 0.15s duration for inputs
+  transition: border-color 0.15s $default-transition-timing-function,
+              box-shadow 0.15s $default-transition-timing-function,
+              background-color 0.15s $default-transition-timing-function; // Added background-color
 
   &::placeholder {
     color: lighten($dark-gray, 25%);

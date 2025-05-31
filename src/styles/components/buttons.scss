@@ -16,7 +16,11 @@
   font-size: $font-size-base; // 16px
   line-height: $line-height-base; // 1.5
   border-radius: $border-radius; // 4px
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  // Using variables from animations.scss for consistency, keeping 0.15s duration for buttons
+  transition: color 0.15s $default-transition-timing-function,
+              background-color 0.15s $default-transition-timing-function,
+              border-color 0.15s $default-transition-timing-function,
+              box-shadow 0.15s $default-transition-timing-function;
 
   &:hover {
     text-decoration: none;

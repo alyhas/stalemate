@@ -1,0 +1,55 @@
+@import '../tokens';
+@import '../animations';
+
+.loader-spinner {
+  @extend .anim-spin; // Use the existing spin animation
+  display: inline-block; // Changed from block to inline-block for better flow with text
+  width: $spacing-xl;    // e.g., 32px
+  height: $spacing-xl;   // e.g., 32px
+  border-width: 3px;     // Thickness of the spinner ring
+  border-style: solid;
+  border-color: var(--primary-color, $primary-color); // Color of the main ring, themeable
+  border-bottom-color: transparent; // Creates the "gap" in the ring
+  border-radius: 50%;
+  animation-duration: 0.75s; // Adjust speed if needed from default .anim-spin
+}
+
+// Optional: Sizes
+.loader-spinner-sm {
+  width: $spacing-lg; // 24px
+  height: $spacing-lg;
+  border-width: 2px;
+}
+
+.loader-spinner-lg {
+  width: calc(#{$spacing-xl} * 1.5); // 48px, ensure calculation is valid SCSS
+  height: calc(#{$spacing-xl} * 1.5);
+  border-width: 4px;
+}
+
+// Styles for .loader-container and .loader-text if text prop is used (moved from component's SCSS for global availability if needed)
+// These are better placed in the component's own SCSS if only used there.
+// For now, defining them here as per original plan for component-specific loader.scss to import this.
+.loader-container {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  vertical-align: middle; // Align well when used inline with other text/elements
+}
+
+.loader-text {
+  font-size: $font-size-base;
+  color: var(--text-color-muted, $dark-gray); // Themeable
+}
+
+// Basic accessibility class (ideally global)
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

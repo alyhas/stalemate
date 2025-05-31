@@ -1,0 +1,13 @@
+// Component-specific SCSS for ActivityIndicator.tsx
+// Imports the main typing indicator styles and can add layout styles for text, etc.
+
+@import '../../styles/components/activity-indicator.scss';
+
+// Any additional component-specific styles or overrides for ActivityIndicator can go here.
+// For example, if the container needed different layouts based on props:
+// .activity-indicator-container.text-below {
+//   flex-direction: column;
+//   .typing-indicator {
+//     margin-bottom: $spacing-xs;
+//   }
+// }

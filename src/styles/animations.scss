@@ -106,3 +106,61 @@
 //     animation-play-state: running; // Play on hover
 //   }
 // }
+
+// Transition Utility Classes
+// Default transition timing (can be overridden by more specific utilities)
+$default-transition-duration: 0.2s;
+$default-transition-timing-function: ease-in-out;
+
+.transition-all {
+  transition-property: all;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: $default-transition-timing-function;
+}
+
+.transition-colors { // For background-color, color, border-color
+  transition-property: background-color, color, border-color, fill, stroke; // Added fill & stroke for SVGs
+  transition-duration: $default-transition-duration;
+  transition-timing-function: $default-transition-timing-function;
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: $default-transition-timing-function;
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: $default-transition-timing-function;
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: $default-transition-timing-function;
+}
+
+// Duration modifiers (examples)
+.duration-100ms { transition-duration: 0.1s !important; }
+.duration-150ms { transition-duration: 0.15s !important; }
+.duration-200ms { transition-duration: 0.2s !important; } // Default
+.duration-300ms { transition-duration: 0.3s !important; }
+.duration-500ms { transition-duration: 0.5s !important; }
+
+// Timing function modifiers (examples)
+.ease-linear { transition-timing-function: linear !important; }
+.ease-in { transition-timing-function: ease-in !important; }
+.ease-out { transition-timing-function: ease-out !important; }
+.ease-in-out { transition-timing-function: ease-in-out !important; } // Default
+
+// Keyframes for Typing Dots Indicator
+@keyframes typingDotsFade {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}

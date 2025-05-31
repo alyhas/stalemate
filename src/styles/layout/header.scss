@@ -77,11 +77,61 @@
     display: flex;
     align-items: center;
 
-    span { // For connection status text
-      font-size: $font-size-sm; // Smaller font for status text
-      color: $light-gray; // Slightly less prominent color, adjust if #fff is too stark
-      // If $light-gray (token) is too dark on primary-color bg, use a lighter shade:
-      // color: rgba(255, 255, 255, 0.85);
+    // span { // Old style for direct span, now replaced by .connection-status-indicator
+    //   font-size: $font-size-sm;
+    //   color: $light-gray;
+    // }
+
+    .connection-status-indicator {
+      display: flex;
+      align-items: center;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius;
+      // background-color: rgba(255,255,255, 0.08); // Optional: subtle background on dark header
+      // transition for potential background color changes, though not strictly needed if only icon/text color changes
+      transition: background-color $default-transition-duration $default-transition-timing-function;
+
+
+      .connection-status-icon {
+        margin-right: $spacing-xs;
+        font-size: $font-size-lg; // e.g., 20px if base is 16px
+        // Default color will be #fff from .app-header, specific state colors below
+      }
+
+      .connection-status-text {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-normal;
+        // Default color will be #fff from .app-header unless overridden by states
+      }
+
+      // Styles for "connected" state
+      &.connected {
+        // background-color: rgba($success-color, 0.1); // Optional: very subtle bg
+        .connection-status-icon {
+          color: $success-color; // Use a themeable success color, e.g., var(--success-color-on-primary)
+                                 // For now, assuming $success-color is visible enough on $primary-color header
+                                 // Or, use a light green if $success-color is dark: lighten($success-color, 30%)
+        }
+        .connection-status-text {
+          // color: $success-color; // Text color, ensure contrast with header background
+          // If header is dark blue, and $success-color is dark green, this won't be visible.
+          // Keep default #fff from .app-header, or use a light variant of success.
+          // For now, relying on default #fff from .app-header for text.
+        }
+      }
+
+      // Styles for "disconnected" state
+      &.disconnected {
+        // background-color: rgba($danger-color, 0.1); // Optional: very subtle bg
+        .connection-status-icon {
+          color: $danger-color; // Use a themeable danger color, e.g., var(--danger-color-on-primary)
+                                // Or, use a light red if $danger-color is dark: lighten($danger-color, 20%)
+        }
+        .connection-status-text {
+          // color: $danger-color; // Text color, ensure contrast
+          // Relying on default #fff from .app-header for text.
+        }
+      }
     }
 
     .btn { // Style buttons in header if needed

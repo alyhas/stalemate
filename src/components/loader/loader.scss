@@ -1,0 +1,16 @@
+// Component-specific SCSS for Loader.tsx
+// Imports the main spinner styles and can add layout styles for text, etc.
+
+@import '../../styles/components/loader.scss'; // Import the main spinner styles and .loader-container, .loader-text
+
+// If .loader-container-inline needs specific styles (e.g., if different from block version)
+// .loader-container-inline {
+//   // Default .loader-container is already display: inline-flex;
+//   // Add specific inline adjustments if needed
+// }
+
+// Any other component-specific styles or overrides for the Loader can go here.
+// For example, if text position needed to be different based on a prop:
+// .loader-container.text-below {
+//   flex-direction: column;
+// }
