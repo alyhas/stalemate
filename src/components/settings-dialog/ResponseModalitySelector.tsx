@@ -35,23 +35,37 @@ export default function ResponseModalitySelector() {
         id="response-modality-selector"
         className="react-select"
         classNamePrefix="react-select"
+        // SCSS tokens for light theme (approximations for direct use in JS)
+        // $light-gray: #f8f9fa;
+        // $dark-gray: #343a40;
+        // $primary-color: #007bff;
+        // $border-color: #dee2e6;
         styles={{
-          control: (baseStyles) => ({
+          control: (baseStyles, state) => ({
             ...baseStyles,
-            background: "var(--Neutral-15)",
-            color: "var(--Neutral-90)",
-            minHeight: "33px",
-            maxHeight: "33px",
-            border: 0,
+            backgroundColor: state.isDisabled ? '#e9ecef' : '#fff',
+            borderColor: state.isFocused ? '#007bff' : '#dee2e6',
+            boxShadow: state.isFocused ? `0 0 0 1px #007bff` : baseStyles.boxShadow,
+            '&:hover': {
+              borderColor: state.isFocused ? '#007bff' : '#adb5bd',
+            },
+            color: '#343a40',
+            minHeight: "38px", // Match .form-control style from inputs.scss
           }),
-          option: (styles, { isFocused, isSelected }) => ({
-            ...styles,
-            backgroundColor: isFocused
-              ? "var(--Neutral-30)"
-              : isSelected
-              ? "var(--Neutral-20)"
-              : undefined,
+          option: (baseStyles, state) => ({
+            ...baseStyles,
+            backgroundColor: state.isSelected
+              ? '#007bff'
+              : state.isFocused
+              ? '#e9ecef'
+              : '#fff',
+            color: state.isSelected ? '#fff' : '#343a40',
+            '&:active': {
+              backgroundColor: '#0056b3',
+            },
           }),
+          singleValue: (baseStyles) => ({ ...baseStyles, color: '#343a40' }),
+          menu: (baseStyles) => ({ ...baseStyles, backgroundColor: '#fff' }),
         }}
         defaultValue={selectedOption}
         options={responseOptions}

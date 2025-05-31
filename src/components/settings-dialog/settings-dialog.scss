@@ -1,175 +1,285 @@
-.select-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  height: 70px;
-  & > label {
-    font-size: 10px;
-  }
-}
+@import '../../styles/tokens';
+@import '../../styles/typography';
+// Import inputs if its styles are not globally available via main.scss, or for mixins/extends
+// @import '../../styles/components/inputs';
 
+// Styles for the main wrapper around the settings icon/button
 .settings-dialog {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  height: 70px;
+  // This class is on the div that contains the settings button and the dialog itself.
+  // It might not need much styling if the button is a ControlButton and dialog is positioned.
+  // display: flex; // Original, might not be needed if button is standalone
+  // align-items: center;
+  // justify-content: center;
+  // gap: $spacing-xs; // Original
+  // height: 70px; // Original, likely for old layout. Remove if not needed.
 
-  .connected-indicator {
-    font-style: italic;
+  // The button that opens the dialog (assuming it's a ControlButton or styled like one)
+  > .control-button { // If the button is a direct child
+    // Specific styles if needed, otherwise ControlButton defaults apply
   }
 
-  /*.connected-indicator {
-    &:before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-      display: block;
-      content: "";
-      width: 100%;
-      height: 100%;
-      background-color: var(--Neutral-5);
-      opacity: 0.85;
-    }
-    z-index: 1;
+  // The <dialog> element itself
+  .dialog {
+    // Reset browser default dialog styles
+    border: none;
+    padding: 0;
+    // margin: auto; // Margin is handled by fixed positioning + transform
+    background-color: var(--dialog-bg-color, $background-color-light);
+    border-radius: $border-radius-lg;
+    box-shadow: $box-shadow-lg;
+    max-width: 600px;
+    width: 90vw;
     
-    position: absolute;
+    // Positioning & Initial Animation State (Hidden)
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    // Start slightly up and smaller, centered, then move to exact center and full size
+    transform: translate(-50%, -50%) scale(0.95);
+    // transform: translate(-50%, -60%) scale(0.95); // Example: starts higher
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1050; // Above backdrop
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0s linear 0.2s;
+
+    &.dialog-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1); // End state: centered and full size
+      transition-delay: 0s, 0s, 0s; // Apply visibility change immediately when opening
+    }
+  }
+
+  .dialog-backdrop {
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--Neutral-80);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3); // Slightly less dark than typical 0.5
+    z-index: 1040; // Below dialog, above everything else
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-out, visibility 0s linear 0.2s;
 
-    p {
-      z-index: 1;
+    &.active {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
     }
-  }*/
-
-  h4 {
-    margin-left: 4px;
-    margin-bottom: 10px;
-  }
-
-  button {
-    background: none;
-    border: 0;
-  }
-
-  .dialog {
-    font-family: "Space mono";
-    background: var(--Neutral-5);
-    border-radius: 18px;
-    color: var(--Neutral-80);
-    border: 0;
-    padding: 0;
-    margin: 0;
-    position: fixed;
-    top: -400px;
-    right: 0;
-    width: 696px;
-    height: 593px;
-    transform: translate(-25%, -50%);
   }
 
   .dialog-container {
     box-sizing: border-box;
-    padding: 32px;
-    max-height: 100%;
+    padding: $spacing-xl; // Generous padding for content area
+    max-height: 80vh; // Example max height for scrollability
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: hidden; // Not expecting horizontal scroll in dialog content
   }
 
-  .small {
-    font-size: 80%;
+  .connected-indicator {
+    background-color: var(--warning-bg-color, #{lighten($warning-color, 35%)});
+    color: var(--warning-text-color, #{darken($warning-color, 35%)});
+    padding: $spacing-md;
+    border-radius: $border-radius;
+    margin-bottom: $spacing-lg;
+    font-size: $font-size-sm;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
   }
 
-  .mode-selectors {
+  .settings-category {
+    margin-bottom: $spacing-xl;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+    // Optional: add border between categories
+    // border-bottom: 1px solid var(--border-color, $border-color);
+    // padding-bottom: $spacing-xl;
+    // &:last-child { border-bottom: none; padding-bottom: 0; }
+  }
+
+  .settings-category-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--text-color-headings, $dark-gray); // Use a heading color token or default
+    margin-top: 0; // Remove default h3 margin if any
+    margin-bottom: $spacing-lg;
     display: flex;
-    gap: 1rem;
-    padding: 8px 0;
+    align-items: center;
   }
 
-  textarea.system {
-    border-radius: 12px;
-    background-color: var(--Neutral-15);
-    color: var(--Neutral-80);
-    margin-top: 8px;
-    font-family:
-      Google Sans,
-      sans-serif;
-    line-height: 21px;
-    font-size: 16px;
-    field-sizing: content;
-    width: calc(100% - 16px);
-    min-height: 150px;
-    height: 150px;
-    padding: 8px;
-    border: 0;
-    resize: vertical;
-    box-sizing: border-box;
+  .settings-category-icon {
+    margin-right: $spacing-md;
+    font-size: $font-size-xl; // Match title size or slightly larger
+    color: var(--primary-color, $primary-color); // Icon color
+    // vertical-align: middle; // If not using flex
   }
 
+  .settings-category-content {
+    // General content wrapper, specific layouts like form-grid go inside this
+    // Add default bottom margin for elements within content if needed
+    > *:not(:last-child) {
+      margin-bottom: $spacing-md;
+    }
+    // For .select-group which might be direct children:
+    .select-group:not(:last-child) {
+         margin-bottom: $spacing-md;
+    }
+  }
+
+  // Specific layout for forms within categories
+  .form-grid {
+    display: grid;
+    // grid-template-columns: auto 1fr; // Label takes auto, input takes rest
+    // A more robust approach for label-input pairs on separate lines or responsive:
+    grid-template-columns: 1fr; // Each field takes full width by default
+    gap: $spacing-md; // Gap between form fields/rows
+
+    @media (min-width: $breakpoint-sm) { // Two columns on larger screens
+      grid-template-columns: auto 1fr;
+      gap: $spacing-md $spacing-lg; // Row gap, Column gap
+    }
+
+    label {
+      font-weight: $font-weight-normal; // Standard label weight
+      // text-align: right; // If using auto 1fr grid and want labels right-aligned
+      // padding-right: $spacing-lg; // If right-aligning labels
+      margin-bottom: $spacing-xs; // Space below label if it's above input on small screens
+      display: block; // Ensure label takes its own line on small screens if not in grid column
+      @media (min-width: $breakpoint-sm) {
+        display: inline; // Default display for labels in two-column grid
+        margin-bottom: 0;
+        text-align: left; // Default
+      }
+    }
+    // Ensure inputs take full width of their grid cell
+    .form-control, .react-select-container, .gender-input-group {
+      width: 100%;
+    }
+    .gender-input-group {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+    }
+  }
+
+  .form-field { // Wrapper for a label + input group, if not using direct grid placement
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-md; // Consistent spacing between fields
+    @media (min-width: $breakpoint-sm) {
+        // If using form-grid with auto 1fr, this might not be needed for layout,
+        // but can still be used for grouping.
+    }
+    label { margin-bottom: $spacing-xs; }
+  }
+
+
+  // Select Group (for react-select wrappers: label + select)
+  .select-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs; // Small gap between label and select
+    // height: auto; // Remove fixed height from original
+    // margin-bottom: $spacing-md; // Added by .settings-category-content general rule
+
+    & > label { // Style for the label of react-select
+      font-size: $font-size-base; // Use base font size for labels
+      font-weight: $font-weight-normal;
+      // margin-bottom: $spacing-xs; // Replaced by gap on parent
+    }
+    // react-select styling is handled by its `styles` prop using token-like values
+  }
+
+
+  // Function Declarations Area
   .function-declarations {
-    font-size: 66%;
+    // font-size: 66%; // Original - too small. Let children define font size or use $font-size-sm.
     width: 100%;
-    /* Enables vertical scrolling */
   }
 
   .fd-rows {
     display: grid;
-    grid-template-columns: 1fr 0.5fr 1.5fr;
-    row-gap: 6px;
-    /* Three columns, last one takes remaining space */
+    grid-template-columns: minmax(120px, 1.5fr) minmax(100px, 1fr) 2fr; // Adjusted for better flexibility
+    gap: $spacing-sm;
+    align-items: center; // Vertically align items in each row
   }
 
   .fd-row-name {
-    font-family: "Space mono";
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--Blue-400);
-    font-weight: bold;
-    border-radius: 8px;
-    border: 1px solid var(--Neutral-20, #2a2f31);
-    padding: 10px;
+    font-family: $font-family-monospace; // Good for code-like names
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: var(--primary-color, $primary-color); // Use primary color for the name
+    border-radius: $border-radius;
+    border: 1px solid var(--border-color, $border-color);
+    padding: $spacing-sm;
+    word-break: break-all; // Break long names
   }
 
   .fd-row-args {
-    padding: 12px;
-  }
+    padding: $spacing-sm;
+    font-size: $font-size-xs;
+    color: var(--text-muted, $dark-gray);
+    word-break: break-all;
 
-  .fd-row-args > *:not(:last-child)::after {
-    content: ", ";
-  }
-
-  .fd-row {
-    display: contents;
-    color: var(--Neutral-70);
-    /* Make data-row participate in the grid layout of data-rows, without being an additional grid row */
-    align-items: center;
-    /* Vertically center the content of the row */
-    /* Bottom border for each row */
-    height: 35px;
-    /* The row height */
-  }
-
-  .fd-row-description {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: inherit;
-    font-size: inherit;
-    padding: 2px 4px;
-
-    &:hover,
-    &:focus {
-      background: var(--Neutral-20);
-      outline: none;
+    > span:not(:last-child)::after {
+      content: ", ";
     }
   }
+
+  // .fd-row-description is an input with .form-control.
+  // Overrides from previous step are applied here:
+  .fd-row-description.form-control {
+    background: transparent;
+    border: 1px solid transparent; // Minimal border
+    color: var(--text-color, $dark-gray);
+    font-size: $font-size-sm;
+    padding: $spacing-xs;
+    height: auto; // Let input content define height, or min-height from .form-control
+
+    &:hover {
+      background: var(--surface-hover-color, #{rgba($black, 0.05)});
+      border-color: var(--border-color, $border-color);
+    }
+    &:focus {
+      background: var(--surface-hover-color, #{rgba($black, 0.05)});
+      border-color: $primary-color;
+      box-shadow: none; // Remove default form-control focus shadow
+    }
+  }
+
+  // Cleanup old specific styles that are now handled by tokens or component classes
+  h4 { // Original h4 for "Function declarations" - now an h3.settings-category-title
+    // margin-left: 4px;
+    // margin-bottom: 10px;
+    // These are handled by .settings-category-title now
+  }
+
+  // General button style within dialog - should use ControlButton or .btn
+  // button {
+  //   background: none; // Handled by ControlButton or .btn
+  //   border: 0; // Handled by ControlButton or .btn
+  // }
+
+  // .mode-selectors, .custom-instructions, textarea.system are removed from JSX
+  // Their styles can be removed if not used by any other part.
+  .mode-selectors { display: none; }
+  .custom-instructions { display: none; } // Assuming these are fully replaced
+  textarea.system { display: none; }
+
 }
+
+// Ensure the dialog is hidden by default if not using JS to add/remove from DOM
+// This relies on the <dialog> element's `open` attribute or direct style manipulation by JS.
+// If using direct style:
+// .settings-dialog .dialog {
+//   display: none;
+// }
+// .settings-dialog .dialog.is-open { // Or similar class toggled by JS
+//   display: block; // Or flex/grid depending on desired centering
+// }

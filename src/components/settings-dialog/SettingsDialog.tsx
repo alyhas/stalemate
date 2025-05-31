@@ -74,8 +74,14 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
       >
         settings
       </button>
-      <dialog className="dialog" style={{ display: open ? "block" : "none" }}>
-        <div className={`dialog-container ${connected ? "disabled" : ""}`}>
+
+      {/* Backdrop for the dialog */}
+      <div className={cn("dialog-backdrop", { "active": open })} onClick={() => setOpen(false)}></div>
+
+      {/* Dialog element */}
+      <dialog className={cn("dialog", { "dialog-open": open })}>
+        {/* Prevent clicks inside the dialog from closing it via the backdrop's onClick */}
+        <div className={`dialog-container ${connected ? "disabled" : ""}`} onClick={(e) => e.stopPropagation()}>
           {connected && (
             <div className="connected-indicator">
               <p>
@@ -84,67 +90,113 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
               </p>
             </div>
           )}
-          <div className="mode-selectors">
-            <ResponseModalitySelector />
-            <VoiceSelector />
-          </div>
 
-          <div className="custom-instructions">
-            <label htmlFor="product-name">Product Name:</label>
-            <input
-              id="product-name"
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              onBlur={updateSystemInstruction}
-              disabled={connected}
-            />
-            <label htmlFor="language">Language:</label>
-            <input
-              id="language"
-              type="text"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              onBlur={updateSystemInstruction}
-              disabled={connected}
-            />
-            <label htmlFor="agent-gender">Agent Gender:</label>
-            <input
-              id="agent-gender"
-              type="checkbox"
-              checked={isFemale}
-              onChange={(e) => {
-                setIsFemale(e.target.checked);
-                updateSystemInstruction();
-              }}
-              disabled={connected}
-            />
-            <span>{isFemale ? "Female" : "Male"}</span>
-          </div>
-          <h4>Function declarations</h4>
-          <div className="function-declarations">
-            <div className="fd-rows">
-              {functionDeclarations.map((fd, fdKey) => (
-                <div className="fd-row" key={`function-${fdKey}`}>
-                  <span className="fd-row-name">{fd.name}</span>
-                  <span className="fd-row-args">
-                    {Object.keys(fd.parameters?.properties || {}).map(
-                      (item, k) => (
-                        <span key={k}>{item}</span>
-                      )
-                    )}
-                  </span>
+          {/* Category 1: Response & Voice */}
+          <section className="settings-category" id="settings-response-voice">
+            <h3 className="settings-category-title">
+              <span className="material-symbols-outlined settings-category-icon">record_voice_over</span>
+              Response & Voice
+            </h3>
+            <div className="settings-category-content">
+              <ResponseModalitySelector />
+              <VoiceSelector />
+            </div>
+          </section>
+
+          {/* Category 2: Agent Persona Customization */}
+          <section className="settings-category" id="settings-agent-persona">
+            <h3 className="settings-category-title">
+              <span className="material-symbols-outlined settings-category-icon">badge</span>
+              Agent Persona Customization
+            </h3>
+            {/* Added form-grid for potential 2-column layout for label-input pairs */}
+            <div className="settings-category-content form-grid">
+              <div className="form-field">
+                <label htmlFor="product-name">Product Name:</label>
+                <input
+                  id="product-name"
+                  type="text"
+                  className="form-control" // Corrected class
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  onBlur={updateSystemInstruction}
+                  disabled={connected}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="language">Language:</label>
+                <input
+                  id="language"
+                  type="text"
+                  className="form-control" // Corrected class
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  onBlur={updateSystemInstruction}
+                  disabled={connected}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="agent-gender">Agent Gender:</label>
+                <div className="gender-input-group"> {/* Wrapper for checkbox and span */}
+                  {/* For checkboxes, the structure in inputs.scss is typically:
+                      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                      Here, the label is separate. We need to ensure our current structure works
+                      or adapt it. inputs.scss has custom styling for the label based on input state.
+                      For now, applying .form-check-input. The label text is currently a separate span.
+                  */}
                   <input
-                    key={`fd-${fd.description}`}
-                    className="fd-row-description"
-                    type="text"
-                    defaultValue={fd.description}
-                    onBlur={(e) =>
-                      updateFunctionDescription(fd.name!, e.target.value)
-                    }
+                    id="agent-gender"
+                    type="checkbox"
+                    className="form-check-input" // Corrected class
+                    checked={isFemale}
+                    onChange={(e) => {
+                      setIsFemale(e.target.checked);
+                      updateSystemInstruction(); // updateSystemInstruction is memoized, so should be okay here
+                    }}
+                    disabled={connected}
                   />
+                  {/* This span might need to become a <label htmlFor="agent-gender"> for inputs.scss styling to fully apply */}
+                  <span>{isFemale ? "Female" : "Male"}</span>
                 </div>
-              ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Category 3: Function Declarations */}
+          <section className="settings-category" id="settings-function-declarations">
+            <h3 className="settings-category-title">
+              <span className="material-symbols-outlined settings-category-icon">integration_instructions</span>
+              Function Declarations
+            </h3>
+            <div className="settings-category-content">
+              {/* The existing div.function-declarations and its contents */}
+              <div className="function-declarations">
+                <div className="fd-rows">
+                  {functionDeclarations.map((fd, fdKey) => (
+                    <div className="fd-row" key={`function-${fdKey}`}>
+                      <span className="fd-row-name">{fd.name}</span>
+                      <span className="fd-row-args">
+                        {Object.keys(fd.parameters?.properties || {}).map(
+                          (item, k) => (
+                            <span key={k}>{item}</span>
+                          )
+                        )}
+                      </span>
+                      <input
+                        key={`fd-${fd.description}`}
+                        className="fd-row-description form-control" // Corrected class
+                        type="text"
+                        defaultValue={fd.description}
+                        onBlur={(e) =>
+                          updateFunctionDescription(fd.name!, e.target.value)
+                        }
+                        disabled={connected} // Ensure this is also disabled when connected
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
