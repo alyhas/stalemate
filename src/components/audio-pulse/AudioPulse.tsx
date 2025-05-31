@@ -19,7 +19,7 @@ import React from "react";
 import { useEffect, useRef } from "react";
 import c from "classnames";
 
-const lineCount = 3;
+const lineCount = 5; // Changed to 5 lines
 
 export type AudioPulseProps = {
   active: boolean;
@@ -29,17 +29,54 @@ export type AudioPulseProps = {
 
 export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
   const lines = useRef<HTMLDivElement[]>([]);
+  const pulseContainerRef = useRef<HTMLDivElement>(null); // Added ref for the container
 
   useEffect(() => {
     let timeout: number | null = null;
     const update = () => {
-      lines.current.forEach(
-        (line, i) =>
-        (line.style.height = `${Math.min(
-          24,
-          4 + volume * (i === 1 ? 400 : 60),
-        )}px`),
-      );
+      lines.current.forEach((line, i) => {
+        let scaleFactor = 0;
+        switch (i) {
+          case 0: // Outermost left
+          case 4: // Outermost right
+            scaleFactor = 100;
+            break;
+          case 1: // Inner left
+          case 3: // Inner right
+            scaleFactor = 250;
+            break;
+          case 2: // Center
+            scaleFactor = 400;
+            break;
+        }
+        // Using existing minHeight (4) and maxHeight (24) from the original component's logic
+        line.style.height = `${Math.min(
+          24, // Max height
+          4 + volume * scaleFactor, // Min height + scaled volume
+        )}px`;
+      });
+
+      // Update container classes based on volume
+      if (pulseContainerRef.current) {
+        const lowThreshold = 0.02;  // Adjusted from 0.05 to make medium/high more reactive
+        const mediumThreshold = 0.04; // Adjusted from 0.1
+
+        // Remove previous classes
+        pulseContainerRef.current.classList.remove('volume-low', 'volume-medium', 'volume-high');
+
+        if (active) { // Only apply color changes if active
+          if (volume >= mediumThreshold) {
+            pulseContainerRef.current.classList.add('volume-high');
+          } else if (volume >= lowThreshold) {
+            pulseContainerRef.current.classList.add('volume-medium');
+          } else {
+            // Apply 'volume-low' only if volume is not zero, to distinguish from inactive low
+            if (volume > 0) {
+              pulseContainerRef.current.classList.add('volume-low');
+            }
+          }
+        }
+      }
       timeout = window.setTimeout(update, 100);
     };
 
@@ -49,7 +86,7 @@ export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
   }, [volume]);
 
   return (
-    <div className={c("audioPulse", { active, hover })}>
+    <div className={c("audioPulse", { active, hover })} ref={pulseContainerRef}> {/* Assigned ref */}
       {Array(lineCount)
         .fill(null)
         .map((_, i) => (
