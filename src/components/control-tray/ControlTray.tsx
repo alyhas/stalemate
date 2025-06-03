@@ -24,6 +24,7 @@ import { useWebcam } from "../../hooks/use-webcam";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import AudioPulse from "../audio-pulse/AudioPulse";
 import { useTheme } from "../../contexts/ThemeContext";
+import ControlButton from "./ControlButton";
 import "./control-tray.scss";
 import SettingsDialog from "../settings-dialog/SettingsDialog";
 
@@ -49,13 +50,9 @@ type MediaStreamButtonProps = {
 const MediaStreamButton = memo(
   ({ isStreaming, onIcon, offIcon, start, stop }: MediaStreamButtonProps) =>
     isStreaming ? (
-      <button className="action-button" onClick={stop}>
-        <span className="material-symbols-outlined">{onIcon}</span>
-      </button>
+      <ControlButton icon={onIcon} label={onIcon} onClick={stop} />
     ) : (
-      <button className="action-button" onClick={start}>
-        <span className="material-symbols-outlined">{offIcon}</span>
-      </button>
+      <ControlButton icon={offIcon} label={offIcon} onClick={start} />
     )
 );
 
@@ -166,16 +163,13 @@ function ControlTray({
     <section className="control-tray">
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
-        <button
-          className={cn("action-button mic-button")}
+        <ControlButton
+          icon={muted ? "mic_off" : "mic"}
+          label={muted ? "Unmute microphone" : "Mute microphone"}
+          className="mic-button"
           onClick={() => setMuted(!muted)}
-        >
-          {!muted ? (
-            <span className="material-symbols-outlined filled">mic</span>
-          ) : (
-            <span className="material-symbols-outlined filled">mic_off</span>
-          )}
-        </button>
+          active={!muted}
+        />
 
         <div className="action-button no-action outlined">
           <AudioPulse volume={volume} active={connected} hover={false} />
@@ -199,25 +193,24 @@ function ControlTray({
             />
           </>
         )}
-        <button className="action-button" onClick={toggleTheme}>
-          <span className="material-symbols-outlined filled">
-            {theme === "dark" ? "light_mode" : "dark_mode"}
-          </span>
-        </button>
+        <ControlButton
+          icon={theme === "dark" ? "light_mode" : "dark_mode"}
+          label="Toggle theme"
+          onClick={toggleTheme}
+        />
         {children}
       </nav>
 
       <div className={cn("connection-container", { connected })}>
         <div className="connection-button-container">
-          <button
-            ref={connectButtonRef}
-            className={cn("action-button connect-toggle", { connected })}
+          <ControlButton
+            icon={connected ? "pause" : "play_arrow"}
+            label={connected ? "Disconnect" : "Connect"}
+            className={cn("connect-toggle", { connected })}
             onClick={connected ? disconnect : connect}
-          >
-            <span className="material-symbols-outlined filled">
-              {connected ? "pause" : "play_arrow"}
-            </span>
-          </button>
+            active={connected}
+            ref={connectButtonRef}
+          />
         </div>
         <span className="text-indicator">Streaming</span>
       </div>
