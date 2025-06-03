@@ -74,7 +74,9 @@ body {
   background: var(--color-surface);
   color: var(--color-muted);
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--spacing-md);
   height: 100vh;
   width: 100vw;
 

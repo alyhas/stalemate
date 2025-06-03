@@ -42,8 +42,10 @@ function App() {
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
         <div className="streaming-console grid">
-          <SidePanel />
-          <main>
+          <div className="col-span-12 md:col-span-4 lg:col-span-3">
+            <SidePanel />
+          </div>
+          <main className="col-span-12 md:col-span-8 lg:col-span-9">
             <div className="main-app-area">
               {/* APP goes here */}
                       <video

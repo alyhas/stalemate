@@ -11,3 +11,19 @@ $columns: 12;
     grid-column: span #{$i};
   }
 }
+
+$breakpoints: (
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+);
+
+@each $bp, $width in $breakpoints {
+  @media (min-width: $width) {
+    @for $i from 1 through $columns {
+      .#{$bp}\:col-span-#{$i} {
+        grid-column: span #{$i};
+      }
+    }
+  }
+}
