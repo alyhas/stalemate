@@ -23,6 +23,7 @@ import { useScreenCapture } from "../../hooks/use-screen-capture";
 import { useWebcam } from "../../hooks/use-webcam";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import AudioPulse from "../audio-pulse/AudioPulse";
+import { useTheme } from "../../contexts/ThemeContext";
 import "./control-tray.scss";
 import SettingsDialog from "../settings-dialog/SettingsDialog";
 
@@ -74,6 +75,8 @@ function ControlTray({
   const [muted, setMuted] = useState(false);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const connectButtonRef = useRef<HTMLButtonElement>(null);
+
+  const { theme, toggleTheme } = useTheme();
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -196,6 +199,11 @@ function ControlTray({
             />
           </>
         )}
+        <button className="action-button" onClick={toggleTheme}>
+          <span className="material-symbols-outlined filled">
+            {theme === "dark" ? "light_mode" : "dark_mode"}
+          </span>
+        </button>
         {children}
       </nav>
 

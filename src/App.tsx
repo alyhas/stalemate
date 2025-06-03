@@ -41,7 +41,7 @@ function App() {
   return (
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
-        <div className="streaming-console">
+        <div className="streaming-console grid">
           <SidePanel />
           <main>
             <div className="main-app-area">
