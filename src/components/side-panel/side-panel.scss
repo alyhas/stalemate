@@ -1,15 +1,15 @@
 .side-panel {
-  background: var(--Neutral-00);
+  background: var(--color-background);
   width: 40px;
   /* when closed */
   display: flex;
   flex-direction: column;
   height: 100vh;
   transition: all 0.2s ease-in;
-  font-family: Arial, sans-serif;
-  border-right: 1px solid var(--gray-600);
-  color: var(--Neutral-90, #e1e2e3);
-  font-family: var(--font-family);
+  font-family: var(--font-family-base);
+  border-right: 1px solid var(--Neutral-20);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
@@ -40,7 +40,7 @@
 
     h2 {
       position: relative;
-      color: var(--Neutral-90, #e1e2e3);
+      color: var(--color-text);
       font-family: "Google Sans";
       font-size: 21px;
       font-style: normal;
@@ -113,7 +113,7 @@
       gap: 6px;
       flex-shrink: 0;
       text-align: center;
-      font-family: "Space Mono";
+      font-family: var(--font-family-base);
       font-size: 14px;
       font-style: normal;
       font-weight: 400;
@@ -158,19 +158,19 @@
         transform: translate(0, -50%);
         background: none;
         border: 0;
-        color: var(--Neutral-20);
+        color: var(--color-muted);
         cursor: pointer;
         transition: color 0.1s ease-in;
         z-index: 2;
 
         &:hover {
-          color: var(--Neutral-60);
+          color: var(--color-text);
         }
       }
 
       .input-area {
         background: none;
-        color: var(--Neutral-90);
+        color: var(--color-text);
         field-sizing: content;
         position: absolute;
         top: 0;

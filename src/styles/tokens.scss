@@ -44,6 +44,12 @@
 
   --font-weight-regular: 400;
   --font-weight-bold: 700;
+
+  /* semantic colors */
+  --color-text: var(--Neutral-80);
+  --color-muted: var(--Neutral-60);
+  --color-surface: var(--Neutral-15);
+  --color-background: var(--Neutral-30);
 }
 
 [data-theme="light"] {
@@ -58,4 +64,9 @@
   --Neutral-90: #111111;
   --Blue-500: #1a73e8;
   --accent-red: #d93025;
+
+  --color-text: var(--Neutral-80);
+  --color-muted: var(--Neutral-60);
+  --color-surface: var(--Neutral-15);
+  --color-background: var(--Neutral-5);
 }

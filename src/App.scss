@@ -3,13 +3,14 @@
 @import "./styles/typography.scss";
 
 :root {
-  scrollbar-color: var(--Neutral-60) var(--Neutral-15);
+  scrollbar-color: var(--color-muted) var(--color-surface);
   scrollbar-width: thin;
 }
 
 body {
-  font-family: "Space Mono", monospace;
-  background: var(--Neutral-30);
+  font-family: var(--font-family-base);
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .material-symbols-outlined {
@@ -70,8 +71,8 @@ body {
 }
 
 .streaming-console {
-  background: var(--Neutral-15);
-  color: var(--Neutral-60);
+  background: var(--color-surface);
+  color: var(--color-muted);
   display: grid;
   grid-template-columns: auto 1fr;
   height: 100vh;
@@ -80,7 +81,7 @@ body {
   a,
   a:visited,
   a:active {
-    color: var(--Neutral-60);
+    color: var(--color-muted);
   }
 
   .disabled {
