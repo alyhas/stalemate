@@ -22,7 +22,7 @@ import { UseMediaStreamResult } from "../../hooks/use-media-stream-mux";
 import { useScreenCapture } from "../../hooks/use-screen-capture";
 import { useWebcam } from "../../hooks/use-webcam";
 import { AudioRecorder } from "../../lib/audio-recorder";
-import AudioPulse from "../audio-pulse/AudioPulse";
+import AudioVisualizer from "../audio-pulse/AudioVisualizer";
 import { useTheme } from "../../contexts/ThemeContext";
 import ControlButton from "./ControlButton";
 import "./control-tray.scss";
@@ -206,7 +206,7 @@ function ControlTray({
         />
 
         <div className="action-button no-action outlined">
-          <AudioPulse volume={volume} active={connected} hover={false} />
+          <AudioVisualizer analyser={audioRecorder.analyser} active={connected && !muted} />
         </div>
 
         {supportsVideo && (
