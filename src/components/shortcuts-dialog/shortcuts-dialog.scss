@@ -16,6 +16,11 @@
     animation: fade-in 0.2s ease-out forwards;
   }
 
+  &.closing {
+    display: block;
+    animation: fade-out 0.2s ease-in forwards;
+  }
+
   ul {
     list-style: none;
     margin: var(--spacing-md) 0;

@@ -39,6 +39,7 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     const stored = localStorage.getItem("sidePanelOpen");
     return stored === null ? true : stored === "true";
   });
+  const [closing, setClosing] = useState(false);
   const [width, setWidth] = useState(() => {
     const stored = localStorage.getItem("sidePanelWidth");
     return stored ? parseInt(stored, 10) : 400;
@@ -76,7 +77,7 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     localStorage.setItem("sidePanelSearch", searchQuery);
   }, [searchQuery]);
 
-  useHotkey("ctrl+b", () => setOpen((o) => !o), [setOpen]);
+  useHotkey("ctrl+b", handleToggle, [open]);
   useHotkey("ctrl+k", () => searchRef.current?.focus(), [searchRef]);
   useHotkey("ctrl+enter", () => {
     if (textInput.trim()) handleSubmit();
@@ -155,34 +156,40 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     window.addEventListener("mouseup", stop);
   };
 
+  const handleToggle = () => {
+    if (open) {
+      setClosing(true);
+    } else {
+      setOpen(true);
+    }
+  };
+
   return (
     <div
-      className={`side-panel ${open ? "open" : ""}`}
+      className={`side-panel ${open ? "open" : ""}${closing ? " closing" : ""}`}
       style={{ width: open ? width : 40 }}
+      onAnimationEnd={() => {
+        if (closing) {
+          setClosing(false);
+          setOpen(false);
+        }
+      }}
     >
       <header className="top" onMouseDown={startMove}>
         <h2 id="side-panel-title">Console</h2>
-        {open ? (
-          <button
-            className="opener"
-            aria-label="Collapse side panel"
-            aria-expanded={true}
-            aria-controls="side-panel-container"
-            onClick={() => setOpen(false)}
-          >
+        <button
+          className="opener"
+          aria-label={open ? "Collapse side panel" : "Expand side panel"}
+          aria-expanded={open}
+          aria-controls="side-panel-container"
+          onClick={handleToggle}
+        >
+          {open ? (
             <RiSidebarFoldLine color="#b4b8bb" />
-          </button>
-        ) : (
-          <button
-            className="opener"
-            aria-label="Expand side panel"
-            aria-expanded={false}
-            aria-controls="side-panel-container"
-            onClick={() => setOpen(true)}
-          >
+          ) : (
             <RiSidebarUnfoldLine color="#b4b8bb" />
-          </button>
-        )}
+          )}
+        </button>
         {onToggleSide && (
           <button
             className="swap-side material-symbols-outlined"

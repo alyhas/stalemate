@@ -322,8 +322,16 @@
   animation: slide-in-left 0.25s ease-out;
 }
 
+.streaming-console.left-side &.closing {
+  animation: slide-out-left 0.2s ease-in forwards;
+}
+
 .streaming-console.right-side &.open {
   animation: slide-in-right 0.25s ease-out;
+}
+
+.streaming-console.right-side &.closing {
+  animation: slide-out-right 0.2s ease-in forwards;
 }
 
 .streaming-console.right-side & {

@@ -82,6 +82,11 @@
       display: block;
       animation: fade-in 0.25s ease-out forwards;
     }
+
+    &.closing {
+      display: block;
+      animation: fade-out 0.25s ease-in forwards;
+    }
   }
 
   .dialog-container {

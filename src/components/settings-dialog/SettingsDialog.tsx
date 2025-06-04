@@ -19,6 +19,7 @@ type FunctionDeclarationsTool = Tool & {
 
 export default function SettingsDialog() {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
     if (!Array.isArray(config.tools)) {
@@ -79,10 +80,24 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
       <Button
         variant="icon"
         icon="settings"
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          if (open) {
+            setClosing(true);
+          } else {
+            setOpen(true);
+          }
+        }}
         aria-label="Open settings"
       />
-      <dialog className={cn("dialog", { open })}>
+      <dialog
+        className={cn("dialog", { open, closing })}
+        onAnimationEnd={() => {
+          if (closing) {
+            setClosing(false);
+            setOpen(false);
+          }
+        }}
+      >
         <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
             <div className="connected-indicator">

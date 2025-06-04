@@ -1,4 +1,5 @@
 import cn from "classnames";
+import { useEffect, useState } from "react";
 import useHotkey from "../../hooks/use-hotkey";
 import Button from "../ui/Button";
 import "./shortcuts-dialog.scss";
@@ -26,14 +27,29 @@ type ShortcutsDialogProps = {
 };
 
 export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps) {
-  useHotkey("escape", onClose, [onClose]);
+  const [closing, setClosing] = useState(false);
+  useHotkey("escape", () => setClosing(true), []);
+
+  const handleClose = () => setClosing(true);
+
+  useEffect(() => {
+    if (open) setClosing(false);
+  }, [open]);
+
+  if (!open && !closing) return null;
 
   return (
     <dialog
-      className={cn("shortcuts-dialog", { open })}
+      className={cn("shortcuts-dialog", { open, closing })}
       role="dialog"
       aria-modal="true"
       aria-labelledby="shortcuts-title"
+      onAnimationEnd={() => {
+        if (closing) {
+          setClosing(false);
+          onClose();
+        }
+      }}
     >
       <h3 id="shortcuts-title">Keyboard Shortcuts</h3>
       <ul>
@@ -44,7 +60,7 @@ export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps)
           </li>
         ))}
       </ul>
-      <Button onClick={onClose}>Close</Button>
+      <Button onClick={handleClose}>Close</Button>
     </dialog>
   );
 }
