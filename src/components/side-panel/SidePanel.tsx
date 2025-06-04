@@ -82,6 +82,9 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     if (textInput.trim()) handleSubmit();
   }, [textInput]);
   useHotkey("ctrl+e", () => inputRef.current?.focus(), [inputRef]);
+  useHotkey("ctrl+1", () => setActiveTab("none"), [setActiveTab]);
+  useHotkey("ctrl+2", () => setActiveTab("conversations"), [setActiveTab]);
+  useHotkey("ctrl+3", () => setActiveTab("tools"), [setActiveTab]);
 
   //scroll the log to the bottom when new logs come in
   useEffect(() => {

@@ -5,6 +5,9 @@ import "./shortcuts-dialog.scss";
 
 const shortcuts = [
   { keys: "Ctrl+B", desc: "Toggle side panel" },
+  { keys: "Ctrl+1", desc: "Show all logs" },
+  { keys: "Ctrl+2", desc: "Show conversations" },
+  { keys: "Ctrl+3", desc: "Show tool logs" },
   { keys: "Ctrl+K", desc: "Focus log search" },
   { keys: "Ctrl+E", desc: "Focus message input" },
   { keys: "Ctrl+Enter", desc: "Send message" },
