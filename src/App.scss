@@ -52,32 +52,18 @@ body {
   display: none;
 }
 
-.flex {
-  display: flex;
-}
-
-.h-screen-full {
-  height: 100vh;
-}
-
-.w-screen-full {
-  width: 100vw;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
 @media (prefers-reduced-motion: no-preference) {
 }
 
 .streaming-console {
   background: var(--color-surface);
   color: var(--color-muted);
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  @extend .grid;
   grid-auto-rows: 1fr;
-  gap: var(--spacing-md);
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "side main"
+    "tray tray";
   height: 100vh;
   width: 100vw;
 
@@ -121,6 +107,20 @@ body {
     width: 100%;
     height: 50%;
     overflow-y: auto;
+  }
+
+  .side-area {
+    grid-area: side;
+  }
+
+  .main-area {
+    grid-area: main;
+  }
+
+  .tray-area {
+    grid-area: tray;
+    display: flex;
+    justify-content: center;
   }
 }
 

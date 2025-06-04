@@ -42,10 +42,10 @@ function App() {
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
         <div className="streaming-console grid">
-          <div className="col-span-12 md:col-span-4 lg:col-span-3">
+          <div className="side-area col-span-12 md:col-span-4 lg:col-span-3">
             <SidePanel />
           </div>
-          <main className="col-span-12 md:col-span-8 lg:col-span-9">
+          <main className="main-area col-span-12 md:col-span-8 lg:col-span-9">
             <div className="main-app-area">
               {/* APP goes here */}
                       <video
@@ -57,7 +57,8 @@ function App() {
                 playsInline
               />
             </div>
-
+          </main>
+          <div className="tray-area col-span-12">
             <ControlTray
               videoRef={videoRef}
               supportsVideo={true}
@@ -66,7 +67,7 @@ function App() {
             >
               {/* put your own buttons here */}
             </ControlTray>
-          </main>
+          </div>
         </div>
       </LiveAPIProvider>
     </div>
