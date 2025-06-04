@@ -318,6 +318,14 @@
   cursor: col-resize;
 }
 
+.streaming-console.left-side &.open {
+  animation: slide-in-left 0.25s ease-out;
+}
+
+.streaming-console.right-side &.open {
+  animation: slide-in-right 0.25s ease-out;
+}
+
 .streaming-console.right-side & {
   border-right: none;
   border-left: 1px solid var(--Neutral-20);
