@@ -78,6 +78,7 @@ function ControlTray({
   const { theme, toggleTheme } = useTheme();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
+  const [pipActive, setPipActive] = useState(false);
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -112,6 +113,14 @@ function ControlTray({
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
   }, [connected, client, muted, audioRecorder]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const onLeave = () => setPipActive(false);
+    video.addEventListener("leavepictureinpicture", onLeave);
+    return () => video.removeEventListener("leavepictureinpicture", onLeave);
+  }, [videoRef]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -163,6 +172,20 @@ function ControlTray({
     videoStreams.filter((msr) => msr !== next).forEach((msr) => msr.stop());
   };
 
+  const togglePictureInPicture = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (pipActive) {
+      await document.exitPictureInPicture?.();
+      setPipActive(false);
+    } else {
+      try {
+        await video.requestPictureInPicture();
+        setPipActive(true);
+      } catch (_) {}
+    }
+  };
+
   return (
     <section className="control-tray">
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
@@ -194,6 +217,12 @@ function ControlTray({
               stop={changeStreams()}
               onIcon="videocam_off"
               offIcon="videocam"
+            />
+            <ControlButton
+              icon="picture_in_picture_alt"
+              label="Toggle picture in picture"
+              onClick={togglePictureInPicture}
+              active={pipActive}
             />
           </>
         )}
