@@ -1,0 +1,48 @@
+.shortcuts-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--Neutral-30);
+  border-radius: 12px;
+  padding: var(--spacing-lg);
+  display: none;
+
+  &.open {
+    display: block;
+    animation: fade-in 0.2s ease-out forwards;
+  }
+
+  ul {
+    list-style: none;
+    margin: var(--spacing-md) 0;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .keys {
+    font-weight: var(--font-weight-bold);
+  }
+
+  button {
+    margin-top: var(--spacing-md);
+    background: none;
+    border: 1px solid var(--Neutral-20);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: var(--color-text);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--Neutral-10);
+    }
+  }
+}

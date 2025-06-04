@@ -27,6 +27,8 @@ import { useTheme } from "../../contexts/ThemeContext";
 import ControlButton from "./ControlButton";
 import "./control-tray.scss";
 import SettingsDialog from "../settings-dialog/SettingsDialog";
+import ShortcutsDialog from "../shortcuts-dialog/ShortcutsDialog";
+import useHotkey from "../../hooks/use-hotkey";
 
 export type ControlTrayProps = {
   videoRef: RefObject<HTMLVideoElement>;
@@ -74,6 +76,8 @@ function ControlTray({
   const connectButtonRef = useRef<HTMLButtonElement>(null);
 
   const { theme, toggleTheme } = useTheme();
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -198,6 +202,11 @@ function ControlTray({
           label="Toggle theme"
           onClick={toggleTheme}
         />
+        <ControlButton
+          icon="help"
+          label="Keyboard shortcuts"
+          onClick={() => setShortcutsOpen(true)}
+        />
         {children}
       </nav>
 
@@ -215,6 +224,7 @@ function ControlTray({
         <span className="text-indicator">Streaming</span>
       </div>
       {enableEditingSettings ? <SettingsDialog /> : ""}
+      <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </section>
   );
 }
