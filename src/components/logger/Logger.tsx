@@ -17,10 +17,11 @@
 import "./logger.scss";
 
 import cn from "classnames";
-import { memo, ReactNode } from "react";
+import { memo, ReactNode, useState } from "react";
 import { useLoggerStore } from "../../lib/store-logger";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs2015 as dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import ContextMenu from "./ContextMenu";
 import {
   ClientContentLog as ClientContentLogType,
   StreamingLog,
@@ -40,6 +41,7 @@ const LogEntry = memo(
   ({
     log,
     MessageComponent,
+    onContextMenu,
   }: {
     log: StreamingLog;
     MessageComponent: ({
@@ -47,6 +49,7 @@ const LogEntry = memo(
     }: {
       message: StreamingLog["message"];
     }) => ReactNode;
+    onContextMenu: (e: React.MouseEvent, log: StreamingLog) => void;
   }): JSX.Element => {
     const isObject = typeof log.message === "object";
     return (
@@ -59,6 +62,7 @@ const LogEntry = memo(
             send: log.type.includes("send"),
           }
         )}
+        onContextMenu={(e) => onContextMenu(e, log)}
       >
         <span className="timestamp">{formatTime(log.date)}</span>
         <span className="source">{log.type}</span>
@@ -274,8 +278,22 @@ const component = (log: StreamingLog) => {
 export default function Logger({ filter = "none", search = "" }: LoggerProps) {
   const { logs } = useLoggerStore();
 
+  const [menu, setMenu] = useState<
+    | { x: number; y: number; text: string }
+    | null
+  >(null);
+
   const filterFn = filters[filter];
   const searchLower = search.toLowerCase();
+
+  const onContextMenu = (log: StreamingLog) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    const text =
+      typeof log.message === "string"
+        ? log.message
+        : JSON.stringify(log.message, null, "  ");
+    setMenu({ x: e.clientX, y: e.clientY, text });
+  };
 
   return (
     <div className="logger">
@@ -295,10 +313,28 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
           })
           .map((log, key) => {
             return (
-              <LogEntry MessageComponent={component(log)} log={log} key={key} />
+              <LogEntry
+                MessageComponent={component(log)}
+                log={log}
+                key={key}
+                onContextMenu={onContextMenu(log)}
+              />
             );
           })}
       </ul>
+      {menu && (
+        <ContextMenu
+          x={menu.x}
+          y={menu.y}
+          items={[
+            {
+              label: "Copy message",
+              onClick: () => navigator.clipboard.writeText(menu.text),
+            },
+          ]}
+          onClose={() => setMenu(null)}
+        />
+      )}
     </div>
   );
 }
