@@ -133,6 +133,14 @@
       padding: 10px;
     }
 
+    .status-led {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-error);
+      transition: background 0.3s ease-in-out;
+    }
+
     .text-indicator {
       font-size: 11px;
       color: var(--Blue-500);
@@ -142,6 +150,12 @@
     &:not(.connected) {
       .text-indicator {
         opacity: 0;
+      }
+    }
+
+    &.connected {
+      .status-led {
+        background: var(--color-success);
       }
     }
   }

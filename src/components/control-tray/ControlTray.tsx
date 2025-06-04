@@ -250,6 +250,7 @@ function ControlTray({
             ref={connectButtonRef}
           />
         </div>
+        <div className="status-led" aria-hidden="true" />
         <span className="text-indicator">Streaming</span>
       </div>
       {enableEditingSettings ? <SettingsDialog /> : ""}

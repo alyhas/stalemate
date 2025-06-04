@@ -53,6 +53,8 @@
   --color-card: var(--Neutral-20);
   --color-panel: var(--Neutral-10);
   --color-border: var(--Neutral-20);
+  --color-success: var(--Green-500);
+  --color-error: var(--Red-500);
 }
 
 [data-theme="light"] {
@@ -75,4 +77,6 @@
   --color-card: var(--Neutral-20);
   --color-panel: var(--Neutral-10);
   --color-border: var(--Neutral-20);
+  --color-success: var(--Green-500);
+  --color-error: var(--accent-red);
 }
