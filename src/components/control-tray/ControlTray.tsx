@@ -187,6 +187,12 @@ function ControlTray({
     }
   };
 
+  const statusLabel = connecting
+    ? "Connecting"
+    : connected
+    ? "Connected"
+    : "Disconnected";
+
   return (
     <section className="control-tray">
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
@@ -240,7 +246,12 @@ function ControlTray({
         {children}
       </nav>
 
-      <div className={cn("connection-container", { connected })}>
+      <div
+        className={cn("connection-container", { connected })}
+        role="status"
+        aria-live="polite"
+        aria-label={statusLabel}
+      >
         <div className="connection-button-container">
           <ControlButton
             icon={connected ? "pause" : "play_arrow"}
@@ -250,7 +261,7 @@ function ControlTray({
             active={connected}
             ref={connectButtonRef}
           />
-          {connecting && !connected && <Spinner size={18} />}
+          {connecting && !connected && <Spinner size={18} label="Connecting" />}
         </div>
         <div className="status-led" aria-hidden="true" />
         <span className="text-indicator">Streaming</span>
