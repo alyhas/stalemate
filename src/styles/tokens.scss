@@ -50,6 +50,9 @@
   --color-muted: var(--Neutral-60);
   --color-surface: var(--Neutral-15);
   --color-background: var(--Neutral-30);
+  --color-card: var(--Neutral-20);
+  --color-panel: var(--Neutral-10);
+  --color-border: var(--Neutral-20);
 }
 
 [data-theme="light"] {
@@ -69,4 +72,7 @@
   --color-muted: var(--Neutral-60);
   --color-surface: var(--Neutral-15);
   --color-background: var(--Neutral-5);
+  --color-card: var(--Neutral-20);
+  --color-panel: var(--Neutral-10);
+  --color-border: var(--Neutral-20);
 }

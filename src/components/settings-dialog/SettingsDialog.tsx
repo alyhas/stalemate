@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
+import Panel from "../ui/Panel";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
 import ResponseModalitySelector from "./ResponseModalitySelector";
@@ -81,7 +82,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
         settings
       </button>
       <dialog className={cn("dialog", { open })}>
-        <div className={`dialog-container ${connected ? "disabled" : ""}`}>
+        <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
             <div className="connected-indicator">
               <p>
@@ -164,7 +165,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
               ))}
             </div>
           </div>
-        </div>
+        </Panel>
       </dialog>
     </div>
   );
