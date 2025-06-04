@@ -32,6 +32,9 @@ const tabs: { value: LoggerFilterType; label: string }[] = [
 export default function SidePanel() {
   const { connected, client } = useLiveAPIContext();
   const [open, setOpen] = useState(true);
+  const [width, setWidth] = useState(400);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(400);
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
   const { log, logs } = useLoggerStore();
@@ -78,8 +81,30 @@ export default function SidePanel() {
     }
   };
 
+  const startResize = (e: React.MouseEvent) => {
+    startXRef.current = e.clientX;
+    startWidthRef.current = width;
+
+    function onMove(ev: MouseEvent) {
+      const delta = ev.clientX - startXRef.current;
+      const newWidth = Math.min(600, Math.max(200, startWidthRef.current + delta));
+      setWidth(newWidth);
+    }
+
+    function onUp() {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    }
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
   return (
-    <div className={`side-panel ${open ? "open" : ""}`}>
+    <div
+      className={`side-panel ${open ? "open" : ""}`}
+      style={{ width: open ? width : 40 }}
+    >
       <header className="top">
         <h2>Console</h2>
         {open ? (
@@ -157,6 +182,7 @@ export default function SidePanel() {
           </button>
         </div>
       </div>
+      {open && <div className="resize-handle" onMouseDown={startResize} />}
     </div>
   );
 }

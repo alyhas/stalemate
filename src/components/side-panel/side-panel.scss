@@ -1,4 +1,5 @@
 .side-panel {
+  position: relative;
   background: var(--color-background);
   width: 40px;
   /* when closed */
@@ -245,7 +246,6 @@
 }
 
 .side-panel.open {
-  width: 400px;
   height: 100vh;
 }
 
@@ -278,4 +278,13 @@
   font-size: 1.25rem;
   line-height: 1.75rem;
   padding: 4px;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
 }
