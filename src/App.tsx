@@ -19,8 +19,8 @@ import "./App.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 import SidePanel from "./components/side-panel/SidePanel";
 import ControlTray from "./components/control-tray/ControlTray";
-import cn from "classnames";
 import { LiveClientOptions } from "./types";
+import ResizableVideo from "./components/resizable-video/ResizableVideo";
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -48,14 +48,7 @@ function App() {
           <main className="main-area col-span-12 md:col-span-8 lg:col-span-9">
             <div className="main-app-area">
               {/* APP goes here */}
-                      <video
-                className={cn("stream", {
-                  hidden: !videoRef.current || !videoStream,
-                })}
-                ref={videoRef}
-                autoPlay
-                playsInline
-              />
+              <ResizableVideo videoRef={videoRef} stream={videoStream} />
             </div>
           </main>
           <div className="tray-area col-span-12">
