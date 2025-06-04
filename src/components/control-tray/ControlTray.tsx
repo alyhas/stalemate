@@ -75,11 +75,19 @@ function ControlTray({
   const [muted, setMuted] = useState(false);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const connectButtonRef = useRef<HTMLButtonElement>(null);
+  const [visualizerMode, setVisualizerMode] = useState<"bars" | "wave">(() => {
+    const stored = localStorage.getItem("visualizerMode");
+    return stored === "wave" ? "wave" : "bars";
+  });
 
   const { theme, toggleTheme } = useTheme();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
   const [pipActive, setPipActive] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("visualizerMode", visualizerMode);
+  }, [visualizerMode]);
 
   const { client, connected, connecting, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -206,8 +214,19 @@ function ControlTray({
         />
 
         <div className="action-button no-action outlined">
-          <AudioVisualizer analyser={audioRecorder.analyser} active={connected && !muted} />
+          <AudioVisualizer
+            analyser={audioRecorder.analyser}
+            active={connected && !muted}
+            mode={visualizerMode}
+          />
         </div>
+        <ControlButton
+          icon={visualizerMode === "bars" ? "equalizer" : "show_chart"}
+          label="Toggle visualizer mode"
+          onClick={() =>
+            setVisualizerMode((m) => (m === "bars" ? "wave" : "bars"))
+          }
+        />
 
         {supportsVideo && (
           <>
