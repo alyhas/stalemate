@@ -8,6 +8,7 @@ const shortcuts = [
   { keys: "Ctrl+K", desc: "Focus log search" },
   { keys: "Ctrl+E", desc: "Focus message input" },
   { keys: "Ctrl+Enter", desc: "Send message" },
+  { keys: "Ctrl+Shift+L", desc: "Toggle theme" },
   { keys: "Ctrl+/", desc: "Show this help" },
 ];
 

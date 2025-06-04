@@ -83,6 +83,7 @@ function ControlTray({
   const { theme, toggleTheme } = useTheme();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
+  useHotkey("ctrl+shift+l", toggleTheme, [toggleTheme]);
   const [pipActive, setPipActive] = useState(false);
 
   useEffect(() => {
