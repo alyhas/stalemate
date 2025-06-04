@@ -3,11 +3,13 @@ import {
   useCallback,
   useMemo,
   useState,
+  useRef,
 } from "react";
 import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
 import Panel from "../ui/Panel";
 import Button from "../ui/Button";
+import useFocusTrap from "../../hooks/use-focus-trap";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
 import ResponseModalitySelector from "./ResponseModalitySelector";
@@ -19,6 +21,7 @@ type FunctionDeclarationsTool = Tool & {
 
 export default function SettingsDialog() {
   const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
     if (!Array.isArray(config.tools)) {
@@ -73,6 +76,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
     },
     [config, setConfig]
   );
+  useFocusTrap(dialogRef, open);
 
   return (
     <div className="settings-dialog">
@@ -82,7 +86,13 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
         onClick={() => setOpen(!open)}
         aria-label="Open settings"
       />
-      <dialog className={cn("dialog", { open })}>
+      <dialog
+        ref={dialogRef}
+        className={cn("dialog", { open })}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Settings"
+      >
         <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
             <div className="connected-indicator">
