@@ -102,6 +102,13 @@
     padding: 8px 0;
   }
 
+  .log-settings {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0;
+  }
+
   textarea.system {
     border-radius: 12px;
     background-color: var(--Neutral-15);

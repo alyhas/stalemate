@@ -4,6 +4,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
@@ -33,6 +34,10 @@ export default function SettingsDialog() {
   const [productName, setProductName] = useState<string>("");
   const [language, setLanguage] = useState<string>("");
   const [isFemale, setIsFemale] = useState<boolean>(true);
+  const { maxLogs, setMaxLogs } = useLoggerStore((s) => ({
+    maxLogs: s.maxLogs,
+    setMaxLogs: s.setMaxLogs,
+  }));
 
   const updateSystemInstruction = useCallback(() => {
     const genderText = isFemale ? "Female" : "Male";
@@ -121,6 +126,17 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
               disabled={connected}
             />
             <span>{isFemale ? "Female" : "Male"}</span>
+          </div>
+          <div className="log-settings">
+            <label htmlFor="max-logs">Max log entries:</label>
+            <input
+              id="max-logs"
+              type="number"
+              min="50"
+              max="1000"
+              value={maxLogs}
+              onChange={(e) => setMaxLogs(parseInt(e.target.value, 10))}
+            />
           </div>
           <h4>Function declarations</h4>
           <div className="function-declarations">

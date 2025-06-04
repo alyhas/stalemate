@@ -22,6 +22,7 @@ interface StoreLoggerState {
   logs: StreamingLog[];
   log: (streamingLog: StreamingLog) => void;
   clearLogs: () => void;
+  setMaxLogs: (n: number) => void;
 }
 
 export const useLoggerStore = create<StoreLoggerState>((set, get) => ({
