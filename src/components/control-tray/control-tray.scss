@@ -232,3 +232,23 @@
     color: var(--Blue-500);
   }
 }
+
+.tray-move-handle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--Neutral-30);
+  cursor: ns-resize;
+  user-select: none;
+}
+
+.control-tray.bottom .tray-move-handle {
+  top: -10px;
+}
+
+.control-tray.top .tray-move-handle {
+  bottom: -10px;
+}

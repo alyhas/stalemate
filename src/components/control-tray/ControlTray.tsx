@@ -111,6 +111,26 @@ function ControlTray({
   );
   const [pipActive, setPipActive] = useState(false);
 
+  const startMove = (e: React.MouseEvent) => {
+    const startY = e.clientY;
+    function onMove(ev: MouseEvent) {
+      const delta = ev.clientY - startY;
+      if (
+        (trayPosition === "bottom" && delta < -80) ||
+        (trayPosition === "top" && delta > 80)
+      ) {
+        onToggleTrayPosition();
+        stop();
+      }
+    }
+    function stop() {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", stop);
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", stop);
+  };
+
   useEffect(() => {
     localStorage.setItem("visualizerMode", visualizerMode);
   }, [visualizerMode]);
@@ -228,7 +248,14 @@ function ControlTray({
     : "Disconnected";
 
   return (
-    <section className="control-tray">
+    <section className={cn("control-tray", trayPosition)}>
+      <div
+        className="tray-move-handle material-symbols-outlined"
+        aria-label="Move controls"
+        onMouseDown={startMove}
+      >
+        drag_handle
+      </div>
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
         <ControlButton
