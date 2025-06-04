@@ -9,17 +9,32 @@ export default function ResizableVideo({
   videoRef: RefObject<HTMLVideoElement>;
   stream: MediaStream | null;
 }) {
-  const [size, setSize] = useState({ width: 480, height: 270 });
+  const [size, setSize] = useState(() => {
+    const stored = localStorage.getItem("videoSize");
+    if (stored) {
+      try {
+        const { width, height } = JSON.parse(stored);
+        return { width, height };
+      } catch {
+        /* ignore */
+      }
+    }
+    return { width: 480, height: 270 };
+  });
   const startX = useRef(0);
   const startY = useRef(0);
-  const startW = useRef(480);
-  const startH = useRef(270);
+  const startW = useRef(size.width);
+  const startH = useRef(size.height);
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
   }, [stream, videoRef]);
+
+  useEffect(() => {
+    localStorage.setItem("videoSize", JSON.stringify(size));
+  }, [size]);
 
   const startDrag = (e: React.MouseEvent) => {
     e.preventDefault();
