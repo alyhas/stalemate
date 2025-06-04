@@ -3,6 +3,10 @@
 @import "./styles/typography.scss";
 @import "./styles/animations.scss";
 
+html {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
 :root {
   scrollbar-color: var(--color-muted) var(--color-surface);
   scrollbar-width: thin;
