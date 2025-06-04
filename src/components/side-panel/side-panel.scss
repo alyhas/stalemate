@@ -38,6 +38,11 @@
     align-items: center;
     padding: 12px 20px 12px 25px;
     border-bottom: 1px solid var(--Neutral-20);
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     h2 {
       position: relative;

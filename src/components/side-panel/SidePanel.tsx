@@ -30,9 +30,10 @@ const tabs: { value: LoggerFilterType; label: string }[] = [
 ];
 
 type SidePanelProps = {
+  side?: "left" | "right";
   onToggleSide?: () => void;
 };
-export default function SidePanel({ onToggleSide }: SidePanelProps) {
+export default function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
   const { connected, client } = useLiveAPIContext();
   const [open, setOpen] = useState(() => {
     const stored = localStorage.getItem("sidePanelOpen");
@@ -117,12 +118,33 @@ export default function SidePanel({ onToggleSide }: SidePanelProps) {
     window.addEventListener("mouseup", onUp);
   };
 
+  const startMove = (e: React.MouseEvent) => {
+    if (!onToggleSide) return;
+    const startX = e.clientX;
+
+    function onMove(ev: MouseEvent) {
+      const delta = ev.clientX - startX;
+      if ((side === "left" && delta > 150) || (side === "right" && delta < -150)) {
+        onToggleSide();
+        stop();
+      }
+    }
+
+    function stop() {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", stop);
+    }
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", stop);
+  };
+
   return (
     <div
       className={`side-panel ${open ? "open" : ""}`}
       style={{ width: open ? width : 40 }}
     >
-      <header className="top">
+      <header className="top" onMouseDown={startMove}>
         <h2 id="side-panel-title">Console</h2>
         {open ? (
           <button
