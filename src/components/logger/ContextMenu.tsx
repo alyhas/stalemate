@@ -24,10 +24,11 @@ export default function ContextMenu({
   }, [onClose]);
 
   return (
-    <ul className="context-menu" style={{ top: y, left: x }}>
+    <ul className="context-menu" style={{ top: y, left: x }} role="menu">
       {items.map((item) => (
-        <li key={item.label}>
+        <li key={item.label} role="none">
           <button
+            role="menuitem"
             onClick={() => {
               item.onClick();
               onClose();

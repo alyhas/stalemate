@@ -19,8 +19,13 @@ export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps)
   useHotkey("escape", onClose, [onClose]);
 
   return (
-    <dialog className={cn("shortcuts-dialog", { open })}>
-      <h3>Keyboard Shortcuts</h3>
+    <dialog
+      className={cn("shortcuts-dialog", { open })}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shortcuts-title"
+    >
+      <h3 id="shortcuts-title">Keyboard Shortcuts</h3>
       <ul>
         {shortcuts.map((s) => (
           <li key={s.keys}>

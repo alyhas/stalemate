@@ -120,23 +120,39 @@ export default function SidePanel() {
       style={{ width: open ? width : 40 }}
     >
       <header className="top">
-        <h2>Console</h2>
+        <h2 id="side-panel-title">Console</h2>
         {open ? (
-          <button className="opener" onClick={() => setOpen(false)}>
+          <button
+            className="opener"
+            aria-label="Collapse side panel"
+            aria-expanded={true}
+            aria-controls="side-panel-container"
+            onClick={() => setOpen(false)}
+          >
             <RiSidebarFoldLine color="#b4b8bb" />
           </button>
         ) : (
-          <button className="opener" onClick={() => setOpen(true)}>
+          <button
+            className="opener"
+            aria-label="Expand side panel"
+            aria-expanded={false}
+            aria-controls="side-panel-container"
+            onClick={() => setOpen(true)}
+          >
             <RiSidebarUnfoldLine color="#b4b8bb" />
           </button>
         )}
       </header>
       <section className="indicators">
-        <nav className="tab-nav">
+        <nav className="tab-nav" role="tablist">
           {tabs.map((t) => (
             <button
               key={t.value}
               className={cn("tab-button", { active: activeTab === t.value })}
+              role="tab"
+              aria-selected={activeTab === t.value}
+              id={`tab-${t.value}`}
+              aria-controls="side-panel-container"
               onClick={() => setActiveTab(t.value)}
             >
               {t.label}
@@ -146,6 +162,7 @@ export default function SidePanel() {
         <input
           type="text"
           className="log-search"
+          aria-label="Search logs"
           placeholder="Search logs"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -157,7 +174,13 @@ export default function SidePanel() {
             : `⏸️${open ? " Paused" : ""}`}
         </div>
       </section>
-      <div className="side-panel-container" ref={loggerRef}>
+      <div
+        id="side-panel-container"
+        className="side-panel-container"
+        ref={loggerRef}
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+      >
         <Logger filter={activeTab} search={searchQuery} />
       </div>
       <div className={cn("input-container", { disabled: !connected })}>
@@ -165,6 +188,7 @@ export default function SidePanel() {
           <textarea
             className="input-area"
             ref={inputRef}
+            aria-label="Message input"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -190,6 +214,7 @@ export default function SidePanel() {
 
           <button
             className="send-button material-symbols-outlined filled"
+            aria-label="Send message"
             onClick={handleSubmit}
           >
             send
