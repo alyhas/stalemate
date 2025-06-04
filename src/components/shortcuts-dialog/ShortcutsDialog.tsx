@@ -9,6 +9,11 @@ const shortcuts = [
   { keys: "Ctrl+E", desc: "Focus message input" },
   { keys: "Ctrl+Enter", desc: "Send message" },
   { keys: "Ctrl+Shift+L", desc: "Toggle theme" },
+  { keys: "Ctrl+Shift+M", desc: "Toggle mute" },
+  { keys: "Ctrl+Shift+W", desc: "Toggle webcam" },
+  { keys: "Ctrl+Shift+S", desc: "Toggle screen share" },
+  { keys: "Ctrl+Shift+P", desc: "Toggle picture-in-picture" },
+  { keys: "Ctrl+Shift+C", desc: "Connect/disconnect" },
   { keys: "Ctrl+/", desc: "Show this help" },
 ];
 

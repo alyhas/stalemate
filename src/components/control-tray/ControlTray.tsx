@@ -89,6 +89,26 @@ function ControlTray({
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
   useHotkey("ctrl+shift+l", toggleTheme, [toggleTheme]);
   useHotkey("ctrl+shift+t", onToggleTrayPosition, [onToggleTrayPosition]);
+  useHotkey("ctrl+shift+m", () => setMuted((m) => !m), [setMuted]);
+  useHotkey(
+    "ctrl+shift+w",
+    () => (webcam.isStreaming ? changeStreams()() : changeStreams(webcam)()),
+    [webcam.isStreaming]
+  );
+  useHotkey(
+    "ctrl+shift+s",
+    () =>
+      screenCapture.isStreaming
+        ? changeStreams()()
+        : changeStreams(screenCapture)(),
+    [screenCapture.isStreaming]
+  );
+  useHotkey("ctrl+shift+p", togglePictureInPicture, [togglePictureInPicture]);
+  useHotkey(
+    "ctrl+shift+c",
+    () => (connected ? disconnect() : connect()),
+    [connected, connect, disconnect]
+  );
   const [pipActive, setPipActive] = useState(false);
 
   useEffect(() => {
