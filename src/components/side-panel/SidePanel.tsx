@@ -29,7 +29,10 @@ const tabs: { value: LoggerFilterType; label: string }[] = [
   { value: "tools", label: "Tool Use" },
 ];
 
-export default function SidePanel() {
+type SidePanelProps = {
+  onToggleSide?: () => void;
+};
+export default function SidePanel({ onToggleSide }: SidePanelProps) {
   const { connected, client } = useLiveAPIContext();
   const [open, setOpen] = useState(() => {
     const stored = localStorage.getItem("sidePanelOpen");
@@ -140,6 +143,15 @@ export default function SidePanel() {
             onClick={() => setOpen(true)}
           >
             <RiSidebarUnfoldLine color="#b4b8bb" />
+          </button>
+        )}
+        {onToggleSide && (
+          <button
+            className="swap-side material-symbols-outlined"
+            aria-label="Move side panel"
+            onClick={onToggleSide}
+          >
+            swap_horiz
           </button>
         )}
       </header>

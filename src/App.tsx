@@ -37,13 +37,25 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [panelSide, setPanelSide] = useState<'left' | 'right'>(() => {
+    const stored = localStorage.getItem('panelSide');
+    return stored === 'right' ? 'right' : 'left';
+  });
+
+  const togglePanelSide = () => {
+    setPanelSide((s) => {
+      const next = s === 'left' ? 'right' : 'left';
+      localStorage.setItem('panelSide', next);
+      return next;
+    });
+  };
 
   return (
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
-        <div className="streaming-console grid">
+        <div className={`streaming-console grid ${panelSide}-side`}>
           <div className="side-area col-span-12 md:col-span-4 lg:col-span-3">
-            <SidePanel />
+            <SidePanel onToggleSide={togglePanelSide} />
           </div>
           <main className="main-area col-span-12 md:col-span-8 lg:col-span-9">
             <div className="main-app-area">

@@ -70,6 +70,16 @@
     transition: transform 0.2s ease-in;
   }
 
+  .swap-side {
+    font-size: 20px;
+    color: var(--color-muted);
+    margin-left: 4px;
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+
   &:not(.open) {
     .side-panel-container {
       opacity: 0;
@@ -301,4 +311,14 @@
   width: 8px;
   height: 100%;
   cursor: col-resize;
+}
+
+.streaming-console.right-side & {
+  border-right: none;
+  border-left: 1px solid var(--Neutral-20);
+
+  .resize-handle {
+    right: auto;
+    left: -4px;
+  }
 }
