@@ -30,6 +30,8 @@ export type AudioPulseProps = {
 export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
   const lines = useRef<HTMLDivElement[]>([]);
 
+  const color = `hsl(${Math.round(Math.min(1, volume) * 120)}, 80%, 50%)`;
+
   useEffect(() => {
     let timeout: number | null = null;
     const update = () => {
@@ -49,7 +51,10 @@ export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
   }, [volume]);
 
   return (
-    <div className={c("audioPulse", { active, hover })}>
+    <div
+      className={c("audioPulse", { active, hover })}
+      style={{ ["--pulse-color" as any]: color }}
+    >
       {Array(lineCount)
         .fill(null)
         .map((_, i) => (
