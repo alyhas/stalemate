@@ -50,8 +50,13 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   const { log, logs, clearLogs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<LoggerFilterType>("none");
+  const [searchQuery, setSearchQuery] = useState(() =>
+    localStorage.getItem("sidePanelSearch") || ""
+  );
+  const [activeTab, setActiveTab] = useState<LoggerFilterType>(() => {
+    const stored = localStorage.getItem("sidePanelActiveTab");
+    return stored === "conversations" || stored === "tools" ? stored : "none";
+  });
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +67,14 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   useEffect(() => {
     localStorage.setItem("sidePanelWidth", String(width));
   }, [width]);
+
+  useEffect(() => {
+    localStorage.setItem("sidePanelActiveTab", activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem("sidePanelSearch", searchQuery);
+  }, [searchQuery]);
 
   useHotkey("ctrl+b", () => setOpen((o) => !o), [setOpen]);
   useHotkey("ctrl+k", () => searchRef.current?.focus(), [searchRef]);
