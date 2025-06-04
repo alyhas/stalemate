@@ -75,6 +75,13 @@
     width: 696px;
     height: 593px;
     transform: translate(-25%, -50%);
+    display: none;
+    opacity: 0;
+
+    &.open {
+      display: block;
+      animation: fade-in 0.25s ease-out forwards;
+    }
   }
 
   .dialog-container {

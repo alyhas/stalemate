@@ -1,3 +1,4 @@
+import cn from "classnames";
 import {
   useCallback,
   useMemo,
@@ -74,7 +75,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
       >
         settings
       </button>
-      <dialog className="dialog" style={{ display: open ? "block" : "none" }}>
+      <dialog className={cn("dialog", { open })}>
         <div className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
             <div className="connected-indicator">
