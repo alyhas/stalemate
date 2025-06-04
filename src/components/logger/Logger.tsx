@@ -26,6 +26,7 @@ import {
   useCallback,
   useLayoutEffect,
   useMemo,
+  ComponentPropsWithoutRef,
 } from "react";
 import { VariableSizeList as List } from "react-window";
 import { useLoggerStore } from "../../lib/store-logger";
@@ -345,6 +346,18 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
     []
   );
 
+  const Outer = forwardRef<HTMLUListElement, ComponentPropsWithoutRef<"ul">>(
+    (props, ref) => (
+      <ul
+        {...props}
+        ref={ref}
+        role="log"
+        aria-live="polite"
+        aria-label="Logs"
+      />
+    )
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   useLayoutEffect(() => {
@@ -384,7 +397,7 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
           itemCount={filteredLogs.length}
           itemSize={getSize}
           width="100%"
-          outerElementType="ul"
+          outerElementType={Outer}
           className="logger-list"
           overscanCount={10}
           ref={listRef}
