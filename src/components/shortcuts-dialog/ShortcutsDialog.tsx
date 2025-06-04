@@ -1,5 +1,6 @@
 import cn from "classnames";
 import useHotkey from "../../hooks/use-hotkey";
+import Button from "../ui/Button";
 import "./shortcuts-dialog.scss";
 
 const shortcuts = [
@@ -34,7 +35,7 @@ export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps)
           </li>
         ))}
       </ul>
-      <button onClick={onClose}>Close</button>
+      <Button onClick={onClose}>Close</Button>
     </dialog>
   );
 }

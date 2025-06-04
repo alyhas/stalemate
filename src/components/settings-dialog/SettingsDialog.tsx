@@ -7,6 +7,7 @@ import {
 import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
 import Panel from "../ui/Panel";
+import Button from "../ui/Button";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
 import ResponseModalitySelector from "./ResponseModalitySelector";
@@ -75,12 +76,12 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
 
   return (
     <div className="settings-dialog">
-      <button
-        className="action-button material-symbols-outlined"
+      <Button
+        variant="icon"
+        icon="settings"
         onClick={() => setOpen(!open)}
-      >
-        settings
-      </button>
+        aria-label="Open settings"
+      />
       <dialog className={cn("dialog", { open })}>
         <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
