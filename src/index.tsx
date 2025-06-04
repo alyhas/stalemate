@@ -18,6 +18,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { ErrorBoundaryWithToast } from './components/ErrorBoundary';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -34,13 +35,15 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <ToastProvider>
-        <Auth0Provider
-          domain={domain}
-          clientId={clientId}
-          authorizationParams={{ redirect_uri: window.location.origin }}
-        >
-          <App />
-        </Auth0Provider>
+        <ErrorBoundaryWithToast>
+          <Auth0Provider
+            domain={domain}
+            clientId={clientId}
+            authorizationParams={{ redirect_uri: window.location.origin }}
+          >
+            <App />
+          </Auth0Provider>
+        </ErrorBoundaryWithToast>
       </ToastProvider>
     </ThemeProvider>
   </React.StrictMode>
