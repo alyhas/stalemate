@@ -214,6 +214,7 @@ export type LoggerFilterType = "conversations" | "tools" | "none";
 
 export type LoggerProps = {
   filter: LoggerFilterType;
+  search?: string;
 };
 
 const filters: Record<LoggerFilterType, (log: StreamingLog) => boolean> = {
@@ -260,19 +261,33 @@ const component = (log: StreamingLog) => {
   return AnyMessage;
 };
 
-export default function Logger({ filter = "none" }: LoggerProps) {
+export default function Logger({ filter = "none", search = "" }: LoggerProps) {
   const { logs } = useLoggerStore();
 
   const filterFn = filters[filter];
+  const searchLower = search.toLowerCase();
 
   return (
     <div className="logger">
       <ul className="logger-list">
-        {logs.filter(filterFn).map((log, key) => {
-          return (
-            <LogEntry MessageComponent={component(log)} log={log} key={key} />
-          );
-        })}
+        {logs
+          .filter(filterFn)
+          .filter((log) => {
+            if (!searchLower) return true;
+            const msgStr =
+              typeof log.message === "string"
+                ? log.message
+                : JSON.stringify(log.message);
+            return (
+              log.type.toLowerCase().includes(searchLower) ||
+              msgStr.toLowerCase().includes(searchLower)
+            );
+          })
+          .map((log, key) => {
+            return (
+              <LogEntry MessageComponent={component(log)} log={log} key={key} />
+            );
+          })}
       </ul>
     </div>
   );

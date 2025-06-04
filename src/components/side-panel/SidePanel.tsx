@@ -38,6 +38,7 @@ export default function SidePanel() {
   const { log, logs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState<{
     value: string;
     label: string;
@@ -115,6 +116,13 @@ export default function SidePanel() {
             setSelectedOption(e);
           }}
         />
+        <input
+          type="text"
+          className="log-search"
+          placeholder="Search logs"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
         <div className={cn("streaming-indicator", { connected })}>
           {connected
             ? `🔵${open ? " Streaming" : ""}`
@@ -124,6 +132,7 @@ export default function SidePanel() {
       <div className="side-panel-container" ref={loggerRef}>
         <Logger
           filter={(selectedOption?.value as LoggerFilterType) || "none"}
+          search={searchQuery}
         />
       </div>
       <div className={cn("input-container", { disabled: !connected })}>
@@ -137,6 +146,11 @@ export default function SidePanel() {
                 e.stopPropagation();
                 handleSubmit();
               }
+            }}
+            onInput={(e) => {
+              const t = e.currentTarget;
+              t.style.height = "auto";
+              t.style.height = `${t.scrollHeight}px`;
             }}
             onChange={(e) => setTextInput(e.target.value)}
             value={textInput}

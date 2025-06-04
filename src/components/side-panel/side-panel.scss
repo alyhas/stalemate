@@ -99,6 +99,20 @@
     justify-content: flex-end;
     gap: 21px;
 
+    .log-search {
+      flex: 1;
+      background: var(--Neutral-10);
+      border: 1px solid var(--Neutral-20);
+      border-radius: 6px;
+      padding: 4px 8px;
+      color: var(--color-text);
+      outline: none;
+
+      &:focus {
+        border-color: var(--Blue-500);
+      }
+    }
+
     .streaming-indicator {
       user-select: none;
       border-radius: 4px;
@@ -178,7 +192,8 @@
         z-index: 2;
         display: inline-block;
         width: calc(100% - 72px);
-        max-height: 20px;
+        min-height: 20px;
+        max-height: 200px;
         outline: none;
         --webkit-box-flex: 1;
         flex: 1;
