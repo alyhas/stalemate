@@ -26,6 +26,23 @@ export default function ResizableVideo({
   const startW = useRef(size.width);
   const startH = useRef(size.height);
 
+  const [position, setPosition] = useState(() => {
+    const stored = localStorage.getItem("videoPosition");
+    if (stored) {
+      try {
+        const { left, top } = JSON.parse(stored);
+        return { left, top };
+      } catch {
+        /* ignore */
+      }
+    }
+    return { left: 0, top: 0 };
+  });
+  const moveStartX = useRef(0);
+  const moveStartY = useRef(0);
+  const moveStartLeft = useRef(0);
+  const moveStartTop = useRef(0);
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
@@ -35,6 +52,10 @@ export default function ResizableVideo({
   useEffect(() => {
     localStorage.setItem("videoSize", JSON.stringify(size));
   }, [size]);
+
+  useEffect(() => {
+    localStorage.setItem("videoPosition", JSON.stringify(position));
+  }, [position]);
 
   const startDrag = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,10 +77,32 @@ export default function ResizableVideo({
     window.addEventListener("mouseup", onUp);
   };
 
+  const startMove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    moveStartX.current = e.clientX;
+    moveStartY.current = e.clientY;
+    moveStartLeft.current = position.left;
+    moveStartTop.current = position.top;
+
+    const onMove = (ev: MouseEvent) => {
+      const left = moveStartLeft.current + ev.clientX - moveStartX.current;
+      const top = moveStartTop.current + ev.clientY - moveStartY.current;
+      setPosition({ left, top });
+    };
+
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
   return (
     <div
       className="resizable-video"
-      style={{ width: size.width, height: size.height }}
+      style={{ width: size.width, height: size.height, left: position.left, top: position.top }}
     >
       <video
         ref={videoRef}
@@ -67,6 +110,7 @@ export default function ResizableVideo({
         autoPlay
         playsInline
       />
+      <div className="move-handle" onMouseDown={startMove} />
       <div className="resize-handle" onMouseDown={startDrag} />
     </div>
   );
