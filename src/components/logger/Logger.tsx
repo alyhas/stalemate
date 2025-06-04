@@ -32,6 +32,7 @@ import { useLoggerStore } from "../../lib/store-logger";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs2015 as dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import ContextMenu from "./ContextMenu";
+import { useToast } from "../../contexts/ToastContext";
 import {
   ClientContentLog as ClientContentLogType,
   StreamingLog,
@@ -296,6 +297,7 @@ const component = (log: StreamingLog) => {
 
 export default function Logger({ filter = "none", search = "" }: LoggerProps) {
   const { logs } = useLoggerStore();
+  const { showToast } = useToast();
 
   const [menu, setMenu] = useState<
     | { x: number; y: number; text: string }
@@ -397,7 +399,10 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
           items={[
             {
               label: "Copy message",
-              onClick: () => navigator.clipboard.writeText(menu.text),
+              onClick: () => {
+                navigator.clipboard.writeText(menu.text);
+                showToast("Copied");
+              },
             },
           ]}
           onClose={() => setMenu(null)}
