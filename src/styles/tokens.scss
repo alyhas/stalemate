@@ -63,6 +63,7 @@
   --color-primary-text: var(--Neutral-5);
   --color-secondary: var(--Neutral-20);
   --color-secondary-text: var(--color-text);
+  --color-focus-ring: var(--Blue-500);
 }
 
 [data-theme="light"] {
@@ -91,4 +92,5 @@
   --color-primary-text: var(--Neutral-5);
   --color-secondary: var(--Neutral-20);
   --color-secondary-text: var(--color-text);
+  --color-focus-ring: var(--Blue-500);
 }

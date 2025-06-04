@@ -130,6 +130,10 @@
       border-bottom: 2px solid transparent;
       font-family: var(--font-family-base);
       font-size: 14px;
+      &:focus-visible {
+        outline: none;
+        border-color: var(--color-focus-ring);
+      }
 
       &.active {
         color: var(--color-text);
