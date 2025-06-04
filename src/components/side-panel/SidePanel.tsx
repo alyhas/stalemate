@@ -16,6 +16,7 @@
 
 import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
+import useHotkey from "../../hooks/use-hotkey";
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
@@ -39,6 +40,14 @@ export default function SidePanel() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<LoggerFilterType>("none");
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useHotkey("ctrl+b", () => setOpen((o) => !o), [setOpen]);
+  useHotkey("ctrl+k", () => searchRef.current?.focus(), [searchRef]);
+  useHotkey("ctrl+enter", () => {
+    if (textInput.trim()) handleSubmit();
+  }, [textInput]);
+  useHotkey("ctrl+e", () => inputRef.current?.focus(), [inputRef]);
 
   //scroll the log to the bottom when new logs come in
   useEffect(() => {
@@ -101,6 +110,7 @@ export default function SidePanel() {
           placeholder="Search logs"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          ref={searchRef}
         />
         <div className={cn("streaming-indicator", { connected })}>
           {connected
