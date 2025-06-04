@@ -47,25 +47,35 @@ const LogEntry = memo(
     }: {
       message: StreamingLog["message"];
     }) => ReactNode;
-  }): JSX.Element => (
-    <li
-      className={cn(
-        `plain-log`,
-        `source-${log.type.slice(0, log.type.indexOf("."))}`,
-        {
-          receive: log.type.includes("receive"),
-          send: log.type.includes("send"),
-        }
-      )}
-    >
-      <span className="timestamp">{formatTime(log.date)}</span>
-      <span className="source">{log.type}</span>
-      <span className="message">
-        <MessageComponent message={log.message} />
-      </span>
-      {log.count && <span className="count">{log.count}</span>}
-    </li>
-  )
+  }): JSX.Element => {
+    const isObject = typeof log.message === "object";
+    return (
+      <li
+        className={cn(
+          `plain-log`,
+          `source-${log.type.slice(0, log.type.indexOf("."))}`,
+          {
+            receive: log.type.includes("receive"),
+            send: log.type.includes("send"),
+          }
+        )}
+      >
+        <span className="timestamp">{formatTime(log.date)}</span>
+        <span className="source">{log.type}</span>
+        {isObject ? (
+          <details className="message-details">
+            <summary>details</summary>
+            <MessageComponent message={log.message} />
+          </details>
+        ) : (
+          <span className="message">
+            <MessageComponent message={log.message} />
+          </span>
+        )}
+        {log.count && <span className="count">{log.count}</span>}
+      </li>
+    );
+  }
 );
 
 const PlainTextMessage = ({

@@ -99,6 +99,28 @@
     justify-content: flex-end;
     gap: 21px;
 
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .tab-button {
+      background: none;
+      border: 0;
+      padding: 4px 8px;
+      color: var(--color-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-family-base);
+      font-size: 14px;
+
+      &.active {
+        color: var(--color-text);
+        border-color: var(--Blue-500);
+      }
+    }
+
     .log-search {
       flex: 1;
       background: var(--Neutral-10);

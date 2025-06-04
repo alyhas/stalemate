@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import "./react-select.scss";
 import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
-import Select from "react-select";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
 import Logger, { LoggerFilterType } from "../logger/Logger";
 import "./side-panel.scss";
 
-const filterOptions = [
+const tabs: { value: LoggerFilterType; label: string }[] = [
+  { value: "none", label: "All" },
   { value: "conversations", label: "Conversations" },
   { value: "tools", label: "Tool Use" },
-  { value: "none", label: "All" },
 ];
 
 export default function SidePanel() {
@@ -39,10 +37,7 @@ export default function SidePanel() {
 
   const [textInput, setTextInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOption, setSelectedOption] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  const [activeTab, setActiveTab] = useState<LoggerFilterType>("none");
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   //scroll the log to the bottom when new logs come in
@@ -89,33 +84,17 @@ export default function SidePanel() {
         )}
       </header>
       <section className="indicators">
-        <Select
-          className="react-select"
-          classNamePrefix="react-select"
-          styles={{
-            control: (baseStyles) => ({
-              ...baseStyles,
-              background: "var(--Neutral-15)",
-              color: "var(--Neutral-90)",
-              minHeight: "33px",
-              maxHeight: "33px",
-              border: 0,
-            }),
-            option: (styles, { isFocused, isSelected }) => ({
-              ...styles,
-              backgroundColor: isFocused
-                ? "var(--Neutral-30)"
-                : isSelected
-                  ? "var(--Neutral-20)"
-                  : undefined,
-            }),
-          }}
-          defaultValue={selectedOption}
-          options={filterOptions}
-          onChange={(e) => {
-            setSelectedOption(e);
-          }}
-        />
+        <nav className="tab-nav">
+          {tabs.map((t) => (
+            <button
+              key={t.value}
+              className={cn("tab-button", { active: activeTab === t.value })}
+              onClick={() => setActiveTab(t.value)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </nav>
         <input
           type="text"
           className="log-search"
@@ -130,10 +109,7 @@ export default function SidePanel() {
         </div>
       </section>
       <div className="side-panel-container" ref={loggerRef}>
-        <Logger
-          filter={(selectedOption?.value as LoggerFilterType) || "none"}
-          search={searchQuery}
-        />
+        <Logger filter={activeTab} search={searchQuery} />
       </div>
       <div className={cn("input-container", { disabled: !connected })}>
         <div className="input-content">
