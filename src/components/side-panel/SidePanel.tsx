@@ -59,6 +59,28 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   });
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleTabKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    let nextIndex = index;
+    if (e.key === "ArrowRight") {
+      nextIndex = (index + 1) % tabs.length;
+    } else if (e.key === "ArrowLeft") {
+      nextIndex = (index - 1 + tabs.length) % tabs.length;
+    } else if (e.key === "Home") {
+      nextIndex = 0;
+    } else if (e.key === "End") {
+      nextIndex = tabs.length - 1;
+    } else {
+      return;
+    }
+    e.preventDefault();
+    setActiveTab(tabs[nextIndex].value);
+    tabRefs.current[nextIndex]?.focus();
+  };
 
   useEffect(() => {
     localStorage.setItem("sidePanelOpen", String(open));
@@ -191,16 +213,18 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
         )}
       </header>
       <section className="indicators">
-        <nav className="tab-nav" role="tablist">
-          {tabs.map((t) => (
+        <nav className="tab-nav" role="tablist" aria-orientation="horizontal">
+          {tabs.map((t, i) => (
             <button
               key={t.value}
+              ref={(el) => (tabRefs.current[i] = el)}
               className={cn("tab-button", { active: activeTab === t.value })}
               role="tab"
               aria-selected={activeTab === t.value}
               id={`tab-${t.value}`}
               aria-controls="side-panel-container"
               onClick={() => setActiveTab(t.value)}
+              onKeyDown={(e) => handleTabKeyDown(e, i)}
             >
               {t.label}
             </button>
