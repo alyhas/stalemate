@@ -43,7 +43,7 @@ export default function SidePanel() {
   const startWidthRef = useRef(400);
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
-  const { log, logs } = useLoggerStore();
+  const { log, logs, clearLogs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -173,6 +173,13 @@ export default function SidePanel() {
             ? `🔵${open ? " Streaming" : ""}`
             : `⏸️${open ? " Paused" : ""}`}
         </div>
+        <button
+          className="clear-button material-symbols-outlined"
+          aria-label="Clear logs"
+          onClick={clearLogs}
+        >
+          delete
+        </button>
       </section>
       <div
         id="side-panel-container"
