@@ -29,6 +29,7 @@ import "./control-tray.scss";
 import SettingsDialog from "../settings-dialog/SettingsDialog";
 import ShortcutsDialog from "../shortcuts-dialog/ShortcutsDialog";
 import useHotkey from "../../hooks/use-hotkey";
+import Spinner from "../ui/Spinner";
 
 export type ControlTrayProps = {
   videoRef: RefObject<HTMLVideoElement>;
@@ -80,7 +81,7 @@ function ControlTray({
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
   const [pipActive, setPipActive] = useState(false);
 
-  const { client, connected, connect, disconnect, volume } =
+  const { client, connected, connecting, connect, disconnect, volume } =
     useLiveAPIContext();
 
   useEffect(() => {
@@ -249,6 +250,7 @@ function ControlTray({
             active={connected}
             ref={connectButtonRef}
           />
+          {connecting && !connected && <Spinner size={18} />}
         </div>
         <div className="status-led" aria-hidden="true" />
         <span className="text-indicator">Streaming</span>

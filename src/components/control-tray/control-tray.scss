@@ -131,6 +131,14 @@
       border: 1px solid var(--Neutral-30);
       background: var(--Neutral-5);
       padding: 10px;
+      position: relative;
+
+      .spinner {
+        position: absolute;
+        top: 50%;
+        right: -20px;
+        transform: translateY(-50%);
+      }
     }
 
     .status-led {
