@@ -42,6 +42,11 @@ function App() {
     return stored === 'right' ? 'right' : 'left';
   });
 
+  const [trayPosition, setTrayPosition] = useState<'top' | 'bottom'>(() => {
+    const stored = localStorage.getItem('trayPosition');
+    return stored === 'top' ? 'top' : 'bottom';
+  });
+
   const togglePanelSide = () => {
     setPanelSide((s) => {
       const next = s === 'left' ? 'right' : 'left';
@@ -50,10 +55,18 @@ function App() {
     });
   };
 
+  const toggleTrayPosition = () => {
+    setTrayPosition((p) => {
+      const next = p === 'bottom' ? 'top' : 'bottom';
+      localStorage.setItem('trayPosition', next);
+      return next;
+    });
+  };
+
   return (
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
-        <div className={`streaming-console grid ${panelSide}-side`}>
+        <div className={`streaming-console grid ${panelSide}-side tray-${trayPosition}`}>
           <div className="side-area col-span-12 md:col-span-4 lg:col-span-3">
             <SidePanel side={panelSide} onToggleSide={togglePanelSide} />
           </div>
@@ -69,6 +82,8 @@ function App() {
               supportsVideo={true}
               onVideoStreamChange={setVideoStream}
               enableEditingSettings={true}
+              trayPosition={trayPosition}
+              onToggleTrayPosition={toggleTrayPosition}
             >
               {/* put your own buttons here */}
             </ControlTray>

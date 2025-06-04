@@ -68,6 +68,17 @@ body {
   grid-template-areas:
     "side main"
     "tray tray";
+
+  &.tray-bottom {
+    grid-template-rows: 1fr auto;
+  }
+
+  &.tray-top {
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "tray tray"
+      "side main";
+  }
   height: 100vh;
   width: 100vw;
 
@@ -128,10 +139,17 @@ body {
   }
 }
 
+
 .streaming-console.right-side {
   grid-template-areas:
     "main side"
     "tray tray";
+}
+
+.streaming-console.tray-top.right-side {
+  grid-template-areas:
+    "tray tray"
+    "main side";
 }
 
 /* video player */

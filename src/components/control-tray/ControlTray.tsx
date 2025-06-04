@@ -37,6 +37,8 @@ export type ControlTrayProps = {
   supportsVideo: boolean;
   onVideoStreamChange?: (stream: MediaStream | null) => void;
   enableEditingSettings?: boolean;
+  trayPosition: 'top' | 'bottom';
+  onToggleTrayPosition: () => void;
 };
 
 type MediaStreamButtonProps = {
@@ -65,6 +67,8 @@ function ControlTray({
   onVideoStreamChange = () => {},
   supportsVideo,
   enableEditingSettings,
+  trayPosition,
+  onToggleTrayPosition,
 }: ControlTrayProps) {
   const videoStreams = [useWebcam(), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
@@ -84,6 +88,7 @@ function ControlTray({
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   useHotkey("ctrl+/", () => setShortcutsOpen(true), []);
   useHotkey("ctrl+shift+l", toggleTheme, [toggleTheme]);
+  useHotkey("ctrl+shift+t", onToggleTrayPosition, [onToggleTrayPosition]);
   const [pipActive, setPipActive] = useState(false);
 
   useEffect(() => {
@@ -257,6 +262,11 @@ function ControlTray({
           icon={theme === "dark" ? "light_mode" : "dark_mode"}
           label="Toggle theme"
           onClick={toggleTheme}
+        />
+        <ControlButton
+          icon={trayPosition === "bottom" ? "arrow_upward" : "arrow_downward"}
+          label="Move controls"
+          onClick={onToggleTrayPosition}
         />
         <ControlButton
           icon="help"
