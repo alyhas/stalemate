@@ -31,8 +31,14 @@ const tabs: { value: LoggerFilterType; label: string }[] = [
 
 export default function SidePanel() {
   const { connected, client } = useLiveAPIContext();
-  const [open, setOpen] = useState(true);
-  const [width, setWidth] = useState(400);
+  const [open, setOpen] = useState(() => {
+    const stored = localStorage.getItem("sidePanelOpen");
+    return stored === null ? true : stored === "true";
+  });
+  const [width, setWidth] = useState(() => {
+    const stored = localStorage.getItem("sidePanelWidth");
+    return stored ? parseInt(stored, 10) : 400;
+  });
   const startXRef = useRef(0);
   const startWidthRef = useRef(400);
   const loggerRef = useRef<HTMLDivElement>(null);
@@ -44,6 +50,14 @@ export default function SidePanel() {
   const [activeTab, setActiveTab] = useState<LoggerFilterType>("none");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem("sidePanelOpen", String(open));
+  }, [open]);
+
+  useEffect(() => {
+    localStorage.setItem("sidePanelWidth", String(width));
+  }, [width]);
 
   useHotkey("ctrl+b", () => setOpen((o) => !o), [setOpen]);
   useHotkey("ctrl+k", () => searchRef.current?.focus(), [searchRef]);
