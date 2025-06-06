@@ -22,6 +22,11 @@
     padding: var(--spacing-xs) var(--spacing-md);
     text-align: left;
     cursor: pointer;
+    outline: none;
+
+    &:focus {
+      background: var(--Neutral-20);
+    }
   }
 
   li button:hover {
