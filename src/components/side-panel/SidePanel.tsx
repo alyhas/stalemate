@@ -28,6 +28,7 @@ const tabs: { value: LoggerFilterType; label: string }[] = [
   { value: "conversations", label: "Conversations" },
   { value: "tools", label: "Tool Use" },
 ];
+const defaultTabOrder = tabs.map((t) => t.value);
 
 type SidePanelProps = {
   side?: "left" | "right";
@@ -57,6 +58,23 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     const stored = localStorage.getItem("sidePanelActiveTab");
     return stored === "conversations" || stored === "tools" ? stored : "none";
   });
+  const [tabOrder, setTabOrder] = useState<LoggerFilterType[]>(() => {
+    const stored = localStorage.getItem("sidePanelTabOrder");
+    if (stored) {
+      try {
+        const arr = JSON.parse(stored) as LoggerFilterType[];
+        if (Array.isArray(arr)) {
+          return arr as LoggerFilterType[];
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    return defaultTabOrder;
+  });
+  const orderedTabs = tabOrder
+    .map((v) => tabs.find((t) => t.value === v)!)
+    .filter(Boolean);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -67,18 +85,18 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   ) => {
     let nextIndex = index;
     if (e.key === "ArrowRight") {
-      nextIndex = (index + 1) % tabs.length;
+      nextIndex = (index + 1) % orderedTabs.length;
     } else if (e.key === "ArrowLeft") {
-      nextIndex = (index - 1 + tabs.length) % tabs.length;
+      nextIndex = (index - 1 + orderedTabs.length) % orderedTabs.length;
     } else if (e.key === "Home") {
       nextIndex = 0;
     } else if (e.key === "End") {
-      nextIndex = tabs.length - 1;
+      nextIndex = orderedTabs.length - 1;
     } else {
       return;
     }
     e.preventDefault();
-    setActiveTab(tabs[nextIndex].value);
+    setActiveTab(orderedTabs[nextIndex].value);
     tabRefs.current[nextIndex]?.focus();
   };
 
@@ -93,6 +111,10 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   useEffect(() => {
     localStorage.setItem("sidePanelActiveTab", activeTab);
   }, [activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem("sidePanelTabOrder", JSON.stringify(tabOrder));
+  }, [tabOrder]);
 
   useEffect(() => {
     localStorage.setItem("sidePanelSearch", searchQuery);
@@ -174,6 +196,24 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     window.addEventListener("mouseup", stop);
   };
 
+  const dragItem = useRef<LoggerFilterType | null>(null);
+  const onDragStart = (value: LoggerFilterType) => () => {
+    dragItem.current = value;
+  };
+  const onDropTab = (value: LoggerFilterType) => () => {
+    if (!dragItem.current || dragItem.current === value) return;
+    setTabOrder((order) => {
+      const from = order.indexOf(dragItem.current!);
+      const to = order.indexOf(value);
+      if (from === -1 || to === -1) return order;
+      const newOrder = [...order];
+      newOrder.splice(to, 0, newOrder.splice(from, 1)[0]);
+      return newOrder;
+    });
+    dragItem.current = null;
+  };
+  const allowDrop = (e: React.DragEvent) => e.preventDefault();
+
   return (
     <div
       className={`side-panel ${open ? "open" : ""}`}
@@ -215,7 +255,7 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
       </header>
       <section className="indicators">
         <nav className="tab-nav" role="tablist" aria-orientation="horizontal">
-          {tabs.map((t, i) => (
+          {orderedTabs.map((t, i) => (
             <button
               key={t.value}
               ref={(el) => (tabRefs.current[i] = el)}
@@ -224,6 +264,10 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
               aria-selected={activeTab === t.value}
               id={`tab-${t.value}`}
               aria-controls="side-panel-container"
+              draggable
+              onDragStart={onDragStart(t.value)}
+              onDragOver={allowDrop}
+              onDrop={onDropTab(t.value)}
               onClick={() => setActiveTab(t.value)}
               onKeyDown={(e) => handleTabKeyDown(e, i)}
             >
