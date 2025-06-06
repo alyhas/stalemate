@@ -18,6 +18,6 @@
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: fade-in 0.2s ease-out, fade-out 0.2s ease-in forwards;
+  animation: slide-up 0.2s ease-out, fade-out 0.2s ease-in forwards;
   animation-delay: 0s, 1.8s;
 }
