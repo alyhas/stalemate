@@ -10,7 +10,12 @@
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out,
+    transform 0.1s ease-in-out;
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
 
   .material-symbols-outlined {
     font-size: 20px;
@@ -48,6 +53,16 @@
 
 .button--icon:hover {
   background: var(--Neutral-10);
+}
+
+.button--outlined {
+  background: none;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.button--outlined:hover {
+  background: var(--Neutral-15);
 }
 
 .button:disabled {

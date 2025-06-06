@@ -46,7 +46,7 @@ export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps)
           </li>
         ))}
       </ul>
-      <Button onClick={onClose}>Close</Button>
+      <Button variant="outlined" onClick={onClose}>Close</Button>
     </dialog>
   );
 }
