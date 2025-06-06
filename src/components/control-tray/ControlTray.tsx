@@ -16,7 +16,15 @@
 
 import cn from "classnames";
 
-import { memo, ReactNode, RefObject, useEffect, useRef, useState } from "react";
+import {
+  memo,
+  ReactNode,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+  forwardRef,
+} from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { UseMediaStreamResult } from "../../hooks/use-media-stream-mux";
 import { useScreenCapture } from "../../hooks/use-screen-capture";
@@ -53,12 +61,14 @@ type MediaStreamButtonProps = {
  * button used for triggering webcam or screen-capture
  */
 const MediaStreamButton = memo(
-  ({ isStreaming, onIcon, offIcon, start, stop }: MediaStreamButtonProps) =>
-    isStreaming ? (
-      <ControlButton icon={onIcon} label={onIcon} onClick={stop} />
-    ) : (
-      <ControlButton icon={offIcon} label={offIcon} onClick={start} />
-    )
+  forwardRef<HTMLButtonElement, MediaStreamButtonProps>(
+    ({ isStreaming, onIcon, offIcon, start, stop }, ref) =>
+      isStreaming ? (
+        <ControlButton ref={ref} icon={onIcon} label={onIcon} onClick={stop} />
+      ) : (
+        <ControlButton ref={ref} icon={offIcon} label={offIcon} onClick={start} />
+      ),
+  ),
 );
 
 function ControlTray({
@@ -84,6 +94,62 @@ function ControlTray({
     return stored === "wave" ? "wave" : "bars";
   });
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  type TrayButtonId =
+    | "mic"
+    | "viz"
+    | "screen"
+    | "camera"
+    | "pip"
+    | "theme"
+    | "move"
+    | "help";
+
+  const defaultButtonOrder: TrayButtonId[] = [
+    "mic",
+    "viz",
+    "screen",
+    "camera",
+    "pip",
+    "theme",
+    "move",
+    "help",
+  ];
+
+  const [buttonOrder, setButtonOrder] = useState<TrayButtonId[]>(() => {
+    const stored = localStorage.getItem("controlTrayOrder");
+    if (stored) {
+      try {
+        const arr = JSON.parse(stored) as TrayButtonId[];
+        if (Array.isArray(arr)) return arr;
+      } catch {
+        /* ignore */
+      }
+    }
+    return defaultButtonOrder;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("controlTrayOrder", JSON.stringify(buttonOrder));
+  }, [buttonOrder]);
+
+  const dragButton = useRef<TrayButtonId | null>(null);
+  const onDragStart = (id: TrayButtonId) => () => {
+    dragButton.current = id;
+  };
+  const onDropButton = (id: TrayButtonId) => () => {
+    if (!dragButton.current || dragButton.current === id) return;
+    setButtonOrder((order) => {
+      const from = order.indexOf(dragButton.current!);
+      const to = order.indexOf(id);
+      if (from === -1 || to === -1) return order;
+      const newOrder = [...order];
+      newOrder.splice(to, 0, newOrder.splice(from, 1)[0]);
+      return newOrder;
+    });
+    dragButton.current = null;
+  };
+  const allowDrop = (e: React.DragEvent) => e.preventDefault();
 
   const handleButtonKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement>,
@@ -248,16 +314,126 @@ function ControlTray({
     : connected
     ? "Connected"
     : "Disconnected";
-  let idx = 0;
-  const micIndex = idx++;
-  const vizIndex = idx++;
-  const screenIndex = supportsVideo ? idx++ : -1;
-  const camIndex = supportsVideo ? idx++ : -1;
-  const pipIndex = supportsVideo ? idx++ : -1;
-  const themeIndex = idx++;
-  const moveIndex = idx++;
-  const helpIndex = idx++;
-  const connectIndex = idx++;
+
+  const orderedIds = buttonOrder.filter(
+    (id) => supportsVideo || !["screen", "camera", "pip"].includes(id),
+  );
+  const connectIndex = orderedIds.length;
+
+  const renderButton = (id: TrayButtonId, index: number) => {
+    const commonProps = {
+      ref: (el: HTMLButtonElement | null) => (buttonRefs.current[index] = el),
+      onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) =>
+        handleButtonKeyDown(e, index),
+      draggable: true,
+      onDragStart: onDragStart(id),
+      onDragOver: allowDrop,
+      onDrop: onDropButton(id),
+    } as const;
+
+    switch (id) {
+      case "mic":
+        return (
+          <>
+            <ControlButton
+              {...commonProps}
+              key="mic"
+              icon={muted ? "mic_off" : "mic"}
+              label={muted ? "Unmute microphone" : "Mute microphone"}
+              className="mic-button"
+              onClick={() => setMuted(!muted)}
+              active={!muted}
+            />
+            <div key="vizdisplay" className="action-button no-action outlined">
+              <AudioVisualizer
+                analyser={audioRecorder.analyser}
+                active={connected && !muted}
+                mode={visualizerMode}
+              />
+            </div>
+          </>
+        );
+      case "viz":
+        return (
+          <ControlButton
+            {...commonProps}
+            key="viz"
+            icon={visualizerMode === "bars" ? "equalizer" : "show_chart"}
+            label="Toggle visualizer mode"
+            onClick={() =>
+              setVisualizerMode((m) => (m === "bars" ? "wave" : "bars"))
+            }
+          />
+        );
+      case "screen":
+        return supportsVideo ? (
+          <MediaStreamButton
+            {...commonProps}
+            key="screen"
+            isStreaming={screenCapture.isStreaming}
+            start={changeStreams(screenCapture)}
+            stop={changeStreams()}
+            onIcon="cancel_presentation"
+            offIcon="present_to_all"
+          />
+        ) : null;
+      case "camera":
+        return supportsVideo ? (
+          <MediaStreamButton
+            {...commonProps}
+            key="camera"
+            isStreaming={webcam.isStreaming}
+            start={changeStreams(webcam)}
+            stop={changeStreams()}
+            onIcon="videocam_off"
+            offIcon="videocam"
+          />
+        ) : null;
+      case "pip":
+        return supportsVideo ? (
+          <ControlButton
+            {...commonProps}
+            key="pip"
+            icon="picture_in_picture_alt"
+            label="Toggle picture in picture"
+            onClick={togglePictureInPicture}
+            active={pipActive}
+          />
+        ) : null;
+      case "theme":
+        return (
+          <ControlButton
+            {...commonProps}
+            key="theme"
+            icon={theme === "dark" ? "light_mode" : "dark_mode"}
+            label="Toggle theme"
+            onClick={toggleTheme}
+          />
+        );
+      case "move":
+        return (
+          <ControlButton
+            {...commonProps}
+            key="move"
+            icon={trayPosition === "bottom" ? "arrow_upward" : "arrow_downward"}
+            label="Move controls"
+            onClick={onToggleTrayPosition}
+          />
+        );
+      case "help":
+        return (
+          <ControlButton
+            {...commonProps}
+            key="help"
+            icon="help"
+            label="Keyboard shortcuts"
+            onClick={() => setShortcutsOpen(true)}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <section className="control-tray">
@@ -268,84 +444,9 @@ function ControlTray({
         aria-orientation="horizontal"
         aria-label="Controls"
       >
-        <ControlButton
-          ref={(el) => (buttonRefs.current[micIndex] = el)}
-          onKeyDown={(e) => handleButtonKeyDown(e, micIndex)}
-          icon={muted ? "mic_off" : "mic"}
-          label={muted ? "Unmute microphone" : "Mute microphone"}
-          className="mic-button"
-          onClick={() => setMuted(!muted)}
-          active={!muted}
-        />
-
-        <div className="action-button no-action outlined">
-          <AudioVisualizer
-            analyser={audioRecorder.analyser}
-            active={connected && !muted}
-            mode={visualizerMode}
-          />
-        </div>
-        <ControlButton
-          ref={(el) => (buttonRefs.current[vizIndex] = el)}
-          onKeyDown={(e) => handleButtonKeyDown(e, vizIndex)}
-          icon={visualizerMode === "bars" ? "equalizer" : "show_chart"}
-          label="Toggle visualizer mode"
-          onClick={() =>
-            setVisualizerMode((m) => (m === "bars" ? "wave" : "bars"))
-          }
-        />
-
-        {supportsVideo && (
-          <>
-            <MediaStreamButton
-              ref={(el) => (buttonRefs.current[screenIndex] = el)}
-              onKeyDown={(e) => handleButtonKeyDown(e, screenIndex)}
-              isStreaming={screenCapture.isStreaming}
-              start={changeStreams(screenCapture)}
-              stop={changeStreams()}
-              onIcon="cancel_presentation"
-              offIcon="present_to_all"
-            />
-            <MediaStreamButton
-              ref={(el) => (buttonRefs.current[camIndex] = el)}
-              onKeyDown={(e) => handleButtonKeyDown(e, camIndex)}
-              isStreaming={webcam.isStreaming}
-              start={changeStreams(webcam)}
-              stop={changeStreams()}
-              onIcon="videocam_off"
-              offIcon="videocam"
-            />
-            <ControlButton
-              ref={(el) => (buttonRefs.current[pipIndex] = el)}
-              onKeyDown={(e) => handleButtonKeyDown(e, pipIndex)}
-              icon="picture_in_picture_alt"
-              label="Toggle picture in picture"
-              onClick={togglePictureInPicture}
-              active={pipActive}
-            />
-          </>
-        )}
-        <ControlButton
-          ref={(el) => (buttonRefs.current[themeIndex] = el)}
-          onKeyDown={(e) => handleButtonKeyDown(e, themeIndex)}
-          icon={theme === "dark" ? "light_mode" : "dark_mode"}
-          label="Toggle theme"
-          onClick={toggleTheme}
-        />
-        <ControlButton
-          ref={(el) => (buttonRefs.current[moveIndex] = el)}
-          onKeyDown={(e) => handleButtonKeyDown(e, moveIndex)}
-          icon={trayPosition === "bottom" ? "arrow_upward" : "arrow_downward"}
-          label="Move controls"
-          onClick={onToggleTrayPosition}
-        />
-        <ControlButton
-          ref={(el) => (buttonRefs.current[helpIndex] = el)}
-          onKeyDown={(e) => handleButtonKeyDown(e, helpIndex)}
-          icon="help"
-          label="Keyboard shortcuts"
-          onClick={() => setShortcutsOpen(true)}
-        />
+        {orderedIds.map((id, i) => (
+          <React.Fragment key={id}>{renderButton(id, i)}</React.Fragment>
+        ))}
         {children}
       </nav>
 
