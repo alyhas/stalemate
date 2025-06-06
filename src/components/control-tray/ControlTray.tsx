@@ -83,6 +83,28 @@ function ControlTray({
     const stored = localStorage.getItem("visualizerMode");
     return stored === "wave" ? "wave" : "bars";
   });
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleButtonKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    const total = buttonRefs.current.filter(Boolean).length;
+    let nextIndex = index;
+    if (e.key === "ArrowRight") {
+      nextIndex = (index + 1) % total;
+    } else if (e.key === "ArrowLeft") {
+      nextIndex = (index - 1 + total) % total;
+    } else if (e.key === "Home") {
+      nextIndex = 0;
+    } else if (e.key === "End") {
+      nextIndex = total - 1;
+    } else {
+      return;
+    }
+    e.preventDefault();
+    buttonRefs.current[nextIndex]?.focus();
+  };
 
   const { theme, toggleTheme } = useTheme();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -226,12 +248,29 @@ function ControlTray({
     : connected
     ? "Connected"
     : "Disconnected";
+  let idx = 0;
+  const micIndex = idx++;
+  const vizIndex = idx++;
+  const screenIndex = supportsVideo ? idx++ : -1;
+  const camIndex = supportsVideo ? idx++ : -1;
+  const pipIndex = supportsVideo ? idx++ : -1;
+  const themeIndex = idx++;
+  const moveIndex = idx++;
+  const helpIndex = idx++;
+  const connectIndex = idx++;
 
   return (
     <section className="control-tray">
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
-      <nav className={cn("actions-nav", { disabled: !connected })}>
+      <nav
+        className={cn("actions-nav", { disabled: !connected })}
+        role="toolbar"
+        aria-orientation="horizontal"
+        aria-label="Controls"
+      >
         <ControlButton
+          ref={(el) => (buttonRefs.current[micIndex] = el)}
+          onKeyDown={(e) => handleButtonKeyDown(e, micIndex)}
           icon={muted ? "mic_off" : "mic"}
           label={muted ? "Unmute microphone" : "Mute microphone"}
           className="mic-button"
@@ -247,6 +286,8 @@ function ControlTray({
           />
         </div>
         <ControlButton
+          ref={(el) => (buttonRefs.current[vizIndex] = el)}
+          onKeyDown={(e) => handleButtonKeyDown(e, vizIndex)}
           icon={visualizerMode === "bars" ? "equalizer" : "show_chart"}
           label="Toggle visualizer mode"
           onClick={() =>
@@ -257,6 +298,8 @@ function ControlTray({
         {supportsVideo && (
           <>
             <MediaStreamButton
+              ref={(el) => (buttonRefs.current[screenIndex] = el)}
+              onKeyDown={(e) => handleButtonKeyDown(e, screenIndex)}
               isStreaming={screenCapture.isStreaming}
               start={changeStreams(screenCapture)}
               stop={changeStreams()}
@@ -264,6 +307,8 @@ function ControlTray({
               offIcon="present_to_all"
             />
             <MediaStreamButton
+              ref={(el) => (buttonRefs.current[camIndex] = el)}
+              onKeyDown={(e) => handleButtonKeyDown(e, camIndex)}
               isStreaming={webcam.isStreaming}
               start={changeStreams(webcam)}
               stop={changeStreams()}
@@ -271,6 +316,8 @@ function ControlTray({
               offIcon="videocam"
             />
             <ControlButton
+              ref={(el) => (buttonRefs.current[pipIndex] = el)}
+              onKeyDown={(e) => handleButtonKeyDown(e, pipIndex)}
               icon="picture_in_picture_alt"
               label="Toggle picture in picture"
               onClick={togglePictureInPicture}
@@ -279,16 +326,22 @@ function ControlTray({
           </>
         )}
         <ControlButton
+          ref={(el) => (buttonRefs.current[themeIndex] = el)}
+          onKeyDown={(e) => handleButtonKeyDown(e, themeIndex)}
           icon={theme === "dark" ? "light_mode" : "dark_mode"}
           label="Toggle theme"
           onClick={toggleTheme}
         />
         <ControlButton
+          ref={(el) => (buttonRefs.current[moveIndex] = el)}
+          onKeyDown={(e) => handleButtonKeyDown(e, moveIndex)}
           icon={trayPosition === "bottom" ? "arrow_upward" : "arrow_downward"}
           label="Move controls"
           onClick={onToggleTrayPosition}
         />
         <ControlButton
+          ref={(el) => (buttonRefs.current[helpIndex] = el)}
+          onKeyDown={(e) => handleButtonKeyDown(e, helpIndex)}
           icon="help"
           label="Keyboard shortcuts"
           onClick={() => setShortcutsOpen(true)}
@@ -304,12 +357,16 @@ function ControlTray({
       >
         <div className="connection-button-container">
           <ControlButton
+            ref={(el) => {
+              connectButtonRef.current = el;
+              buttonRefs.current[connectIndex] = el;
+            }}
+            onKeyDown={(e) => handleButtonKeyDown(e, connectIndex)}
             icon={connected ? "pause" : "play_arrow"}
             label={connected ? "Disconnect" : "Connect"}
             className={cn("connect-toggle", { connected })}
             onClick={connected ? disconnect : connect}
             active={connected}
-            ref={connectButtonRef}
           />
           {connecting && !connected && <Spinner size={18} label="Connecting" />}
         </div>
