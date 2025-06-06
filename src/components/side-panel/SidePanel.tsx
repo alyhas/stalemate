@@ -177,7 +177,8 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
   return (
     <div
       className={`side-panel ${open ? "open" : ""}`}
-      style={{ width: open ? width : 40 }}
+      data-side={side}
+      style={{ width: open ? width : 40, "--panel-width": `${width}px` } as React.CSSProperties}
     >
       <header className="top" onMouseDown={startMove}>
         <h2 id="side-panel-title">Console</h2>
