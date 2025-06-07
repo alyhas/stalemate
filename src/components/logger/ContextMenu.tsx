@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import useFocusTrap from "../../hooks/use-focus-trap";
 import "./context-menu.scss";
 
@@ -7,7 +7,7 @@ export type ContextMenuItem = {
   onClick: () => void;
 };
 
-export default function ContextMenu({
+function ContextMenu({
   x,
   y,
   items,
@@ -88,3 +88,5 @@ export default function ContextMenu({
     </ul>
   );
 }
+
+export default memo(ContextMenu);

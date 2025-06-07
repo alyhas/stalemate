@@ -1,5 +1,6 @@
 import cn from "classnames";
 import {
+  memo,
   useCallback,
   useMemo,
   useState,
@@ -19,7 +20,7 @@ type FunctionDeclarationsTool = Tool & {
   functionDeclarations: FunctionDeclaration[];
 };
 
-export default function SettingsDialog() {
+function SettingsDialog() {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { config, setConfig, connected } = useLiveAPIContext();
@@ -181,3 +182,5 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
     </div>
   );
 }
+
+export default memo(SettingsDialog);

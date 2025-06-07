@@ -15,7 +15,7 @@
  */
 
 import cn from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import useHotkey from "../../hooks/use-hotkey";
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
@@ -34,7 +34,7 @@ type SidePanelProps = {
   side?: "left" | "right";
   onToggleSide?: () => void;
 };
-export default function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
+function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
   const { connected, client } = useLiveAPIContext();
   const [open, setOpen] = useState(() => {
     const stored = localStorage.getItem("sidePanelOpen");
@@ -348,3 +348,5 @@ export default function SidePanel({ side = "left", onToggleSide }: SidePanelProp
     </div>
   );
 }
+
+export default memo(SidePanel);

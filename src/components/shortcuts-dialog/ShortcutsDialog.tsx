@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { memo, useRef } from "react";
 import cn from "classnames";
 import useHotkey from "../../hooks/use-hotkey";
 import useFocusTrap from "../../hooks/use-focus-trap";
@@ -24,7 +24,7 @@ type ShortcutsDialogProps = {
   onClose: () => void;
 };
 
-export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps) {
+function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps) {
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   useHotkey("escape", onClose, [onClose]);
   useFocusTrap(dialogRef, open);
@@ -50,3 +50,5 @@ export default function ShortcutsDialog({ open, onClose }: ShortcutsDialogProps)
     </dialog>
   );
 }
+
+export default memo(ShortcutsDialog);
