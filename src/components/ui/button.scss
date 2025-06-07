@@ -12,7 +12,9 @@
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out,
+  transition:
+    background 0.2s ease-in-out,
+    color 0.2s ease-in-out,
     transform 0.1s ease-in-out;
 
   &:active:not(:disabled) {
@@ -65,6 +67,24 @@
 
 .button--outlined:hover {
   background: var(--Neutral-15);
+}
+
+.button--danger {
+  background: var(--color-error);
+  color: var(--Neutral-90);
+}
+
+.button--danger:hover {
+  background: var(--Red-600);
+}
+
+.button--icon.button--danger {
+  background: none;
+  color: var(--color-error);
+}
+
+.button--icon.button--danger:hover {
+  background: var(--Neutral-10);
 }
 
 .button:disabled {

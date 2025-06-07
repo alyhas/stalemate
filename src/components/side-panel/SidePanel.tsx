@@ -21,6 +21,7 @@ import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
 import Logger, { LoggerFilterType } from "../logger/Logger";
+import Button from "../ui/Button";
 import "./side-panel.scss";
 
 const tabs: { value: LoggerFilterType; label: string }[] = [
@@ -51,8 +52,8 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
   const { log, logs, clearLogs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState(() =>
-    localStorage.getItem("sidePanelSearch") || ""
+  const [searchQuery, setSearchQuery] = useState(
+    () => localStorage.getItem("sidePanelSearch") || "",
   );
   const [activeTab, setActiveTab] = useState<LoggerFilterType>(() => {
     const stored = localStorage.getItem("sidePanelActiveTab");
@@ -122,9 +123,13 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
 
   useHotkey("ctrl+b", () => setOpen((o) => !o), [setOpen]);
   useHotkey("ctrl+k", () => searchRef.current?.focus(), [searchRef]);
-  useHotkey("ctrl+enter", () => {
-    if (textInput.trim()) handleSubmit();
-  }, [textInput]);
+  useHotkey(
+    "ctrl+enter",
+    () => {
+      if (textInput.trim()) handleSubmit();
+    },
+    [textInput],
+  );
   useHotkey("ctrl+e", () => inputRef.current?.focus(), [inputRef]);
 
   //scroll the log to the bottom when new logs come in
@@ -162,7 +167,10 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
 
     function onMove(ev: MouseEvent) {
       const delta = ev.clientX - startXRef.current;
-      const newWidth = Math.min(600, Math.max(200, startWidthRef.current + delta));
+      const newWidth = Math.min(
+        600,
+        Math.max(200, startWidthRef.current + delta),
+      );
       setWidth(newWidth);
     }
 
@@ -181,7 +189,10 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
 
     function onMove(ev: MouseEvent) {
       const delta = ev.clientX - startX;
-      if ((side === "left" && delta > 150) || (side === "right" && delta < -150)) {
+      if (
+        (side === "left" && delta > 150) ||
+        (side === "right" && delta < -150)
+      ) {
         onToggleSide();
         stop();
       }
@@ -218,7 +229,12 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
     <div
       className={`side-panel ${open ? "open" : ""}`}
       data-side={side}
-      style={{ width: open ? width : 40, "--panel-width": `${width}px` } as React.CSSProperties}
+      style={
+        {
+          width: open ? width : 40,
+          "--panel-width": `${width}px`,
+        } as React.CSSProperties
+      }
     >
       <header className="top" onMouseDown={startMove}>
         <h2 id="side-panel-title">Console</h2>
@@ -289,13 +305,13 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
             ? `🔵${open ? " Streaming" : ""}`
             : `⏸️${open ? " Paused" : ""}`}
         </div>
-        <button
-          className="clear-button material-symbols-outlined"
+        <Button
+          variant="icon"
+          className="clear-button button--danger"
+          icon="delete"
           aria-label="Clear logs"
           onClick={clearLogs}
-        >
-          delete
-        </button>
+        />
       </section>
       <div
         id="side-panel-container"

@@ -4,7 +4,7 @@ import useRipple from "../../hooks/use-ripple";
 import "./button.scss";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "icon" | "outlined";
+  variant?: "primary" | "secondary" | "icon" | "outlined" | "danger";
   icon?: string;
 };
 
@@ -25,9 +25,7 @@ export default function Button({
       }}
       {...props}
     >
-      {icon && (
-        <span className="material-symbols-outlined filled">{icon}</span>
-      )}
+      {icon && <span className="material-symbols-outlined filled">{icon}</span>}
       {children}
     </button>
   );
