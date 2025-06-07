@@ -260,13 +260,13 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
           </button>
         )}
         {onToggleSide && (
-          <button
-            className="swap-side material-symbols-outlined"
+          <Button
+            variant="ghost"
+            className="swap-side"
+            icon="swap_horiz"
             aria-label="Move side panel"
             onClick={onToggleSide}
-          >
-            swap_horiz
-          </button>
+          />
         )}
       </header>
       <section className="indicators">

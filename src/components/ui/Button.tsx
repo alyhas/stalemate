@@ -4,7 +4,13 @@ import useRipple from "../../hooks/use-ripple";
 import "./button.scss";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "icon" | "outlined" | "danger";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "icon"
+    | "outlined"
+    | "danger"
+    | "ghost";
   icon?: string;
 };
 

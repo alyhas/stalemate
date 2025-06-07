@@ -23,6 +23,7 @@ const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
         ref={ref}
         className={cn("control-button action-button", className, { active })}
         aria-label={label}
+        aria-pressed={active}
         data-tooltip={label}
         onPointerDown={handlePointerDown}
         {...props}

@@ -78,6 +78,16 @@
   background: var(--Red-600);
 }
 
+.button--ghost {
+  background: none;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.button--ghost:hover {
+  background: var(--Neutral-10);
+}
+
 .button--icon.button--danger {
   background: none;
   color: var(--color-error);

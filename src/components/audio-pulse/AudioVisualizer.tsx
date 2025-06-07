@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo } from "react";
 import "./audio-visualizer.scss";
 
 export type AudioVisualizerProps = {
@@ -7,7 +7,7 @@ export type AudioVisualizerProps = {
   mode?: "bars" | "wave" | "circle";
 };
 
-export default function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerProps) {
+function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -87,3 +87,5 @@ export default function AudioVisualizer({ analyser, active, mode = "bars" }: Aud
     />
   );
 }
+
+export default memo(AudioVisualizer);

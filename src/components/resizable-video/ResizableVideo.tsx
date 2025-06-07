@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState, memo } from "react";
 import cn from "classnames";
 import "./resizable-video.scss";
 
-export default function ResizableVideo({
+export default memo(function ResizableVideo({
   videoRef,
   stream,
 }: {
@@ -104,4 +104,4 @@ export default function ResizableVideo({
       />
     </div>
   );
-}
+});
