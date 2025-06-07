@@ -26,6 +26,12 @@
 
   &.open {
     transform: translateX(0);
+    &[data-side="left"] {
+      animation: slide-right 0.2s ease-out;
+    }
+    &[data-side="right"] {
+      animation: slide-left 0.2s ease-out;
+    }
     .top {
       h2 {
         left: 0%;
@@ -90,6 +96,7 @@
   }
 
   &:not(.open) {
+    animation: none;
     .side-panel-container {
       opacity: 0;
       display: none;
