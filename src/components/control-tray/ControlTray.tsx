@@ -89,10 +89,13 @@ function ControlTray({
   const [muted, setMuted] = useState(false);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const connectButtonRef = useRef<HTMLButtonElement>(null);
-  const [visualizerMode, setVisualizerMode] = useState<"bars" | "wave" | "circle">(
+  const [visualizerMode, setVisualizerMode] = useState<"bars" | "wave" | "circle" | "radar">(
     () => {
       const stored = localStorage.getItem("visualizerMode");
-      return stored === "wave" || stored === "circle" ? (stored as any) : "bars";
+      return
+        stored === "wave" || stored === "circle" || stored === "radar"
+          ? (stored as any)
+          : "bars";
     },
   );
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -390,12 +393,20 @@ function ControlTray({
                 ? "equalizer"
                 : visualizerMode === "wave"
                 ? "show_chart"
-                : "donut_large"
+                : visualizerMode === "circle"
+                ? "donut_large"
+                : "radar"
             }
             label="Toggle visualizer mode"
             onClick={() =>
               setVisualizerMode((m) =>
-                m === "bars" ? "wave" : m === "wave" ? "circle" : "bars",
+                m === "bars"
+                  ? "wave"
+                  : m === "wave"
+                  ? "circle"
+                  : m === "circle"
+                  ? "radar"
+                  : "bars",
               )
             }
           />

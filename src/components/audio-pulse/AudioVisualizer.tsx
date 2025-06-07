@@ -4,7 +4,7 @@ import "./audio-visualizer.scss";
 export type AudioVisualizerProps = {
   analyser?: AnalyserNode;
   active: boolean;
-  mode?: "bars" | "wave" | "circle";
+  mode?: "bars" | "wave" | "circle" | "radar";
 };
 
 function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerProps) {
@@ -50,8 +50,7 @@ function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerPro
         ctx.strokeStyle = "#4caf50";
         ctx.lineWidth = 2;
         ctx.stroke();
-      } else {
-        // circle mode
+      } else if (mode === "circle") {
         analyser.getByteFrequencyData(data);
         const radius = Math.min(canvas.width, canvas.height) / 2 - 2;
         ctx.save();
@@ -67,6 +66,21 @@ function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerPro
           ctx.stroke();
         }
         ctx.restore();
+      } else {
+        // radar mode
+        analyser.getByteFrequencyData(data);
+        const radius = Math.min(canvas.width, canvas.height) / 2 - 2;
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        const step = (Math.PI * 2) / bufferLength;
+        for (let i = 0; i < bufferLength; i++) {
+          const value = data[i] / 255;
+          ctx.strokeStyle = `hsl(${Math.round(value * 120)},80%,50%)`;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * value, i * step, (i + 1) * step);
+          ctx.stroke();
+        }
+        ctx.restore();
       }
       raf = requestAnimationFrame(draw);
     };
@@ -75,8 +89,8 @@ function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerPro
     return () => cancelAnimationFrame(raf);
   }, [analyser, active, mode]);
 
-  const width = mode === "circle" ? 40 : 80;
-  const height = mode === "circle" ? 40 : 24;
+  const width = mode === "circle" || mode === "radar" ? 40 : 80;
+  const height = mode === "circle" || mode === "radar" ? 40 : 24;
   return (
     <canvas
       ref={canvasRef}
