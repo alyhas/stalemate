@@ -36,6 +36,12 @@ export default function ResizableVideo({
     localStorage.setItem("videoSize", JSON.stringify(size));
   }, [size]);
 
+  const adjustSize = (dx: number, dy: number) =>
+    setSize(({ width, height }) => ({
+      width: Math.max(160, width + dx),
+      height: Math.max(90, height + dy),
+    }));
+
   const startDrag = (e: React.MouseEvent) => {
     e.preventDefault();
     startX.current = e.clientX;
@@ -56,6 +62,26 @@ export default function ResizableVideo({
     window.addEventListener("mouseup", onUp);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case "ArrowRight":
+        adjustSize(10, 0);
+        break;
+      case "ArrowLeft":
+        adjustSize(-10, 0);
+        break;
+      case "ArrowUp":
+        adjustSize(0, -10);
+        break;
+      case "ArrowDown":
+        adjustSize(0, 10);
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+  };
+
   return (
     <div
       className="resizable-video"
@@ -67,7 +93,15 @@ export default function ResizableVideo({
         autoPlay
         playsInline
       />
-      <div className="resize-handle" onMouseDown={startDrag} />
+      <div
+        className="resize-handle"
+        role="slider"
+        tabIndex={0}
+        aria-label="Resize video"
+        aria-valuetext={`${size.width} by ${size.height}`}
+        onMouseDown={startDrag}
+        onKeyDown={handleKeyDown}
+      />
     </div>
   );
 }
