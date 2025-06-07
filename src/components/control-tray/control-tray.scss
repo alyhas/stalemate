@@ -251,10 +251,3 @@
   pointer-events: none;
   animation: ripple 0.5s ease-out;
 }
-
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}

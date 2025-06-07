@@ -1,5 +1,6 @@
 import React from "react";
 import cn from "classnames";
+import useRipple from "../../hooks/use-ripple";
 import "./button.scss";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -14,9 +15,14 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
+  const ripple = useRipple();
   return (
     <button
       className={cn("button", `button--${variant}`, className)}
+      onPointerDown={(e) => {
+        ripple(e);
+        props.onPointerDown?.(e);
+      }}
       {...props}
     >
       {icon && (
