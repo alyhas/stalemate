@@ -8,10 +8,22 @@
   padding: $spacing-lg $spacing-md;
   height: 100vh;
   overflow-y: auto;
+  flex-shrink: 0; // Prevent shrinking beyond its explicit width/flex-basis
+  // Transitions for theming and width changes (from JS and collapse class)
   transition: background-color $default-transition-duration $default-transition-timing-function,
               border-color $default-transition-duration $default-transition-timing-function,
+              // transform is for potential future off-canvas, width for collapse/resize
               transform $default-transition-duration $default-transition-timing-function,
-              width $default-transition-duration $default-transition-timing-function;
+              width $default-transition-duration $default-transition-timing-function,
+              flex-basis $default-transition-duration $default-transition-timing-function;
+
+
+  @media (max-width: ($breakpoint-md - 1px)) { // Small screens
+    width: 100% !important;  // Override inline style for full width
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+    border-right-width: 0; // No border when full width
+  }
 
   // Sidebar Header (optional, e.g., for logo or title within sidebar)
   .sidebar-header {
@@ -98,14 +110,14 @@
 
 // Collapsed state for sidebar (example, controlled by a class on a parent or sidebar itself)
 // This targets .app-sidebar when a parent (e.g. div.app) has .sidebar-collapsed
-.app.sidebar-collapsed .app-sidebar { // Increased specificity by adding .app
-  // Ensure this overrides the column's percentage width from .col-md-3
-  width: 80px !important; // Using !important for now to ensure override.
-  // Or, manage flex properties:
-  // flex-grow: 0;
-  // flex-shrink: 0;
-  // flex-basis: 80px;
-  padding-left: $spacing-xs; // Reduce padding when collapsed
+.app.sidebar-collapsed .app-sidebar {
+  // This class takes precedence over inline styles for open/resizable state,
+  // and sets the fixed collapsed width.
+  width: 80px !important; // Use a SCSS variable e.g. $collapsed-sidebar-width
+  flex-basis: 80px !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  padding-left: $spacing-xs;
   padding-right: $spacing-xs;
 
   .sidebar-header .sidebar-title,
@@ -163,4 +175,36 @@
   // }
 
   // Adjust main content margin when sidebar is open/closed if it's not fixed overlay
+}
+
+// Styles for the Sidebar Resize Handle
+.resize-handle-col {
+  width: 8px;
+  cursor: col-resize;
+  position: relative;
+  flex-shrink: 0;
+  // background-color: var(--border-color); // Make it subtly visible
+  // opacity: 0.3;
+
+  display: none; // Hidden by default (mobile-first)
+  @media (min-width: $breakpoint-md) {
+    display: block;
+  }
+
+  &:hover::after,
+  &.is-resizing::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 1px);
+    width: 2px;
+    background-color: var(--primary-color);
+    opacity: 0.6;
+  }
+}
+
+// When sidebar is collapsed, hide the resize handle
+.app.sidebar-collapsed .resize-handle-col {
+  display: none !important;
 }

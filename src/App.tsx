@@ -47,11 +47,32 @@ function App() {
   const [isPipMode, setIsPipMode] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
-  const [micMuted, setMicMuted] = useState(false); // New state for mic mute
+  const [micMuted, setMicMuted] = useState(false);
+
+  // Sidebar Resize States
+  const DEFAULT_SIDEBAR_WIDTH = 280;
+  const MIN_SIDEBAR_WIDTH = 220;
+  const MAX_SIDEBAR_WIDTH = 500;
+  const COLLAPSED_SIDEBAR_WIDTH = 80; // Matches SCSS collapsed width
+
+  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const savedWidth = localStorage.getItem('sidebarWidth');
+      if (savedWidth) {
+        const numWidth = parseInt(savedWidth, 10);
+        return Math.max(MIN_SIDEBAR_WIDTH, Math.min(numWidth, MAX_SIDEBAR_WIDTH));
+      }
+    }
+    return DEFAULT_SIDEBAR_WIDTH;
+  });
+  const [isResizing, setIsResizing] = useState(false);
+
+  const initialMouseXRef = useRef<number>(0);
+  const initialSidebarWidthRef = useRef<number>(0);
 
   const { connected } = useLiveAPIContext();
   const { toggleTheme } = useTheme();
-  const sidePanelRef = useRef<SidePanelHandle>(null); // Create ref for SidePanel
+  const sidePanelRef = useRef<SidePanelHandle>(null);
 
   const shortcutsConfig: ShortcutConfig = {
     'meta+shift+l': toggleTheme,
@@ -69,6 +90,49 @@ function App() {
   // setMicMuted etc are stable. toggleTheme is stable if memoized.
   useKeyboardShortcuts(shortcutsConfig, [toggleTheme, setMicMuted, setSettingsOpen, setSidebarCollapsed, setShortcutsHelpOpen]);
 
+  const handleMouseDown = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsResizing(true);
+    initialMouseXRef.current = event.clientX;
+    initialSidebarWidthRef.current = sidebarWidth;
+
+    const handle = document.getElementById('sidebar-resize-handle');
+    if (handle) {
+      handle.classList.add('is-resizing');
+    }
+  }, [sidebarWidth]);
+
+  const handleMouseMove = useCallback((event: MouseEvent) => {
+    const deltaX = event.clientX - initialMouseXRef.current;
+    let newWidth = initialSidebarWidthRef.current + deltaX;
+    newWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(newWidth, MAX_SIDEBAR_WIDTH));
+    setSidebarWidth(newWidth);
+  }, [setSidebarWidth]); // MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH are constants
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebarWidth', sidebarWidth.toString());
+    }
+    const handle = document.getElementById('sidebar-resize-handle');
+    if (handle) {
+      handle.classList.remove('is-resizing');
+    }
+  }, [sidebarWidth]);
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const togglePipMode = async () => {
     if (!videoRef.current) return;
@@ -143,16 +207,32 @@ function App() {
             </header>
 
         <div className="app-container container-fluid">
-          <div className="row">
-            <aside className="app-sidebar col-12 col-md-3">
+          <div className="row"> {/* This row is display: flex */}
+            <aside
+              className="app-sidebar" // Removed col-* classes for width, will be handled by style + SCSS
+              style={
+                // Inline style sets width for resizable and collapsed states on larger screens.
+                // SCSS media queries will override for small screens (stacking).
+                // SCSS for .app.sidebar-collapsed .app-sidebar will set fixed collapsed width.
+                sidebarCollapsed
+                  ? { flex: `0 0 ${COLLAPSED_SIDEBAR_WIDTH}px` }
+                  : { flex: `0 0 ${sidebarWidth}px` }
+              }
+            >
               <SidePanel
-                ref={sidePanelRef} // Pass ref
+                ref={sidePanelRef}
                 collapsed={sidebarCollapsed}
                 onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
               />
             </aside>
 
-            <main className="main-content col-12 col-md-9">
+            <div
+              className="resize-handle-col"
+              id="sidebar-resize-handle"
+              onMouseDown={handleMouseDown}
+            ></div>
+
+            <main className="main-content"> {/* Removed col-* classes */}
               <div className="workspace">
                 <div className="primary-content">
                   <h2>Primary Content Area</h2>

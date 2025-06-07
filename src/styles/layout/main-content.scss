@@ -9,19 +9,17 @@
   // The body already has this background, so main-content might not need its own unless it's visually distinct.
   // For now, no direct background set here, it will be transparent to body's background.
 
-  // The following margin-left assumes a fixed sidebar. Adjust as needed.
-  // margin-left: 250px;
-  // transition: margin-left 0.3s ease-in-out; // Smooth transition if sidebar collapses
+  // Default for mobile (stacks, takes full width)
+  width: 100%;
+  flex-basis: 100%; // Ensure it takes full width when stacked on small screens
+  min-width: 0; // Allow shrinking
 
-  // If header is fixed, add padding to top to prevent content from being obscured
-  // padding-top: calc(#{$spacing-lg} + 60px); // Assuming header height is approx 60px, adjust as needed
-
-  // Example: Full width content area (if not using a fixed-width container inside)
-  width: 100%; // Or auto if it's a flex item
-
-  // If using flexbox for overall page layout (e.g., body is flex container)
-  // flex-grow: 1; // Allows main content to take available space
-  // min-width: 0; // Fix for flex items that might otherwise overflow
+  @media (min-width: $breakpoint-md) { // Medium screens and up
+    flex-grow: 1;
+    flex-basis: 0; // Allow it to grow from 0, taking remaining space
+    // width: auto; // Not needed if flex-grow is 1
+    // min-width: 0; // Already set above, good for flex children
+  }
 
   // When sidebar is collapsed (assuming a class `sidebar-collapsed` on a parent, e.g., <body>)
   // This example assumes the sidebar width changes, and main-content margin adjusts.
@@ -30,14 +28,12 @@
   // }
 
   // When sidebar is collapsed, main-content should expand to fill available space
-  .app.sidebar-collapsed & { // Targeting .main-content when .app.sidebar-collapsed is a parent
-    @media (min-width: $breakpoint-md) { // Apply only on medium screens and up
-      // Override Bootstrap's column fixed width and allow it to grow
-      width: calc(100% - 80px); // Assuming sidebar is 80px when collapsed
-      // Or, if using flex properties directly on columns:
-      // flex-grow: 1;
-      // flex-basis: auto; // Reset basis from percentage
-      // max-width: none; // Remove max-width if set by column class
+  .app.sidebar-collapsed & {
+    @media (min-width: $breakpoint-md) {
+      // When sidebar is collapsed to 80px, main-content flex-grows into the space.
+      // The explicit width: calc(100% - 80px) might not be needed if flex properties are set correctly on all siblings in the row.
+      // width: calc(100% - 80px);
+      // flex-grow: 1; (already set for md+)
     }
   }
 }
@@ -107,16 +103,13 @@
 }
 
 // Responsive adjustments for main content
-@media (max-width: $breakpoint-lg) { // Same breakpoint used for sidebar collapse/off-canvas
+@media (max-width: ($breakpoint-md - 1px)) { // Small screens, ensure it takes full width
   .main-content {
-    // If sidebar becomes off-canvas, main content might take full width
-    // margin-left: 0; // Reset margin if sidebar is hidden or overlaid
-
-    // Adjust padding if needed for smaller screens
-    padding: $spacing-md;
-
-    // If header height changes on mobile, adjust padding-top
-    // padding-top: calc(#{$spacing-md} + 50px); // Example: smaller header height
+    padding: $spacing-md; // Keep reduced padding for small screens
+    flex-basis: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-grow: 0 !important; // Don't grow, rely on 100% width
   }
 }
 
