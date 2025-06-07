@@ -205,6 +205,7 @@
 
 .control-button {
   position: relative;
+  overflow: hidden;
 
   &[data-tooltip]::after {
     content: attr(data-tooltip);
@@ -238,5 +239,22 @@
     &:active {
       cursor: grabbing;
     }
+  }
+}
+
+.control-button .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.3;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple 0.5s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
   }
 }
