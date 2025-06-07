@@ -33,9 +33,11 @@ export type ControlTrayProps = {
   children?: ReactNode;
   supportsVideo: boolean;
   onVideoStreamChange?: (stream: MediaStream | null) => void;
-  enableEditingSettings?: boolean; // This will determine if settings button is shown
-  settingsOpen?: boolean; // From App.tsx
-  toggleSettings?: () => void; // From App.tsx
+  enableEditingSettings?: boolean;
+  settingsOpen?: boolean;
+  toggleSettings?: () => void;
+  muted: boolean; // New prop for microphone mute state
+  onToggleMute: () => void; // New prop for toggling mute
 };
 
 type MediaStreamButtonProps = {
@@ -53,9 +55,11 @@ function ControlTray({
   children,
   onVideoStreamChange = () => {},
   supportsVideo,
-  enableEditingSettings, // Keep for deciding whether to show settings functionality at all
-  settingsOpen,       // New prop for dialog visibility
-  toggleSettings,     // New prop to toggle dialog
+  enableEditingSettings,
+  settingsOpen,
+  toggleSettings,
+  muted,        // Destructure new prop
+  onToggleMute, // Destructure new prop
 }: ControlTrayProps) {
   const videoStreams = [useWebcam(), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
@@ -63,9 +67,9 @@ function ControlTray({
   const [webcam, screenCapture] = videoStreams;
   const [inVolume, setInVolume] = useState(0);
   const [audioRecorder] = useState(() => new AudioRecorder());
-  const [muted, setMuted] = useState(false);
+  // const [muted, setMuted] = useState(false); // Removed local state, use props.muted
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
-  const connectButtonRef = useRef<HTMLButtonElement>(null);
+  const connectButtonRef = useRef<HTMLButtonElement>(null); // This ref is not currently used by ControlButton
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -91,6 +95,7 @@ function ControlTray({
         },
       ]);
     };
+    // Use props.muted for AudioRecorder logic
     if (connected && !muted && audioRecorder) {
       audioRecorder.on("data", onData).on("volume", setInVolume).start();
     } else {
@@ -99,7 +104,7 @@ function ControlTray({
     return () => {
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
-  }, [connected, client, muted, audioRecorder]);
+  }, [connected, client, muted, audioRecorder]); // props.muted is now a dependency
 
   useEffect(() => {
     if (videoRef.current) {
@@ -156,11 +161,11 @@ function ControlTray({
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
         <ControlButton
-          icon={muted ? 'mic_off' : 'mic'}
-          label={muted ? 'Unmute' : 'Mute'}
-          active={!muted}
-          onClick={() => setMuted(!muted)}
-          className="mic-button" // Keep specific class for pulse animation
+          icon={muted ? 'mic_off' : 'mic'} // Use props.muted
+          label={muted ? 'Unmute' : 'Mute'} // Use props.muted
+          active={!muted} // active is when NOT muted
+          onClick={onToggleMute} // Use props.onToggleMute
+          className="mic-button"
           disabled={!connected}
         />
 

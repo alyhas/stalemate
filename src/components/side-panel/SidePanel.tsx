@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-// import "./react-select.scss"; // Removed react-select.scss import
+// import "./react-select.scss";
 import cn from "classnames";
-import { useEffect, useRef, useState, ChangeEvent } from "react"; // Added ChangeEvent
+import React, { useEffect, useRef, useState, ChangeEvent, forwardRef, useImperativeHandle } from "react"; // Added forwardRef, useImperativeHandle
 import { RiSidebarFoldLine, RiSidebarUnfoldLine } from "react-icons/ri";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
@@ -35,24 +35,44 @@ export interface SidePanelProps {
   onToggleCollapse: () => void;
 }
 
-export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProps) {
+export interface SidePanelHandle {
+  focusSearchInput: () => void;
+  triggerSendMessage: () => void;
+}
+
+const SidePanel = forwardRef<SidePanelHandle, SidePanelProps>(({ collapsed, onToggleCollapse }, ref) => {
   const { connected, client } = useLiveAPIContext();
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
   const { log, logs } = useLoggerStore();
 
   const [textInput, setTextInput] = useState("");
-  const [activeTab, setActiveTab] = useState<LoggerFilterType>('none'); // State for active tab
-  const [searchTerm, setSearchTerm] = useState(''); // New state for search term
-  const inputRef = useRef<HTMLTextAreaElement>(null); // Already correctly typed
+  const [activeTab, setActiveTab] = useState<LoggerFilterType>('none');
+  const [searchTerm, setSearchTerm] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const logSearchInputRef = useRef<HTMLInputElement>(null); // Ref for log search input
 
   // Auto-expand textarea height
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.style.height = 'auto'; // Reset height to shrink if text is deleted
+      inputRef.current.style.height = 'auto';
       inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
     }
   }, [textInput]);
+
+  // Expose methods via useImperativeHandle
+  useImperativeHandle(ref, () => ({
+    focusSearchInput: () => {
+      logSearchInputRef.current?.focus();
+    },
+    triggerSendMessage: () => {
+      // Only send if there's text and connected
+      if (textInput.trim() && connected) {
+        handleSubmit();
+      }
+    }
+  }), [textInput, connected, handleSubmit]); // Add dependencies
+
 
   //scroll the log to the bottom when new logs come in
   useEffect(() => {
@@ -120,6 +140,7 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
             placeholder="Search logs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            ref={logSearchInputRef} // Assign ref to log search input
           />
           {searchTerm && (
             <button
@@ -182,4 +203,7 @@ export default function SidePanel({ collapsed, onToggleCollapse }: SidePanelProp
       </div>
     </div>
   );
-}
+});
+
+export default SidePanel; // Keep default export if that's the convention
+// If memoization is needed: export default React.memo(SidePanel);

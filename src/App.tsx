@@ -16,9 +16,9 @@
 
 import { useRef, useState, ChangeEvent, useEffect } from "react";
 import "./App.scss";
-import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext"; // Import useLiveAPIContext
-import SidePanel from "./components/side-panel/SidePanel";
-import ControlTray, { ControlTrayProps } from "./components/control-tray/ControlTray"; // Import ControlTrayProps
+import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext";
+import SidePanel, { SidePanelHandle } from "./components/side-panel/SidePanel"; // Updated import
+import ControlTray /*, { ControlTrayProps } */ from "./components/control-tray/ControlTray"; // Removed ControlTrayProps as not used in this file
 import ControlButton from "./components/control-button/ControlButton";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
@@ -45,51 +45,29 @@ function App() {
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isPipMode, setIsPipMode] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false); // State for Settings Dialog
-  const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false); // State for Shortcuts Help Dialog
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
+  const [micMuted, setMicMuted] = useState(false); // New state for mic mute
 
-  // Placeholder for connection status - replace with actual logic
-  // const isConnected = true; // This should come from useLiveAPIContext
-  const { connected } /*, connect, disconnect */ = useLiveAPIContext(); // Get connected state
-
-  const { toggleTheme } = useTheme(); // Get toggleTheme for shortcut
-
-  // Placeholder functions for shortcuts until state is fully lifted/managed
-  const handleToggleMic = () => console.log('Shortcut: Toggle Mic (TODO: implement in ControlTray or lift state)');
-  const handleSendMessage = () => console.log('Shortcut: Send Message (TODO: implement in SidePanel or lift state)');
-  const handleFocusLogSearch = () => {
-    // This would ideally focus the input in SidePanel
-    console.log('Shortcut: Focus Log Search (TODO: implement focus management)');
-    const searchInput = document.querySelector('.log-search-input') as HTMLInputElement;
-    if (searchInput) {
-      searchInput.focus();
-    }
-  };
+  const { connected } = useLiveAPIContext();
+  const { toggleTheme } = useTheme();
+  const sidePanelRef = useRef<SidePanelHandle>(null); // Create ref for SidePanel
 
   const shortcutsConfig: ShortcutConfig = {
     'meta+shift+l': toggleTheme,
     'meta+,': () => setSettingsOpen(prev => !prev),
     'meta+b': () => setSidebarCollapsed(prev => !prev),
-    'meta+d': handleToggleMic,
-    'meta+enter': handleSendMessage,
-    'meta+k': handleFocusLogSearch,
-    '?': () => setShortcutsHelpOpen(prev => !prev),
-    // For '?' key, ensure generateKeyCombinationId handles it as '?' or 'shift+/'
-    // Current hook should register '?' directly if shift is not pressed, or 'shift+/' if shift is pressed
-    // The prompt used '?' which means event.key === '?' (usually Shift + /)
-    // The hook's generateKeyCombinationId uses event.key.toLowerCase(). If shift is pressed, it adds 'shift+'.
-    // So, 'shift+/' is the key for '?' if event.key is '/'. If event.key is '?', then 'shift+?' is the id.
-    // Let's assume the hook correctly identifies '?' with Shift+/ as '?' or 'shift+/'.
-    // The current hook will create 'shift+/' if user types '?' (Shift + /).
-    // So, the key should be 'shift+/'. Let's adjust for clarity.
-    // Actually, event.key for '?' is just '?', and shiftKey is true.
-    // So, the keyId would be 'shift+?'. Let's use that.
+    'meta+d': () => setMicMuted(prev => !prev),
+    'meta+enter': () => sidePanelRef.current?.triggerSendMessage(), // Use ref
+    'meta+k': () => sidePanelRef.current?.focusSearchInput(),   // Use ref
     'shift+?': () => setShortcutsHelpOpen(prev => !prev),
   };
 
-  // Pass relevant state setters to the dependencies if actions directly use them
-  // For now, toggleTheme, setSettingsOpen, setSidebarCollapsed are stable setters or direct calls.
-  useKeyboardShortcuts(shortcutsConfig, [toggleTheme]);
+  // Add sidePanelRef.current to dependencies if its methods rely on App.tsx states
+  // However, the methods exposed (focus, submit) are internal to SidePanel.
+  // The config object itself changes if any of its functions change.
+  // setMicMuted etc are stable. toggleTheme is stable if memoized.
+  useKeyboardShortcuts(shortcutsConfig, [toggleTheme, setMicMuted, setSettingsOpen, setSidebarCollapsed, setShortcutsHelpOpen]);
 
 
   const togglePipMode = async () => {
@@ -168,6 +146,7 @@ function App() {
           <div className="row">
             <aside className="app-sidebar col-12 col-md-3">
               <SidePanel
+                ref={sidePanelRef} // Pass ref
                 collapsed={sidebarCollapsed}
                 onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
               />
@@ -222,9 +201,11 @@ function App() {
                 videoRef={videoRef}
                 supportsVideo={true}
                 onVideoStreamChange={setVideoStream}
-                enableEditingSettings={true} // This prop might now be redundant if button is in ControlTray
+                enableEditingSettings={true}
                 settingsOpen={settingsOpen}
                 toggleSettings={() => setSettingsOpen(prev => !prev)}
+                muted={micMuted} // Pass micMuted state
+                onToggleMute={() => setMicMuted(prev => !prev)} // Pass toggle function
               >
             </main>
           </div>
