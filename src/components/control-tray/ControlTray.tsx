@@ -96,6 +96,7 @@ function ControlTray({
     },
   );
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const dragStartY = useRef(0);
 
   type TrayButtonId =
     | "mic"
@@ -311,6 +312,30 @@ function ControlTray({
     }
   };
 
+  const startTrayDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    dragStartY.current = e.clientY;
+    let pos = trayPosition;
+    const onMove = (ev: MouseEvent) => {
+      const diff = ev.clientY - dragStartY.current;
+      if (pos === "top" && diff > 80) {
+        onToggleTrayPosition();
+        pos = "bottom";
+        dragStartY.current = ev.clientY;
+      } else if (pos === "bottom" && diff < -80) {
+        onToggleTrayPosition();
+        pos = "top";
+        dragStartY.current = ev.clientY;
+      }
+    };
+    const stop = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", stop);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", stop);
+  };
+
   const statusLabel = connecting
     ? "Connecting"
     : connected
@@ -447,6 +472,7 @@ function ControlTray({
 
   return (
     <section className="control-tray">
+      <div className="tray-drag-handle" onMouseDown={startTrayDrag} aria-hidden="true" />
       <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav
         className={cn("actions-nav", { disabled: !connected })}

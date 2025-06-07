@@ -251,3 +251,19 @@
   pointer-events: none;
   animation: ripple 0.5s ease-out;
 }
+
+.tray-drag-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+.streaming-console.tray-bottom .tray-drag-handle {
+  top: -4px;
+}
+
+.streaming-console.tray-top .tray-drag-handle {
+  bottom: -4px;
+}
