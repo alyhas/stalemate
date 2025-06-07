@@ -5,42 +5,50 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-width: 0; // Fix for flexbox bugs
+  min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: var(--surface-color);
   background-clip: border-box;
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow-sm;
-  margin-bottom: $spacing-lg; // Default spacing between cards
+  border: var(--border-width, $border-width) solid var(--border-color);
+  border-radius: var(--border-radius, $border-radius);
+  box-shadow: var(--box-shadow-sm, $box-shadow-sm);
+  margin-bottom: $spacing-lg;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function,
+              box-shadow $default-transition-duration $default-transition-timing-function;
 
   // Card Header
   .card-header {
     padding: $spacing-md $spacing-lg;
-    margin-bottom: 0; // Reset default margin for headings
-    background-color: $light-gray;
-    border-bottom: $border-width solid $border-color;
-    border-top-left-radius: calc(#{$border-radius} - #{$border-width});
-    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
+    margin-bottom: 0;
+    background-color: var(--surface-header-color, var(--surface-color));
+    color: var(--text-on-surface-color);
+    border-bottom: var(--border-width, $border-width) solid var(--border-color);
+    border-top-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-top-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
 
-    &:first-child { // If header is the first element, ensure its top corners are rounded with the card
-      border-radius: calc(#{$border-radius} - #{$border-width}) calc(#{$border-radius} - #{$border-width}) 0 0;
+    &:first-child {
+      border-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width})) calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width})) 0 0;
     }
 
-    // For h* tags within header
     h1, h2, h3, h4, h5, h6 {
       margin-top: 0;
       margin-bottom: 0;
-      font-size: $font-size-lg; // Example: Larger font for card titles
+      font-size: $font-size-lg;
+      color: inherit; // Inherit from .card-header
     }
   }
 
   // Card Body
   .card-body {
-    flex: 1 1 auto; // Allow card body to grow and shrink
-    padding: $spacing-lg; // Content padding
+    flex: 1 1 auto;
+    padding: $spacing-lg;
+    color: var(--text-on-surface-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
 
-    // Clearfix for floated content
     &::after {
       content: "";
       clear: both;
@@ -51,44 +59,52 @@
   // Card Footer
   .card-footer {
     padding: $spacing-md $spacing-lg;
-    background-color: $light-gray;
-    border-top: $border-width solid $border-color;
-    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
-    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
+    background-color: var(--surface-header-color, var(--surface-color));
+    color: var(--text-on-surface-color);
+    border-top: var(--border-width, $border-width) solid var(--border-color);
+    border-bottom-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-bottom-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
 
-    &:last-child { // If footer is the last element, ensure its bottom corners are rounded
-      border-radius: 0 0 calc(#{$border-radius} - #{$border-width}) calc(#{$border-radius} - #{$border-width});
+    &:last-child {
+      border-radius: 0 0 calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width})) calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
     }
   }
 
-  // Card Title (if not using card-header)
+  // Card Title (if not using card-header, usually in card-body)
   .card-title {
-    margin-bottom: $spacing-md; // Space below title if it's in card-body
-    font-size: $font-size-xl; // Example size
+    margin-bottom: $spacing-md;
+    font-size: $font-size-xl;
     font-weight: $font-weight-bold;
+    color: var(--text-color-headings);
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   // Card Subtitle
   .card-subtitle {
     margin-top: -$spacing-md / 2;
     margin-bottom: $spacing-sm;
-    color: lighten($dark-gray, 20%);
+    color: var(--text-muted-on-surface-color, #{lighten($dark-gray, 20%)}); // Cards are surfaces
     font-size: $font-size-base;
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   // Card Text
   .card-text:last-child {
-    margin-bottom: 0; // Remove margin from last text element in card-body
+    margin-bottom: 0;
   }
 
   // Card Links
   .card-link {
-    color: $primary-color;
+    color: var(--primary-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
     &:hover {
-      color: darken($primary-color, 10%);
-      text-decoration: none; // Optional: remove underline on hover
+      color: var(--primary-color-hover);
+      text-decoration: none;
     }
-    + .card-link { // Spacing between multiple links
+    + .card-link {
       margin-left: $spacing-lg;
     }
   }
@@ -102,15 +118,15 @@
   }
 
   .card-img-top {
-    border-top-left-radius: calc(#{$border-radius} - #{$border-width});
-    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
-    border-width: $border-width $border-width 0 $border-width; // Border only on sides and top if needed
+    border-top-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-top-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-width: var(--border-width, $border-width) var(--border-width, $border-width) 0 var(--border-width, $border-width);
   }
 
   .card-img-bottom {
-    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
-    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
-    border-width: 0 $border-width $border-width $border-width; // Border only on sides and bottom
+    border-bottom-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-bottom-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-width: 0 var(--border-width, $border-width) var(--border-width, $border-width) var(--border-width, $border-width);
   }
 
   // Image overlays
@@ -121,7 +137,9 @@
     bottom: 0;
     left: 0;
     padding: $spacing-lg;
-    border-radius: calc(#{$border-radius} - #{$border-width}); // Match card's inner radius
+    border-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    // Text color on overlays might need specific theming if background images vary
+    // color: var(--text-color-on-overlay, #fff); // Example
   }
 }
 
@@ -154,25 +172,35 @@
 }
 
 
-// Contextual Card Variants (similar to panels, but might be more subtle)
+// Contextual Card Variants
 .card-primary {
-  border-color: $primary-color;
+  border-color: var(--primary-color, $primary-color);
   .card-header {
-    background-color: $primary-color;
-    color: #fff;
-    border-color: $primary-color;
+    background-color: var(--primary-color, $primary-color);
+    color: var(--text-color-on-primary, #{$white});
+    border-color: var(--primary-color, $primary-color);
   }
 }
 
 .card-secondary {
-  border-color: $secondary-color;
+  border-color: var(--secondary-color, $secondary-color);
   .card-header {
-    background-color: $secondary-color;
-    color: #fff;
-    border-color: $secondary-color;
+    background-color: var(--secondary-color, $secondary-color);
+    color: var(--text-color-on-secondary, #{$white});
+    border-color: var(--secondary-color, $secondary-color);
   }
 }
 // Add more contextual variants (success, danger, etc.) as needed, similar to panels.
+// Example:
+// .card-success {
+//   border-color: var(--success-color, $success-color);
+//   .card-header {
+//     background-color: var(--success-color, $success-color);
+//     color: var(--text-color-on-success, #{$white});
+//     border-color: var(--success-color, $success-color);
+//   }
+// }
+
 
 // Card with no shadow
 .card-no-shadow {
@@ -181,16 +209,16 @@
 
 // Card with larger shadow
 .card-shadow-lg {
-  box-shadow: $box-shadow-lg;
+  box-shadow: var(--box-shadow-lg, $box-shadow-lg);
 }
 
 // Card with no border
 .card-no-border {
-  border: none;
+  border: none !important;
   .card-header, .card-footer {
-    border-color: transparent;
+    border-color: transparent !important;
   }
   .card-img-top, .card-img-bottom {
-    border-color: transparent;
+    border-color: transparent !important;
   }
 }

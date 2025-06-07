@@ -8,11 +8,11 @@
 
   span {
     display: inline-block;
-    width: 8px;  // Dot size
-    height: 8px; // Dot size
-    background-color: var(--text-color-muted, $dark-gray); // Dot color, themeable
+    width: 8px;
+    height: 8px;
+    background-color: var(--text-muted-on-bg-color, $dark-gray); // Assuming it's usually on main bg
     border-radius: 50%;
-    opacity: 0.3; // Initial state for animation
+    opacity: 0.3;
     animation: typingDotsFade 1.4s infinite ease-in-out both;
 
     &:nth-child(1) {
@@ -37,6 +37,6 @@
 }
 
 .activity-text {
-  font-size: $font-size-sm; // Slightly smaller than base
-  color: var(--text-color-muted, $dark-gray); // Themeable
+  font-size: $font-size-sm;
+  color: var(--text-muted-on-bg-color, $dark-gray); // Assuming it's usually on main bg
 }

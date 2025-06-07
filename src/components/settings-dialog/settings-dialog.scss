@@ -23,12 +23,14 @@
     // Reset browser default dialog styles
     border: none;
     padding: 0;
-    // margin: auto; // Margin is handled by fixed positioning + transform
-    background-color: var(--dialog-bg-color, $background-color-light);
-    border-radius: $border-radius-lg;
-    box-shadow: $box-shadow-lg;
+    background-color: var(--dialog-bg-color);
+    border-radius: var(--border-radius-lg, $border-radius-lg);
+    box-shadow: var(--box-shadow-lg, $box-shadow-lg);
     max-width: 600px;
     width: 90vw;
+    // Adding base transition for dialog theme properties
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                box-shadow $default-transition-duration $default-transition-timing-function;
     
     // Positioning & Initial Animation State (Hidden)
     position: fixed;
@@ -56,11 +58,15 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3); // Slightly less dark than typical 0.5
-    z-index: 1040; // Below dialog, above everything else
+    background-color: var(--backdrop-bg-color, #{rgba($black, 0.3)});
+    z-index: 1040;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease-out, visibility 0s linear 0.2s;
+    // Transition for backdrop fade
+    transition: opacity $default-transition-duration ease-out,
+                visibility 0s linear $default-transition-duration,
+                background-color $default-transition-duration $default-transition-timing-function;
+
 
     &.active {
       opacity: 1;
@@ -78,12 +84,17 @@
   }
 
   .connected-indicator {
-    background-color: var(--warning-bg-color, #{lighten($warning-color, 35%)});
-    color: var(--warning-text-color, #{darken($warning-color, 35%)});
+    // Assuming --warning-bg-color and --warning-text-color will be defined in themes
+    // For now, let's use a more generic approach or ensure these are added to tokens.scss
+    // Using existing tokens for a similar visual:
+    background-color: var(--warning-bg-color);
+    color: var(--warning-text-color);
     padding: $spacing-md;
-    border-radius: $border-radius;
+    border-radius: var(--border-radius, $border-radius);
     margin-bottom: $spacing-lg;
     font-size: $font-size-sm;
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
     text-align: center;
 
     p {
@@ -98,7 +109,7 @@
       margin-bottom: 0;
     }
     // Optional: add border between categories
-    // border-bottom: 1px solid var(--border-color, $border-color);
+    // border-bottom: 1px solid var(--border-color);
     // padding-bottom: $spacing-xl;
     // &:last-child { border-bottom: none; padding-bottom: 0; }
   }
@@ -106,18 +117,19 @@
   .settings-category-title {
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
-    color: var(--text-color-headings, $dark-gray); // Use a heading color token or default
-    margin-top: 0; // Remove default h3 margin if any
+    color: var(--text-color-headings);
+    margin-top: 0;
     margin-bottom: $spacing-lg;
     display: flex;
     align-items: center;
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   .settings-category-icon {
     margin-right: $spacing-md;
-    font-size: $font-size-xl; // Match title size or slightly larger
-    color: var(--primary-color, $primary-color); // Icon color
-    // vertical-align: middle; // If not using flex
+    font-size: $font-size-xl;
+    color: var(--primary-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   .settings-category-content {
@@ -127,9 +139,10 @@
       margin-bottom: $spacing-md;
     }
     // For .select-group which might be direct children:
-    .select-group:not(:last-child) {
-         margin-bottom: $spacing-md;
-    }
+    // .select-group is styled below, its margin is handled by form-grid gap or direct styling.
+    // .select-group:not(:last-child) {
+    //      margin-bottom: $spacing-md; // This might be redundant if it's part of form-grid
+    // }
   }
 
   // Specific layout for forms within categories
@@ -158,24 +171,27 @@
       }
     }
     // Ensure inputs take full width of their grid cell
-    .form-control, .react-select-container, .gender-input-group {
+    .form-control, .react-select-container, .gender-input-group { // Ensure react-select also takes full width in grid
       width: 100%;
     }
     .gender-input-group {
       display: flex;
       align-items: center;
       gap: $spacing-sm;
+      // Ensure checkbox and span are aligned with other form controls if label is on top
+      // This might require adjusting the grid cell for the label of the checkbox.
+      // For now, assumes label is part of the same grid cell or handled by .form-field structure.
     }
   }
 
-  .form-field { // Wrapper for a label + input group, if not using direct grid placement
+  // .form-field can be used to group label and input if not using direct grid cell placement for each.
+  // If .form-grid directly places labels and inputs in cells, .form-field specific layout might be less critical.
+  // However, it's good for semantic grouping and consistent margin if used outside a direct grid assignment for label/input.
+  .form-field {
     display: flex;
     flex-direction: column;
-    margin-bottom: $spacing-md; // Consistent spacing between fields
-    @media (min-width: $breakpoint-sm) {
-        // If using form-grid with auto 1fr, this might not be needed for layout,
-        // but can still be used for grouping.
-    }
+    // margin-bottom: $spacing-md; // Handled by form-grid gap if it's a grid item
+
     label { margin-bottom: $spacing-xs; }
   }
 
@@ -184,16 +200,13 @@
   .select-group {
     display: flex;
     flex-direction: column;
-    gap: $spacing-xs; // Small gap between label and select
-    // height: auto; // Remove fixed height from original
-    // margin-bottom: $spacing-md; // Added by .settings-category-content general rule
+    gap: $spacing-xs;
 
-    & > label { // Style for the label of react-select
-      font-size: $font-size-base; // Use base font size for labels
+    & > label {
+      font-size: $font-size-base;
       font-weight: $font-weight-normal;
-      // margin-bottom: $spacing-xs; // Replaced by gap on parent
+      color: var(--text-color); // Ensure label color is themed
     }
-    // react-select styling is handled by its `styles` prop using token-like values
   }
 
 
@@ -211,45 +224,50 @@
   }
 
   .fd-row-name {
-    font-family: $font-family-monospace; // Good for code-like names
+    font-family: $font-family-monospace;
     font-size: $font-size-sm;
     font-weight: $font-weight-bold;
-    color: var(--primary-color, $primary-color); // Use primary color for the name
-    border-radius: $border-radius;
-    border: 1px solid var(--border-color, $border-color);
+    color: var(--primary-color);
+    border-radius: var(--border-radius, $border-radius);
+    border: 1px solid var(--border-color);
     padding: $spacing-sm;
-    word-break: break-all; // Break long names
+    word-break: break-all;
+    transition: color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function;
   }
 
   .fd-row-args {
     padding: $spacing-sm;
     font-size: $font-size-xs;
-    color: var(--text-muted, $dark-gray);
+    color: var(--text-muted-on-surface-color); // Dialog is a surface
     word-break: break-all;
+    transition: color $default-transition-duration $default-transition-timing-function;
 
     > span:not(:last-child)::after {
       content: ", ";
     }
   }
 
-  // .fd-row-description is an input with .form-control.
-  // Overrides from previous step are applied here:
   .fd-row-description.form-control {
-    background: transparent;
-    border: 1px solid transparent; // Minimal border
-    color: var(--text-color, $dark-gray);
+    background: transparent; // This already has its own hover/focus transitions for bg/border
+    border: 1px solid transparent;
+    color: var(--text-color);
     font-size: $font-size-sm;
     padding: $spacing-xs;
-    height: auto; // Let input content define height, or min-height from .form-control
+    height: auto;
+    // Transitions for background, border-color are already part of its hover/focus states
+    // Add transition for text color if it can change with theme
+    transition: color $default-transition-duration $default-transition-timing-function;
+
 
     &:hover {
-      background: var(--surface-hover-color, #{rgba($black, 0.05)});
-      border-color: var(--border-color, $border-color);
+      background: var(--surface-hover-color);
+      border-color: var(--border-color);
     }
     &:focus {
-      background: var(--surface-hover-color, #{rgba($black, 0.05)});
-      border-color: $primary-color;
-      box-shadow: none; // Remove default form-control focus shadow
+      background: var(--surface-hover-color);
+      border-color: var(--primary-color);
+      box-shadow: none;
     }
   }
 

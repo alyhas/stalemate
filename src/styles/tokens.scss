@@ -30,3 +30,107 @@ $border-color: $light-gray;
 $box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 $box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 $box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+// CSS Custom Properties (defaults to light theme values from above)
+// These are intended to be overridden by theme-specific classes like .theme-dark
+:root {
+  // Core Colors
+  --primary-color: #{$primary-color};
+  --secondary-color: #{$secondary-color};
+  --success-color: #{$success-color};
+  --danger-color: #{$danger-color};
+  --warning-color: #{$warning-color};
+  --info-color: #{$info-color};
+
+  // Backgrounds & Surfaces
+  --background-color: #{$light-gray}; // Default light theme background (using $light-gray, often #fff is used too)
+                                     // Let's use #fff for main background and $light-gray for surface
+  --background-color-main: #fff;    // Main page background
+  --surface-color: #{$light-gray};   // For cards, panels, headers with a slight off-white bg
+
+  // Text Colors
+  --text-color: #{$dark-gray};
+  --text-on-surface-color: #{$dark-gray};
+  // --text-muted-color: #{lighten($dark-gray, 25%)}; // Old single muted color
+  --text-muted-on-bg-color: #6c757d; // Approx lighten($dark-gray, 25%), good on #fff
+  --text-muted-on-surface-color: #5a6268; // Darker for use on $light-gray surfaces
+  --text-color-headings: #{$dark-gray};
+
+  // Borders
+  --border-color: #{$border-color}; // Uses $light-gray by default
+
+  // Non-color tokens (usually not themed but good to have as CSS vars for consistency)
+  --border-radius: #{$border-radius};
+  --border-radius-lg: calc(#{$border-radius} * 2); // Example for larger radius elements like dialogs
+  --border-width: #{$border-width};
+
+  --box-shadow-sm: #{$box-shadow-sm};
+  --box-shadow: #{$box-shadow};
+  --box-shadow-lg: #{$box-shadow-lg};
+
+  // Input specific colors (derived from base colors for light theme)
+  --input-background-color: #fff;
+  --input-text-color: #{$dark-gray};
+  --input-border-color: #{$border-color}; // Same as default border color
+  --input-focus-border-color: #{lighten($primary-color, 25%)};
+  --input-focus-box-shadow: 0 0 0 0.2rem #{rgba($primary-color, 0.25)};
+  --input-placeholder-color: #{lighten($dark-gray, 40%)};
+
+  // Specific component colors (examples, can be expanded)
+  --dialog-bg-color: var(--surface-color); // Dialogs use surface color
+  --dialog-border-color: var(--border-color);
+  --media-background-color: #000; // Video player background often black
+  --media-border-color: var(--border-color);
+
+  // Activity Indicator colors
+  --audio-pulse-inactive-color: #{lighten($dark-gray, 50%)}; // e.g. $gray-300
+  --audio-pulse-low-color: #{$primary-color};
+  --audio-pulse-medium-color: #{$warning-color};
+  --audio-pulse-high-color: #{$danger-color};
+
+  // Tooltip
+  --tooltip-bg-color: #{$dark-gray};
+  --tooltip-text-color: #{$light-gray};
+
+  // Softer border color for subtle separators
+  --border-color-soft: #{lighten($border-color, 5%)}; // Lighten the default border color
+
+  // Interactive States (derived for light theme default)
+  --primary-color-hover: #{darken($primary-color, 7.5%)};
+  --primary-color-active: #{darken($primary-color, 10%)};
+  --primary-color-focus-shadow: #{rgba($primary-color, 0.25)};
+
+  --secondary-color-hover: #{darken($secondary-color, 7.5%)};
+  --secondary-color-active: #{darken($secondary-color, 10%)};
+
+  --success-color-hover: #{darken($success-color, 7.5%)};
+  --success-color-active: #{darken($success-color, 10%)};
+
+  --danger-color-hover: #{darken($danger-color, 7.5%)};
+  --danger-color-active: #{darken($danger-color, 10%)};
+
+  --warning-color-hover: #{darken($warning-color, 7.5%)};
+  --warning-color-active: #{darken($warning-color, 10%)};
+
+  --info-color-hover: #{darken($info-color, 7.5%)};
+  --info-color-active: #{darken($info-color, 10%)};
+
+  // General surface interactions for light theme
+  --surface-hover-color: #{rgba(0,0,0,0.03)};
+  --surface-active-color: #{rgba(0,0,0,0.05)};
+  --surface-selected-color: #{mix($primary-color, $light-gray, 15%)};
+
+  // Text on colored backgrounds (light theme defaults)
+  --text-color-on-primary: #{$white};
+  --text-color-on-secondary: #{$white};
+  --text-color-on-success: #{$white};
+  --text-color-on-danger: #{$white};
+  --text-color-on-warning: #{$dark-gray};
+  --text-color-on-info: #{$white};
+
+  // Specific hover/active text colors if needed (e.g. if text on primary changes on hover)
+  // --text-color-on-primary-hover: #{darken(#fff, 10%)}; (Example)
+
+  --text-color-on-primary-hover: #{darken(#fff, 15%)}; // Already defined, ensure it's used if needed
+  --surface-hover-on-primary: #{rgba(#fff, 0.1)}; // Already defined
+}

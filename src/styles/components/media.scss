@@ -74,15 +74,15 @@
 // Media Player (placeholder for custom video/audio player styling)
 .media-player {
   position: relative;
-  background-color: $dark-gray; // Default dark background for players
-  border-radius: $border-radius;
-  overflow: hidden; // Ensure controls or overlays stay within bounds
-  box-shadow: $box-shadow;
+  background-color: var(--surface-color, $dark-gray); // Use surface color, fallback to dark-gray for player bg
+  border-radius: var(--border-radius, $border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow, $box-shadow);
 
   video, audio {
-    display: block; // Remove extra space below inline elements
+    display: block;
     width: 100%;
-    height: auto; // Maintain aspect ratio by default
+    height: auto;
   }
 
   // Placeholder for custom controls overlay
@@ -92,10 +92,10 @@
     left: 0;
     right: 0;
     padding: $spacing-sm $spacing-md;
-    background-color: rgba(0, 0, 0, 0.5); // Semi-transparent overlay
-    color: #fff;
-    opacity: 0; // Hidden by default, shown on hover/focus or via JS
-    transition: opacity 0.2s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.5); // This overlay is usually dark
+    color: var(--text-color-on-dark-bg, #fff); // Text on dark overlay
+    opacity: 0;
+    transition: opacity $default-transition-duration $default-transition-timing-function;
 
     // Example: Play/pause button, progress bar, volume
     // .btn-play-pause { ... }
@@ -117,12 +117,12 @@
 
 .img-thumbnail {
   padding: $spacing-xs;
-  background-color: $light-gray;
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
+  background-color: var(--surface-color, $light-gray);
+  border: var(--border-width, $border-width) solid var(--border-color, $border-color);
+  border-radius: var(--border-radius, $border-radius);
   max-width: 100%;
   height: auto;
-  box-shadow: $box-shadow-sm;
+  box-shadow: var(--box-shadow-sm, $box-shadow-sm);
 }
 
 // Figure element for images with captions
@@ -136,9 +136,9 @@
   }
 
   .figure-caption {
-    font-size: $font-size-sm * 0.9; // Smaller font for captions
-    color: lighten($dark-gray, 20%);
-    text-align: center; // Example: center caption text
+    font-size: $font-size-sm * 0.9;
+    color: var(--text-muted-color, #{lighten($dark-gray, 20%)});
+    text-align: center;
   }
 }
 
@@ -159,18 +159,17 @@
 
 // Styles for the application's main video display area
 .media-container {
-  background-color: var(--media-background-color, #000); // Default to black, can be themed
-  padding: $spacing-xs; // Small padding to act as part of the frame
-  border-radius: $border-radius; // Consistent border radius
-  border: 1px solid var(--media-border-color, $dark-gray); // Subtle border
-  box-shadow: $box-shadow-sm; // Optional: a very subtle shadow for depth
-  width: 100%; // Take full width of its parent in .workspace
-  // max-width: 800px; // Example max-width if needed
-  margin: 0 auto; // Center if max-width is applied
-  display: flex; // To help center video or manage aspect ratio if needed
+  background-color: var(--media-background-color, #000);
+  padding: $spacing-xs;
+  border-radius: var(--border-radius, $border-radius);
+  border: 1px solid var(--media-border-color, $dark-gray);
+  box-shadow: var(--box-shadow-sm, $box-shadow-sm);
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; // Ensure border-radius clips video stream
+  overflow: hidden;
 
   // Styles for when PiP mode is active (from issue example)
   &.picture-in-picture {
@@ -195,13 +194,9 @@
 .video-stream {
   display: block;
   width: 100%;
-  height: 100%; // Fill the .media-container height
-  max-height: 100%; // Fill the .media-container height
-  object-fit: contain; // Maintain aspect ratio within the container bounds
-  // The border-radius should ideally match the container's inner radius.
-  // If .media-container has padding: $spacing-xs, this is correct.
-  // If .media-container padding is $spacing-md (from main-content.scss), this should be calc(#{$border-radius} - #{$spacing-md})
-  // For now, assume $spacing-xs is the effective inner padding for the video frame.
-  border-radius: calc(#{$border-radius} - #{$spacing-xs});
-  background-color: #111; // Fallback/letterbox color
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: calc(var(--border-radius, #{$border-radius}) - #{$spacing-xs}); // Assumes $spacing-xs is the inner frame padding
+  background-color: var(--media-video-fallback-bg, #111); // Fallback/letterbox color
 }

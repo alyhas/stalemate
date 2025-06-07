@@ -38,12 +38,27 @@ body {
   font-size: $font-size-md;
   font-weight: $font-weight-normal;
   line-height: $line-height-md;
-  color: $dark-gray; // Example text color from original typography.scss
+  color: var(--text-color, $dark-gray);
+  background-color: var(--background-color-main, #fff);
+
+  // Add transitions for theme switch
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function;
 }
 
-code {
-  font-family: $font-family-monospace; // From original typography.scss, similar to index.css
+code, kbd, samp, pre { // Consolidated pre here
+  font-family: $font-family-monospace;
+  font-size: 1em; // Usually 1em of parent font size
+  // Add background/padding for <pre> and <code> if desired globally
+  // For example:
+  // pre, code {
+  //   background-color: var(--surface-color, $light-gray);
+  //   padding: $spacing-xs $spacing-sm;
+  //   border-radius: $border-radius;
+  // }
+  // SyntaxHighlighter will handle its own styling for code blocks it renders.
 }
+
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-family-sans-serif; // Or a specific heading font
@@ -51,6 +66,7 @@ h1, h2, h3, h4, h5, h6 {
   line-height: $line-height-sm; // Example heading line height
   margin-top: $spacing-lg;
   margin-bottom: $spacing-md;
+  color: var(--text-color-headings, $dark-gray); // Use CSS var for heading color
 }
 
 h1 { font-size: $font-size-xl; }
@@ -60,14 +76,15 @@ h3 { font-size: $font-size-base * 1.125; } // ~18px
 
 p {
   margin-bottom: $spacing-md;
+  // color: var(--text-color); // Body already sets this, p will inherit
 }
 
 a {
-  color: $primary-color;
+  color: var(--primary-color, $primary-color);
   text-decoration: none; // Or customize
 
   &:hover {
-    color: darken($primary-color, 10%);
+    color: var(--primary-color-hover, #{darken($primary-color, 10%)});
     text-decoration: underline; // Or customize
   }
 }
@@ -81,11 +98,7 @@ a {
 .letter-spacing-normal { letter-spacing: $letter-spacing-normal; }
 .letter-spacing-wide { letter-spacing: $letter-spacing-wide; }
 
-// Ensure our defined monospace font is applied to code elements
-pre, code, kbd, samp {
-  font-family: $font-family-monospace;
-  font-size: 1em; // Usually 1em of parent font size
-}
+// Ensure our defined monospace font is applied to code elements (already handled above)
 
 // Text color utilities
 .text-primary { color: $primary-color !important; }
@@ -100,8 +113,9 @@ pre, code, kbd, samp {
 // Let's add a specific color for .text-muted here for consistency with other text utilities.
 // The original .text-light, .text-normal, .text-bold were for font-weight.
 // It's better to have .text-muted for color and keep .font-weight-light for weight.
-// The prompt example for .text-muted was `lighten($dark-gray, 25%)`.
-.text-muted-color { color: lighten($dark-gray, 25%) !important; }
+.text-muted-color { color: var(--text-muted-on-bg-color, #{lighten($dark-gray, 25%)}) !important; }
+// Utility for muted text on a surface background, if needed explicitly
+.text-muted-on-surface { color: var(--text-muted-on-surface-color, #{darken($dark-gray, 10%)}) !important; }
 // Or, if .text-light from above is intended for text on dark backgrounds,
 // then we might need a .text-gray or similar.
 // For now, .text-light uses $light-gray, which is light.

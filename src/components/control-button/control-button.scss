@@ -2,13 +2,12 @@
 
 .control-button {
   background-color: transparent;
-  border: 1px solid transparent; // Default: no visible border
-  // border: 1px solid var(--border-color); // Alternative: subtle border always visible
+  border: 1px solid transparent;
   padding: $spacing-sm;
   border-radius: $border-radius;
   cursor: pointer;
-  color: var(--text-color, $dark-gray); // Use themed text color, fallback to dark-gray
-  position: relative; // For status-indicator and tooltip positioning
+  color: var(--text-color); // Default icon/text color from theme
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,15 +17,15 @@
   -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
 
   &:focus {
-    outline: 2px solid $primary-color; // Standard focus outline
+    outline: 2px solid var(--primary-color, $primary-color); // Use themed primary color for outline
     outline-offset: 2px;
   }
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5; // Standard disabled opacity
-    background-color: transparent; // Ensure no background on disabled
-    color: var(--text-muted, $dark-gray); // Muted color when disabled
+    opacity: 0.5;
+    background-color: transparent;
+    color: var(--text-muted-on-bg-color, #{lighten($dark-gray, 25%)}); // Default to on-bg version
   }
 
   .control-button-icon {
@@ -38,48 +37,42 @@
   .status-indicator {
     width: 6px;
     height: 6px;
-    background-color: $primary-color; // Or a specific 'active-indicator-color' token
+    background-color: var(--primary-color, $primary-color); // Use themed primary color
     border-radius: 50%;
     position: absolute;
-    top: $spacing-xs; // Adjust as needed (4px)
-    right: $spacing-xs; // Adjust as needed (4px)
-    // Add a small border to make it pop on various backgrounds
-    // border: 1px solid var(--background-color, $white);
+    top: $spacing-xs;
+    right: $spacing-xs;
+    // border: 1px solid var(--background-color); // Optional: border against button background
   }
 
   // Hover and Active states
   &:not(:disabled):hover {
-    // Using rgba for generic hover effect, replace with theme variable if available
-    background-color: var(--surface-hover-color, rgba(0, 0, 0, 0.05));
-    // border-color: var(--border-color-hover, $primary-color); // Example: show border on hover
+    background-color: var(--surface-hover-color); // Use defined CSS var
   }
 
   &:not(:disabled):active {
-    // Using rgba for generic active effect
-    background-color: var(--surface-active-color, rgba(0, 0, 0, 0.1));
+    background-color: var(--surface-active-color); // Use defined CSS var
   }
 
   // Toggled active state (when props.active is true)
   &.active:not(:disabled) {
-    background-color: var(--surface-selected-color, #{mix($primary-color, $light-gray, 15%)});
-    // color: $primary-color; // Or change icon color if background is not enough
-    // border-color: $primary-color; // Optional: border for active state
+    background-color: var(--surface-selected-color); // Use defined CSS var
+    // color: var(--primary-color); // Optional: change icon color if selection implies primary interaction
   }
 
   // Outlined variant
   &.outlined {
     background-color: transparent;
-    border: 1px solid var(--border-color, $border-color); // Use a visible border color
+    border: 1px solid var(--border-color);
 
     &:not(:disabled):hover {
-      background-color: var(--surface-hover-color, rgba(0, 0, 0, 0.05));
-      border-color: var(--border-color-hover, $primary-color);
+      background-color: var(--surface-hover-color);
+      border-color: var(--primary-color-hover, var(--primary-color)); // Use hover state for border too
     }
-    // Active state for outlined button might need specific styling if different from default .active
     &.active:not(:disabled) {
-      background-color: var(--surface-selected-color, #{mix($primary-color, $light-gray, 15%)});
-      border-color: $primary-color; // Ensure border matches active state
-      color: $primary-color; // Text color might need to change if bg is light
+      background-color: var(--surface-selected-color);
+      border-color: var(--primary-color, $primary-color);
+      color: var(--primary-color, $primary-color);
     }
   }
 }
@@ -102,11 +95,11 @@
   &::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%; // Position above the button
+    bottom: 100%;
     left: 50%;
-    transform: translateX(-50%) translateY(-($spacing-xs + 2px)); // Center it and add small gap (2px for potential arrow)
-    background-color: $dark-gray; // Tooltip background (use a specific token if available, e.g., $tooltip-bg)
-    color: $light-gray; // Tooltip text color (e.g., $tooltip-text-color)
+    transform: translateX(-50%) translateY(-($spacing-xs + 2px));
+    background-color: var(--tooltip-bg-color, $dark-gray); // Use themed tooltip background
+    color: var(--tooltip-text-color, $light-gray);       // Use themed tooltip text color
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius;
     font-size: $font-size-sm;

@@ -33,7 +33,9 @@ export type ControlTrayProps = {
   children?: ReactNode;
   supportsVideo: boolean;
   onVideoStreamChange?: (stream: MediaStream | null) => void;
-  enableEditingSettings?: boolean;
+  enableEditingSettings?: boolean; // This will determine if settings button is shown
+  settingsOpen?: boolean; // From App.tsx
+  toggleSettings?: () => void; // From App.tsx
 };
 
 type MediaStreamButtonProps = {
@@ -51,7 +53,9 @@ function ControlTray({
   children,
   onVideoStreamChange = () => {},
   supportsVideo,
-  enableEditingSettings,
+  enableEditingSettings, // Keep for deciding whether to show settings functionality at all
+  settingsOpen,       // New prop for dialog visibility
+  toggleSettings,     // New prop to toggle dialog
 }: ControlTrayProps) {
   const videoStreams = [useWebcam(), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
@@ -185,6 +189,15 @@ function ControlTray({
           </>
         )}
         {children}
+        {/* Settings Button, if enableEditingSettings is true */}
+        {enableEditingSettings && toggleSettings && (
+          <ControlButton
+            icon="settings"
+            label="Settings"
+            onClick={toggleSettings} // Use the passed toggle function
+            active={settingsOpen}   // Optionally make it look active when dialog is open
+          />
+        )}
       </nav>
 
       <div className={cn("connection-container", { connected })}>
@@ -194,14 +207,17 @@ function ControlTray({
             label={connected ? 'Disconnect' : 'Connect'}
             active={connected}
             onClick={connected ? disconnect : connect}
-            className="connect-toggle" // Keep specific class if needed for styling
-            // ref={connectButtonRef} // ControlButton does not forward refs by default
-            // If connectButtonRef is essential, ControlButton needs to use React.forwardRef
+            className="connect-toggle"
+            // ref={connectButtonRef} // Still needs forwardRef in ControlButton if used
           />
         </div>
         <span className="text-indicator">Streaming</span>
       </div>
-      {enableEditingSettings ? <SettingsDialog /> : ""}
+      {/* Render SettingsDialog conditionally based on props.settingsOpen */}
+      {/* The SettingsDialog itself is no longer self-triggering its visibility */}
+      {enableEditingSettings && typeof settingsOpen === 'boolean' && toggleSettings && (
+        <SettingsDialog isOpen={settingsOpen} onClose={toggleSettings} />
+      )}
     </section>
   );
 }

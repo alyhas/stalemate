@@ -1,6 +1,8 @@
 import {
   useCallback,
+  useEffect, // Added useEffect
   useMemo,
+  useRef, // Added useRef
   useState,
 } from "react";
 import "./settings-dialog.scss";
@@ -13,8 +15,13 @@ type FunctionDeclarationsTool = Tool & {
   functionDeclarations: FunctionDeclaration[];
 };
 
-export default function SettingsDialog() {
-  const [open, setOpen] = useState(false);
+export interface SettingsDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function SettingsDialog({ isOpen, onClose }: SettingsDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
     if (!Array.isArray(config.tools)) {
@@ -66,22 +73,66 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
     [config, setConfig]
   );
 
+  useEffect(() => {
+    const dialogNode = dialogRef.current;
+    if (isOpen && dialogNode) {
+      // Initial focus
+      const focusableElementsQuery = 'button, [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      const firstFocusable = dialogNode.querySelector<HTMLElement>(focusableElementsQuery);
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+
+      // Focus trapping and Escape key listener
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Tab') {
+          const focusables = Array.from(dialogNode.querySelectorAll<HTMLElement>(focusableElementsQuery))
+                                .filter(el => el.offsetParent !== null && !el.hasAttribute('disabled'));
+
+          if (focusables.length === 0) return;
+
+          const firstFocusableElement = focusables[0];
+          const lastFocusableElement = focusables[focusables.length - 1];
+
+          if (event.shiftKey) { // Shift + Tab
+            if (document.activeElement === firstFocusableElement) {
+              lastFocusableElement.focus();
+              event.preventDefault();
+            }
+          } else { // Tab
+            if (document.activeElement === lastFocusableElement) {
+              firstFocusableElement.focus();
+              event.preventDefault();
+            }
+          }
+        } else if (event.key === 'Escape') {
+          onClose();
+        }
+      };
+
+      dialogNode.addEventListener('keydown', handleKeyDown);
+      return () => {
+        // Check if dialogNode still exists before removing listener
+        // This can happen if the component unmounts before the effect cleanup for some reason
+        if (dialogNode) {
+            dialogNode.removeEventListener('keydown', handleKeyDown);
+        }
+      };
+    }
+  }, [isOpen, onClose]);
+
+
   return (
-    <div className="settings-dialog">
-      <button
-        className="action-button material-symbols-outlined"
-        onClick={() => setOpen(!open)}
-      >
-        settings
-      </button>
-
-      {/* Backdrop for the dialog */}
-      <div className={cn("dialog-backdrop", { "active": open })} onClick={() => setOpen(false)}></div>
-
-      {/* Dialog element */}
-      <dialog className={cn("dialog", { "dialog-open": open })}>
-        {/* Prevent clicks inside the dialog from closing it via the backdrop's onClick */}
+    <div className={cn("settings-dialog-modal-wrapper", { "visible": isOpen })}>
+      <div className={cn("dialog-backdrop", { "active": isOpen })} onClick={onClose}></div>
+      <dialog ref={dialogRef} className={cn("dialog", { "dialog-open": isOpen })} open={isOpen}>
         <div className={`dialog-container ${connected ? "disabled" : ""}`} onClick={(e) => e.stopPropagation()}>
+          <header className="dialog-header">
+            <h2>Settings</h2>
+            <button className="control-button dialog-internal-close-button material-symbols-outlined" onClick={onClose} aria-label="Close settings">
+              close
+            </button>
+          </header>
           {connected && (
             <div className="connected-indicator">
               <p>

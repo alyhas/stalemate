@@ -1,133 +1,174 @@
 // SCSS for SidePanel component - internal layout and content visibility
-@import '../../styles/tokens'; // For using design tokens if needed for colors, fonts, etc.
+@import '../../styles/tokens';
+@import '../../styles/animations'; // For transition variables
 
 .side-panel {
-  // background: var(--Neutral-00); // Example: Use a token like $surface-color or specific variable
-  background-color: $background-color-light; // Assuming light theme, or use CSS var like var(--surface-color)
+  background-color: var(--surface-color);
   display: flex;
   flex-direction: column;
-  height: 100%; // Fill the height of .app-sidebar container
-  overflow: hidden; // Important: hide content that overflows during collapse
-  // width: 100%; // Fill width of parent .app-sidebar. Width is controlled by .app-sidebar.
-  // transition: all 0.2s ease-in; // Original transition, review if still needed for things other than width
-  font-family: $font-family-base; // Use token
-  // border-right: 1px solid var(--gray-600); // Border is on .app-sidebar
-  color: var(--text-color); // Use themed text color
-  font-size: $font-size-sm; // Approx 13px
+  height: 100%;
+  overflow: hidden;
+  font-family: $font-family-base;
+  color: var(--text-on-surface-color);
+  font-size: $font-size-sm;
   line-height: $line-height-base;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function;
 
   .hidden {
     display: none !important;
   }
 
-  // Styles for when the panel is "open" (i.e., !props.collapsed)
+  // Transitions for sections when opening/closing
   &.open {
-    .top {
-      h2 {
-        opacity: 1;
-      }
-    }
-
+    .top h2,
     .log-tabs,
-    .log-search-toolbar, // Added .log-search-toolbar
+    .log-search-toolbar,
     .indicators,
     .side-panel-container,
-    .input-container {
+    .input-container,
+    .indicators .streaming-indicator span.text {
       opacity: 1;
       visibility: visible;
-      transition: opacity 0.2s ease-in 0.1s, visibility 0s linear 0.1s, height 0.2s ease-in 0.1s, margin 0.2s ease-in 0.1s, padding 0.2s ease-in 0.1s;
+      transition: opacity 0.2s $default-transition-timing-function 0.1s,
+                  visibility 0s linear 0.1s,
+                  height 0.2s $default-transition-timing-function 0.1s,
+                  margin 0.2s $default-transition-timing-function 0.1s,
+                  padding 0.2s $default-transition-timing-function 0.1s;
     }
 
-    .log-tabs, .log-search-toolbar { // Specific styles for opening these
+    .log-tabs, .log-search-toolbar {
       height: auto;
-      // Restore margins/paddings if they change on collapse
-    }
-
-    .indicators .streaming-indicator span.text { // Assuming text is wrapped in a span
-      opacity: 1;
     }
   }
 
-  // Styles for when the panel is "collapsed" (i.e., props.collapsed is true)
   &.collapsed {
-    .top {
-      h2 {
-        opacity: 0;
-      }
-    }
-
-    .opener {
-      // transform: translate(0,0); // Reset transform if any
-    }
-
+    .top h2,
     .log-tabs,
-    .log-search-toolbar, // Added .log-search-toolbar
+    .log-search-toolbar,
     .indicators,
     .side-panel-container,
-    .input-container {
+    .input-container,
+    .indicators .streaming-indicator span.text {
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.1s ease-out, visibility 0s linear 0.1s, height 0.1s ease-out, margin 0.1s ease-out, padding 0.1s ease-out;
+      transition: opacity 0.1s $default-transition-timing-function,
+                  visibility 0s linear 0.1s,
+                  height 0.1s $default-transition-timing-function,
+                  margin 0.1s $default-transition-timing-function,
+                  padding 0.1s $default-transition-timing-function;
     }
 
-    .log-tabs, .log-search-toolbar { // Specific styles for collapsing these
+    .log-tabs, .log-search-toolbar {
       height: 0;
       margin-bottom: 0;
       padding-top: 0;
       padding-bottom: 0;
       overflow: hidden;
     }
-    .log-tabs { // Keep border hidden for tabs when collapsed
+    .log-tabs {
         border-bottom-width: 0;
-    }
-
-
-    .indicators .streaming-indicator span.text { // Assuming text "Streaming" / "Paused" is wrapped
-      opacity: 0;
     }
   }
 
+  // --- Sections Styling ---
   .top {
     display: flex;
-    // width: calc(100% - 45px); // Let it be 100% and padding control inner space
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: $spacing-md $spacing-sm; // Use tokens
-    border-bottom: $border-width solid var(--border-color); // Use tokens
+    padding: $spacing-md $spacing-sm;
+    border-bottom: var(--border-width, $border-width) solid var(--border-color);
     flex-shrink: 0;
+    transition: border-color $default-transition-duration $default-transition-timing-function;
 
     h2 {
-      color: var(--text-color); // Use token
-      // font-family: "Google Sans"; // Consider using $font-family-headings or base
-      font-size: $font-size-lg; // Use token
-      font-weight: $font-weight-bold; // Use token
-      line-height: $line-height-base; // Use token
-      margin: 0; // Remove default margin
-      opacity: 1; // Default for open state
-      transition: opacity 0.2s ease-out 0.1s; // Transition for text
+      color: var(--text-on-surface-color);
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      line-height: $line-height-base;
+      margin: 0;
+      opacity: 1;
+      transition: opacity 0.2s $default-transition-timing-function 0.1s, // For collapse
+                  color $default-transition-duration $default-transition-timing-function; // For theme change
     }
   }
 
-  // Tab Styles for Logger Filter
+  .opener {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--text-on-surface-color);
+    font-size: 1.5rem;
+    padding: $spacing-xs;
+    height: auto;
+    transition: transform 0.2s $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
+  }
+
   .log-tabs {
     display: flex;
-    border-bottom: 1px solid var(--border-color, $border-color);
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
-    padding: 0 $spacing-sm; // Horizontal padding
-    opacity: 1; // Base for transition
-    visibility: visible; // Base for transition
-    height: auto; // Base for transition - or specific calculated height
-    // transition for opacity, visibility, height, margin, padding (defined in .open/.collapsed)
+    padding: 0 $spacing-sm;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    transition: opacity 0.2s $default-transition-timing-function 0.1s,
+                visibility 0s linear 0.1s,
+                height 0.2s $default-transition-timing-function 0.1s,
+                margin 0.2s $default-transition-timing-function 0.1s,
+                padding 0.2s $default-transition-timing-function 0.1s,
+                border-color $default-transition-duration $default-transition-timing-function;
+  }
+
+  .log-tab-button {
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: var(--text-muted-on-surface-color); // Side panel is a surface
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    position: relative;
+    transition: color $default-transition-duration $default-transition-timing-function;
+    margin-bottom: -1px;
+
+    &:hover {
+      color: var(--text-color);
+    }
+
+    &.active {
+      color: var(--primary-color);
+      font-weight: $font-weight-bold;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-color, $primary-color);
+      outline-offset: -2px; // Adjust to be inside or just on the edge
+      // Or use box-shadow for a different style:
+      // box-shadow: 0 0 0 2px var(--background-color, $white), 0 0 0 4px var(--primary-color, $primary-color);
+    }
   }
 
   .log-search-toolbar {
-    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm; // Top, Hori, Bottom
+    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm;
     flex-shrink: 0;
-    opacity: 1; // Base for transition
-    visibility: visible; // Base for transition
-    height: auto; // Base for transition
-    // Transitions will be handled by .open / .collapsed general rules
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    transition: opacity 0.2s $default-transition-timing-function 0.1s,
+                visibility 0s linear 0.1s,
+                height 0.2s $default-transition-timing-function 0.1s,
+                margin 0.2s $default-transition-timing-function 0.1s,
+                padding 0.2s $default-transition-timing-function 0.1s;
   }
 
   .search-input-wrapper {
@@ -139,17 +180,25 @@
   .log-search-input {
     width: 100%;
     padding: $spacing-sm;
-    padding-right: $spacing-xl; // Space for the clear button
-    border: 1px solid var(--border-color, $border-color);
-    border-radius: $border-radius;
+    padding-right: $spacing-xl;
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--border-radius, $border-radius);
     font-size: $font-size-base;
-    background-color: var(--input-background-color, $white); // Themeable input background
-    color: var(--text-color, $dark-gray); // Themeable text color
+    background-color: var(--input-background-color);
+    color: var(--input-text-color);
     line-height: $line-height-base;
+    transition: border-color $default-transition-duration $default-transition-timing-function,
+                background-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function,
+                box-shadow $default-transition-duration $default-transition-timing-function;
 
+    &::placeholder {
+      color: var(--input-placeholder-color);
+    }
     &:focus {
-      border-color: $primary-color;
+      border-color: var(--input-focus-border-color);
       outline: none;
+      box-shadow: var(--input-focus-box-shadow);
     }
   }
 
@@ -160,236 +209,146 @@
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: var(--text-muted, $dark-gray);
+    color: var(--text-muted-on-surface-color); // Side panel is a surface
     cursor: pointer;
     font-size: $font-size-lg;
     padding: $spacing-xs;
     line-height: 1;
-
-    &:hover {
-      color: var(--text-color, $dark-gray);
-    }
-  }
-
-  .log-tab-button {
-    padding: $spacing-sm $spacing-md;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    color: var(--text-muted, $dark-gray);
-    font-size: $font-size-base;
-    font-family: $font-family-base;
-    position: relative;
     transition: color $default-transition-duration $default-transition-timing-function;
-    margin-bottom: -1px; // Overlap parent's border-bottom
-
     &:hover {
-      color: var(--text-color, $dark-gray);
+      color: var(--text-color);
     }
-
-    &.active {
-      color: var(--primary-color, $primary-color);
-      font-weight: $font-weight-bold;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background-color: var(--primary-color, $primary-color);
-      }
-    }
-  }
-
-  .opener {
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    color: var(--text-color); // Use token for icon color
-    font-size: 1.5rem; // Adjust icon size if needed
-    padding: $spacing-xs;
-    height: auto; // Remove fixed height
-    transition: transform 0.2s ease-in;
-    // No specific transform needed here as it's part of .app-sidebar now
   }
 
   .indicators {
     display: flex;
-    padding: $spacing-md $spacing-sm; // Use tokens
-    justify-content: flex-end; // Align streaming indicator to the right as Select is gone
-    gap: $spacing-md; // Use token
+    padding: $spacing-md $spacing-sm;
+    justify-content: flex-end;
+    gap: $spacing-md;
     flex-shrink: 0;
-    align-items: center; // Vertically align items
-
-    // .react-select-container style block is now removed.
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    transition: opacity 0.2s $default-transition-timing-function 0.1s,
+                visibility 0s linear 0.1s,
+                height 0.2s $default-transition-timing-function 0.1s,
+                padding 0.2s $default-transition-timing-function 0.1s;
 
     .streaming-indicator {
       user-select: none;
-      border-radius: $border-radius;
-      border: $border-width solid var(--border-color);
-      background: var(--surface-color); // Use token
+      border-radius: var(--border-radius, $border-radius);
+      border: var(--border-width, $border-width) solid var(--border-color);
+      background: var(--surface-color);
       display: flex;
-      // width: 136px; // Allow width to be flexible or fixed based on content
       padding: $spacing-xs $spacing-sm;
       justify-content: center;
       align-items: center;
       gap: $spacing-xs;
       flex-shrink: 0;
       text-align: center;
-      // font-family: "Space Mono"; // Use $font-family-monospace or base
       font-size: $font-size-sm;
-      transition: opacity 0.2s ease-out 0.1s; // For text part
+      color: var(--text-on-surface-color);
+      transition: opacity 0.2s $default-transition-timing-function 0.1s,
+                  background-color $default-transition-duration $default-transition-timing-function,
+                  border-color $default-transition-duration $default-transition-timing-function,
+                  color $default-transition-duration $default-transition-timing-function;
 
       &.connected {
-        color: $primary-color; // Use token
+        // color: var(--primary-color); // Example if text turns blue when connected
       }
 
-      span.text { // Wrap "Streaming" / "Paused" text in a span for separate animation
+      span.text {
         opacity: 1;
-        transition: opacity 0.2s ease-out 0.1s;
+        transition: opacity 0.2s $default-transition-timing-function 0.1s;
       }
     }
   }
 
   .side-panel-container {
-    // width: 400px; // Width is controlled by .app-sidebar
     width: 100%;
     flex-grow: 1;
-    overflow-x: hidden; // Content within should not cause horizontal scroll
-    overflow-y: auto;   // Allow vertical scroll for content like Logger
-    // padding: 0 $spacing-sm $spacing-sm $spacing-sm; // Padding removed, Logger panel will have its own
-    // The Logger component itself is now a panel and will have its own padding.
-    // This container ensures the Logger (or other content) can scroll if it exceeds height.
-    // It might need padding if there are other elements directly within it besides the Logger panel.
-    // For now, assuming Logger panel is the primary child.
-    // Add a small bottom margin/padding if input-container is directly after it without visual gap
-    // Or rely on Logger panel's margin-bottom if set.
-    // Let's ensure it fills available space for the Logger panel to sit in.
-    display: flex; // To make child (Logger panel) take full height if needed
+    overflow: hidden;
+    display: flex;
     flex-direction: column;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    // No direct bg/color here, it's a container for Logger panel
 
-    > .logger.panel { // If Logger panel is a direct child
-      flex-grow: 1; // Allow Logger panel to take available vertical space
-      min-height: 0; // Important for flex children that scroll
+    > .logger.panel {
+      flex-grow: 1;
+      min-height: 0;
+      background-color: var(--background-color-main);
+      transition: background-color $default-transition-duration $default-transition-timing-function;
     }
   }
 
   .input-container {
-    // height: 50px; // Let height be auto based on content
-    flex-shrink: 0; // Prevent shrinking
-    border-top: $border-width solid var(--border-color);
+    flex-shrink: 0;
+    border-top: var(--border-width, $border-width) solid var(--border-color);
     padding: $spacing-md $spacing-sm;
-    overflow: hidden; // Keep hidden for transition effect
-    background-color: var(--surface-color); // Background for input area section
+    overflow: hidden;
+    background-color: var(--surface-color);
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function,
+                opacity 0.2s $default-transition-timing-function 0.1s,
+                visibility 0s linear 0.1s,
+                height 0.2s $default-transition-timing-function 0.1s,
+                padding 0.2s $default-transition-timing-function 0.1s;
+
 
     .input-content {
       position: relative;
-      background: var(--background-color); // Input background
-      border: $border-width solid var(--border-color);
-      // height: 22px; // Remove fixed height, let padding define it
-      border-radius: $border-radius;
-      padding: $spacing-sm; // Inner padding for textarea and button container
+      background: var(--input-background-color);
+      border: var(--border-width, $border-width) solid var(--input-border-color);
+      border-radius: var(--border-radius, $border-radius);
+      padding: $spacing-sm;
       display: flex;
-      align-items: flex-end; // Align items to the bottom, good for multi-line textarea
-      gap: $spacing-sm; // Gap between textarea and button
+      align-items: flex-end;
+      gap: $spacing-sm;
+      transition: background-color $default-transition-duration $default-transition-timing-function,
+                  border-color $default-transition-duration $default-transition-timing-function;
 
-      // .send-button styles are removed as it's replaced by ControlButton
 
-      .input-area { // Textarea
-        flex-grow: 1; // Take available space
-        width: 100%; // Ensure it tries to fill
-        background-color: var(--input-background-color, $white);
-        color: var(--text-color, $dark-gray);
-        border: 1px solid var(--border-color, $border-color);
-        border-radius: $border-radius;
-        padding: $spacing-sm;
+      .input-area {
+        flex-grow: 1;
+        width: 100%;
+        background-color: transparent;
+        color: var(--input-text-color);
+        border: none;
+        padding: $spacing-xs;
         font-family: $font-family-base;
         font-size: $font-size-base;
         line-height: $line-height-base;
-        resize: none; // Disable manual resize
-        overflow-y: hidden; // Hide scrollbar, height adjusts automatically
-        // min-height: calc(#{$line-height-base} * #{$font-size-base} + #{$spacing-sm} * 2 + 2px); // Approx 1 line
-        min-height: 2.5rem; // Approx height for a single line with padding
-        // max-height: calc((#{$line-height-base} * #{$font-size-base} * 6) + #{$spacing-sm} * 2 + 2px); // ~6 lines
-        // Consider adding overflow: auto; if max-height is set and content exceeds it.
+        resize: none;
+        overflow-y: hidden;
+        min-height: 2.5rem;
+        transition: color $default-transition-duration $default-transition-timing-function;
 
+
+        &::placeholder { // Added placeholder styling
+            color: var(--input-placeholder-color);
+        }
         &:focus {
-          border-color: $primary-color;
           outline: none;
-          // box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25); // Optional focus shadow
         }
       }
 
       .input-content-placeholder {
         position: absolute;
-        left: $spacing-sm + $spacing-xs; // Match input-area padding
-        top: $spacing-sm + $spacing-xs; // Match input-area padding
-        // display: flex; // Not needed
-        // align-items: center; // Not needed
-        // height: 100%; // Not needed
-        // width: 100%; // Not needed
+        left: $spacing-sm + $spacing-xs;
+        top: $spacing-sm + $spacing-xs;
         pointer-events: none;
         user-select: none;
-        // padding: 0px 18px; // Remove, use left/top
         white-space: pre-wrap;
-        color: var(--text-muted); // Placeholder color
+        color: var(--input-placeholder-color);
+        transition: color $default-transition-duration $default-transition-timing-function;
       }
+      // Send button (ControlButton) is styled by its own SCSS
     }
   }
 }
-
-// Remove explicit width settings based on .open, rely on .app-sidebar and its transitions
-// .side-panel.open {
-//   width: 400px; // This is now controlled by .app-sidebar
-// }
-
-// react-select specific styling should be checked if it needs token updates
-// For example, var(--Neutral-15) etc. should be mapped to tokens.
-// This was in a separate react-select.scss import, so may need attention if not done.
-// Assuming base styles for react-select are handled or tokens are injected there.
-
-// Ensure that when the side-panel is collapsed (meaning .app-sidebar is narrow),
-// the text within various elements like titles, indicators, and input placeholders
-// is hidden gracefully. Opacity transitions are preferred.
-// The .collapsed class on .side-panel itself is used above to trigger these.
-
-// Color variables like var(--Neutral-00) should be replaced with SCSS tokens
-// e.g. $background-color-light, $surface-color, etc. or CSS variables from themes.
-// For now, I've used some direct token replacements assuming a light theme context
-// or that CSS variables like --text-color are correctly set by the theme.
-// A full theming pass on this component's specific SCSS might be needed separately.
-
-// Example: Ensure streaming indicator text is hidden when collapsed
-.side-panel.collapsed .indicators .streaming-indicator span.text {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
-  width: 0; // Collapse width of text span
-  display: inline-block; // To allow width change
-  overflow: hidden; // Hide text during transition
-  white-space: nowrap; // Prevent wrapping
-}
-
-.side-panel.open .indicators .streaming-indicator span.text {
-  opacity: 1;
-  visibility: visible;
-  width: auto; // Allow text to take its natural width
-  transition: opacity 0.2s ease-in 0.1s, width 0.2s ease-in 0.1s;
-}
-
-// Ensure console h2 is hidden
-.side-panel.collapsed .top h2 {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.1s ease-out, visibility 0s linear 0.1s;
-}
-.side-panel.open .top h2 {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.2s ease-in 0.1s;
-}
-
-// Styles for .react-select-container in open/collapsed states are removed.
-// The main .react-select-container style block should be removed separately if still present.

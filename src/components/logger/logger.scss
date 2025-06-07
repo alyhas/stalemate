@@ -1,101 +1,91 @@
 @import '../../styles/tokens'; // For design tokens
 @import '../../styles/components/panels'; // To ensure .panel styles are available if not globally applied
 
-// .logger is now also .panel. The .panel class from components/panels.scss will provide:
-// - background-color
-// - border
-// - border-radius
-// - box-shadow
-// - margin-bottom (if applicable, though Logger is usually contained)
+// .logger is now also .panel. Panel base styles (bg, border, shadow) are applied by .panel class.
+// These styles refine the panel for Logger specific needs.
 .logger.panel {
-  // Override or add specific panel styles for Logger if needed
-  // For example, if the default panel margin is not desired:
-  // margin-bottom: 0;
-  // The default panel has its own padding for header/body/footer.
-  // We added a .panel-body div in the TSX.
-
-  // Ensure logger takes full height if its container allows (e.g. in side-panel)
   height: 100%;
-  display: flex; // Allow panel-body to grow
-  flex-direction: column; // Stack header (if any) and body
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color-main);
+  transition: background-color $default-transition-duration $default-transition-timing-function;
+
 
   .panel-body {
-    // The .panel-body class from components/panels.scss adds padding (e.g., $spacing-lg).
-    // It should also handle overflow:
     overflow-y: auto;
-    flex-grow: 1; // Allow panel-body to take available space
-    // Reset any specific logger padding if panel-body's padding is sufficient
-    padding: $spacing-md; // Or use default $spacing-lg from panels.scss, or customize
+    flex-grow: 1;
+    padding: $spacing-md;
+    color: var(--text-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   .logger-list {
-    list-style-type: none; // Common reset for lists
-    padding: 0; // Reset default ul padding. Spacing is now from panel-body.
-    margin: 0; // Reset default ul margin
-    width: 100%; // Take full width of panel-body
-    // overflow-x: hidden; // Handled by panel-body or individual log entries if needed
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
   }
 
-  // Color updates using tokens (examples, assuming these map semantically)
+  // Color updates using CSS variables
   .user h4 {
-    color: $success-color; // Was var(--Green-500)
+    color: var(--success-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   .model h4 {
-    color: $info-color; // Was var(--Blue-500)
+    color: var(--info-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
   }
 
   .rich-log {
-    // display: flex; // Keep or remove based on desired layout of rich log parts
-    // justify-content: center;
-    gap: $spacing-xs; // Use token
-    display: block; // Keep as block if preferred for rich log entries
+    gap: $spacing-xs;
+    display: block;
 
-    // Styles for <pre> within .rich-log are removed here if SyntaxHighlighter handles all code block styling.
-    // SyntaxHighlighter will apply its own <pre> styling via its chosen theme (e.g., okaidia).
-    // If any plain <pre> tags are still used outside of SyntaxHighlighter, they would need separate styling.
-    // pre {
-    //   overflow-x: auto;
-    //   background-color: var(--code-background-color, darken($light-gray, 5%));
-    //   padding: $spacing-sm;
-    //   border-radius: $border-radius;
-    // }
+    // SyntaxHighlighter renders into a <pre> which has its own theme (e.g. okaidia dark bg)
+    // No general <pre> styling needed here if SyntaxHighlighter is always used for code/json.
 
-    h4 {
-      font-size: $font-size-base; // Was 14px
+    h4 { // Role indicator (User/Model)
+      font-size: $font-size-base;
       text-transform: uppercase;
-      padding: $spacing-xs 0; // Use token
+      padding: $spacing-xs 0;
       margin: 0;
       font-weight: $font-weight-bold;
     }
 
-    h5 {
-      margin: 0 0 $spacing-xs 0; // Use token
-      padding-bottom: $spacing-xs; // Use token
-      border-bottom: $border-width solid var(--border-color); // Use token
+    h5 { // Part title (e.g., executableCode, functionCall)
+      margin: 0 0 $spacing-xs 0;
+      padding-bottom: $spacing-xs;
+      border-bottom: var(--border-width, $border-width) solid var(--border-color);
       font-size: $font-size-sm;
       font-weight: $font-weight-normal;
+      color: var(--text-muted-color);
+      transition: border-color $default-transition-duration $default-transition-timing-function,
+                  color $default-transition-duration $default-transition-timing-function;
     }
 
     .part {
-      background: var(--surface-color-inset, darken($light-gray, 2%)); // Slightly different from main panel body bg
-      padding: $spacing-sm; // Use token
-      margin-bottom: $spacing-xs; // Use token
-      color: var(--text-color); // Use token
-      border-radius: $border-radius;
+      padding: $spacing-xs 0;
+      margin-bottom: $spacing-sm;
+      color: var(--text-color);
+      border-radius: var(--border-radius, $border-radius);
+      transition: color $default-transition-duration $default-transition-timing-function;
+      // background-color potentially if .part-text gets a background
+
+      &.part-text {
+        // transition for background-color if added above
+      }
     }
   }
 
-  .plain-log {
-    & > * { // Direct children of .plain-log (li)
-      padding-right: $spacing-xs; // Use token
+  .plain-log { // This is the <li> itself
+    & > * {
+      padding-right: $spacing-xs;
     }
   }
 
   .inline-code:not(:last-child) {
     font-style: italic;
-    // Consider using a specific class for inline code background/padding if needed
-    // background-color: var(--code-inline-background-color, $light-gray);
+    // background-color: var(--surface-color); // Optional bg for inline code
     // padding: 0 $spacing-xs;
     // border-radius: $border-radius-sm;
     &::after {
@@ -106,13 +96,14 @@
   .log-collapse-toggle {
     background: none;
     border: none;
-    color: var(--primary-color, $primary-color);
+    color: var(--primary-color);
     cursor: pointer;
     font-size: $font-size-sm;
     padding: $spacing-xs 0;
     margin-top: $spacing-xs;
-    display: block; // Or inline-block if preferred next to content
-    text-align: left; // Ensure text is aligned left if block
+    display: block;
+    text-align: left;
+    transition: color $default-transition-duration $default-transition-timing-function;
 
     &:hover {
       text-decoration: underline;
@@ -120,66 +111,72 @@
   }
 }
 
-// Styling for individual log list items (li)
-.logger li { // This applies to .plain-log items primarily
-  display: block; // Or flex if timestamp/source/message are to be aligned in a row
-  padding: $spacing-xs 0; // Vertical padding for each log entry
-  // color: var(--Neutral-50, #707577); // Default text color for log entries
-  color: var(--text-muted, $dark-gray); // Use a muted text token
-  // font-family: "Space Mono"; // Handled by body or .panel
-  font-size: $font-size-sm; // Was 14px
+// Styling for individual log list items (li elements, which are .plain-log)
+.logger li.plain-log {
+  display: block;
+  padding: $spacing-xs $spacing-sm;
+  color: var(--text-muted-color);
+  font-size: $font-size-sm;
   line-height: $line-height-base;
-  // border-bottom: $border-width solid var(--border-color-soft, lighten($border-color, 5%)); // Optional: separator line
-  // &:last-child {
-  //   border-bottom: none;
-  // }
+  border-bottom: 1px solid var(--border-color);
+  transition: color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .logger li .timestamp {
-  // width: 70px; // Avoid fixed width if possible, allow natural flow or use flex for alignment
-  display: inline-block; // Or part of a flex layout
+  display: inline-block;
   margin-right: $spacing-sm;
   flex-grow: 0;
   flex-shrink: 0;
-  color: var(--text-muted, lighten($dark-gray, 10%)); // Further muted
+  color: var(--text-muted-color);
+  transition: color $default-transition-duration $default-transition-timing-function;
 }
 
 .logger li .source {
   flex-shrink: 0;
-  font-weight: $font-weight-bold; // Use token
+  font-weight: $font-weight-bold;
   margin-right: $spacing-sm;
+  // Color for source text will be set by type-specific classes below
 }
 
-// Specific source colors using tokens
+// Specific source colors using CSS variables
 .logger li.source-server,
 .logger li.receive {
-  // color: var(--Blue-500); // Original
-  color: $info-color; // Use semantic token
-  .source { color: $info-color; } // Ensure source text also gets this color
+  // color: var(--info-color);
+  .source {
+    color: var(--info-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
+  }
 }
 
 .logger li.source-client,
 .logger li.send:not(.source-server) {
-  // color: var(--Green-500); // Original
-  color: $success-color; // Use semantic token
-  .source { color: $success-color; }
+  // color: var(--success-color);
+  .source {
+    color: var(--success-color);
+    transition: color $default-transition-duration $default-transition-timing-function;
+  }
 }
 
 .logger li .count {
-  background-color: var(--surface-color-inset, darken($light-gray, 2%)); // Use token
-  font-size: $font-size-xs; // Use token
-  padding: $spacing-xs * 0.5 $spacing-xs;
+  background-color: var(--surface-color);
+  font-size: $font-size-xs;
+  padding: calc(#{$spacing-xs} * 0.5) $spacing-xs;
   line-height: 1;
   vertical-align: middle;
-  border-radius: $border-radius;
-  // color: var(--Blue-500); // Original, or use a text color that contrasts with its bg
-  color: $info-color;
+  border-radius: var(--border-radius, $border-radius);
+  color: var(--text-muted-color);
   margin-left: $spacing-xs;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function;
 }
 
 .logger li .message {
-  flex-grow: 1; // If li is flex
-  // color: var(--Neutral-50); // Original
-  color: var(--text-color); // Use standard text color for messages within the log
-  word-break: break-word; // Ensure long messages wrap
+  flex-grow: 1;
+  color: var(--text-color);
+  word-break: break-word;
+  transition: color $default-transition-duration $default-transition-timing-function;
 }

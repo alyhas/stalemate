@@ -54,8 +54,9 @@
 }
 
 body {
-  font-family: "Space Mono", monospace;
-  background: var(--Neutral-30);
+  // font-family is now set by typography.scss using $font-family-base
+  // background is now set by typography.scss using var(--background-color-main)
+  // background: var(--Neutral-30); // Old style, remove
 }
 
 .material-symbols-outlined {
@@ -173,9 +174,10 @@ body {
 */
 
 /* video player */
-.stream { /* This class was on the video element, now it's .video-stream */
-  flex-grow: 1;
-  max-width: 90%;
-  border-radius: 32px;
-  max-height: fit-content;
-}
+// .stream class is no longer used, .video-stream is styled in components/media.scss
+// .stream {
+//   flex-grow: 1;
+//   max-width: 90%;
+//   border-radius: 32px;
+//   max-height: fit-content;
+// }

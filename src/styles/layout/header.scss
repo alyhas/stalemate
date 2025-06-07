@@ -4,11 +4,14 @@
 
 // Main Application Header
 .app-header {
-  background-color: $primary-color; // Example: Use primary color for header background
-  color: #fff; // White text on primary background
-  padding: $spacing-md 0; // Vertical padding, no horizontal padding if using a container inside
-  box-shadow: $box-shadow; // Add a subtle shadow for depth
-  // position: fixed; // Uncomment if a fixed header is desired
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  padding: $spacing-md 0;
+  box-shadow: var(--box-shadow);
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function,
+              box-shadow $default-transition-duration $default-transition-timing-function;
+  // position: fixed;
   // top: 0;
   // left: 0;
   // right: 0;
@@ -32,16 +35,14 @@
     h1 {
       font-size: $font-size-xl;
       font-weight: $font-weight-bold;
-      color: #fff;
-      margin: 0; // Remove default h1 margin
-      line-height: 1.2; // Adjust line height for large font size if needed
+      color: inherit;
+      margin: 0;
+      line-height: 1.2;
+      transition: color $default-transition-duration $default-transition-timing-function; // For hover effect
     }
 
-    &:hover {
-      // Hover effect can be on h1 if it's the link, or on .header-brand if it's a wrapper link
-      h1 {
-        color: darken(#fff, 10%); // Slightly darken on hover
-      }
+    &:hover h1, &:focus h1 {
+      color: var(--text-color-on-primary-hover, #{darken(#fff, 15%)});
     }
   }
 
@@ -94,50 +95,41 @@
 
       .connection-status-icon {
         margin-right: $spacing-xs;
-        font-size: $font-size-lg; // e.g., 20px if base is 16px
-        // Default color will be #fff from .app-header, specific state colors below
+        font-size: $font-size-lg;
+        transition: color $default-transition-duration $default-transition-timing-function;
       }
 
       .connection-status-text {
         font-size: $font-size-sm;
         font-weight: $font-weight-normal;
-        // Default color will be #fff from .app-header unless overridden by states
+        color: inherit;
+        // Text color itself doesn't change per state here, only icon
       }
 
-      // Styles for "connected" state
-      &.connected {
-        // background-color: rgba($success-color, 0.1); // Optional: very subtle bg
-        .connection-status-icon {
-          color: $success-color; // Use a themeable success color, e.g., var(--success-color-on-primary)
-                                 // For now, assuming $success-color is visible enough on $primary-color header
-                                 // Or, use a light green if $success-color is dark: lighten($success-color, 30%)
-        }
-        .connection-status-text {
-          // color: $success-color; // Text color, ensure contrast with header background
-          // If header is dark blue, and $success-color is dark green, this won't be visible.
-          // Keep default #fff from .app-header, or use a light variant of success.
-          // For now, relying on default #fff from .app-header for text.
-        }
+      &.connected .connection-status-icon {
+        color: var(--success-color);
       }
 
-      // Styles for "disconnected" state
-      &.disconnected {
-        // background-color: rgba($danger-color, 0.1); // Optional: very subtle bg
-        .connection-status-icon {
-          color: $danger-color; // Use a themeable danger color, e.g., var(--danger-color-on-primary)
-                                // Or, use a light red if $danger-color is dark: lighten($danger-color, 20%)
-        }
-        .connection-status-text {
-          // color: $danger-color; // Text color, ensure contrast
-          // Relying on default #fff from .app-header for text.
-        }
+      &.disconnected .connection-status-icon {
+        color: var(--danger-color);
       }
     }
 
-    .btn { // Style buttons in header if needed
+    .btn {
       margin-left: $spacing-sm;
+      // Button transitions are handled by .btn styles in buttons.scss
+      // Ensure text/border colors for outline/link buttons adapt to header's dark bg
+      &.btn-outline-primary, &.btn-link {
+         color: var(--text-color-on-primary); // Use text color defined for elements on primary bg
+         border-color: var(--text-color-on-primary);
+         &:hover {
+            // Use a specific var for this hover if defined, or a subtle rgba
+            background-color: var(--surface-hover-on-primary, #{rgba(#fff, 0.1)});
+            color: var(--text-color-on-primary);
+            border-color: var(--text-color-on-primary);
+         }
+      }
     }
-    // Example: User profile link/dropdown
     .user-profile {
       margin-left: $spacing-md;
       // Style for user avatar, name, etc.

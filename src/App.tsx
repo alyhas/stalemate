@@ -16,14 +16,18 @@
 
 import { useRef, useState, ChangeEvent, useEffect } from "react";
 import "./App.scss";
-import { LiveAPIProvider } from "./contexts/LiveAPIContext";
+import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext"; // Import useLiveAPIContext
 import SidePanel from "./components/side-panel/SidePanel";
-import ControlTray from "./components/control-tray/ControlTray";
+import ControlTray, { ControlTrayProps } from "./components/control-tray/ControlTray"; // Import ControlTrayProps
 import ControlButton from "./components/control-button/ControlButton";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
-import { ToastProvider } from "./contexts/ToastContext"; // Import ToastProvider
-import ToastContainer from "./components/toast/ToastContainer"; // Import ToastContainer
+import { ToastProvider } from "./contexts/ToastContext";
+import ToastContainer from "./components/toast/ToastContainer";
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import ThemeToggleButton from './components/theme-toggle-button/ThemeToggleButton';
+import { useKeyboardShortcuts, ShortcutConfig } from './hooks/useKeyboardShortcuts';
+import ShortcutsHelp from './components/shortcuts-help/ShortcutsHelp'; // Import ShortcutsHelp
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -38,13 +42,55 @@ function App() {
   // this video reference is used for displaying the active stream, whether that is the webcam or screen capture
   // feel free to style as you see fit
   const videoRef = useRef<HTMLVideoElement>(null);
-  // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // State for sidebar
-  const [isPipMode, setIsPipMode] = useState(false); // State for PiP mode
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isPipMode, setIsPipMode] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false); // State for Settings Dialog
+  const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false); // State for Shortcuts Help Dialog
 
   // Placeholder for connection status - replace with actual logic
-  const isConnected = true; // Example status
+  // const isConnected = true; // This should come from useLiveAPIContext
+  const { connected } /*, connect, disconnect */ = useLiveAPIContext(); // Get connected state
+
+  const { toggleTheme } = useTheme(); // Get toggleTheme for shortcut
+
+  // Placeholder functions for shortcuts until state is fully lifted/managed
+  const handleToggleMic = () => console.log('Shortcut: Toggle Mic (TODO: implement in ControlTray or lift state)');
+  const handleSendMessage = () => console.log('Shortcut: Send Message (TODO: implement in SidePanel or lift state)');
+  const handleFocusLogSearch = () => {
+    // This would ideally focus the input in SidePanel
+    console.log('Shortcut: Focus Log Search (TODO: implement focus management)');
+    const searchInput = document.querySelector('.log-search-input') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.focus();
+    }
+  };
+
+  const shortcutsConfig: ShortcutConfig = {
+    'meta+shift+l': toggleTheme,
+    'meta+,': () => setSettingsOpen(prev => !prev),
+    'meta+b': () => setSidebarCollapsed(prev => !prev),
+    'meta+d': handleToggleMic,
+    'meta+enter': handleSendMessage,
+    'meta+k': handleFocusLogSearch,
+    '?': () => setShortcutsHelpOpen(prev => !prev),
+    // For '?' key, ensure generateKeyCombinationId handles it as '?' or 'shift+/'
+    // Current hook should register '?' directly if shift is not pressed, or 'shift+/' if shift is pressed
+    // The prompt used '?' which means event.key === '?' (usually Shift + /)
+    // The hook's generateKeyCombinationId uses event.key.toLowerCase(). If shift is pressed, it adds 'shift+'.
+    // So, 'shift+/' is the key for '?' if event.key is '/'. If event.key is '?', then 'shift+?' is the id.
+    // Let's assume the hook correctly identifies '?' with Shift+/ as '?' or 'shift+/'.
+    // The current hook will create 'shift+/' if user types '?' (Shift + /).
+    // So, the key should be 'shift+/'. Let's adjust for clarity.
+    // Actually, event.key for '?' is just '?', and shiftKey is true.
+    // So, the keyId would be 'shift+?'. Let's use that.
+    'shift+?': () => setShortcutsHelpOpen(prev => !prev),
+  };
+
+  // Pass relevant state setters to the dependencies if actions directly use them
+  // For now, toggleTheme, setSettingsOpen, setSidebarCollapsed are stable setters or direct calls.
+  useKeyboardShortcuts(shortcutsConfig, [toggleTheme]);
+
 
   const togglePipMode = async () => {
     if (!videoRef.current) return;
@@ -95,54 +141,59 @@ function App() {
             // The effect runs once to attach/detach listeners. Content of ref can change without re-running effect.
 
   return (
-    <ToastProvider> {/* Wrap the application with ToastProvider */}
-      <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}>
-        <LiveAPIProvider options={apiOptions}>
-          <header className="app-header">
-            <div className="container"> {/* Using fixed-width container for header content */}
-              <div className="header-brand">
-              {/* Placeholder for Logo - replace with actual <img> or SVG */}
-              <h1>Logo</h1> {/* Changed from <strong> to <h1> */}
-            </div>
-            <div className="header-actions">
-              <div className={cn("connection-status-indicator", { "connected": isConnected, "disconnected": !isConnected })}>
-                <span className="material-symbols-outlined connection-status-icon">
-                  {isConnected ? "wifi" : "wifi_off"}
-                </span>
-                <span className="connection-status-text">
-                  {isConnected ? "Connected" : "Disconnected"}
-                </span>
+    <ThemeProvider> {/* ThemeProvider is now the outermost provider */}
+      <ToastProvider>
+        <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}>
+          <LiveAPIProvider options={apiOptions}>
+            <header className="app-header">
+              <div className="container">
+                <div className="header-brand">
+                  <h1>Logo</h1>
+                </div>
+                <div className="header-actions">
+                  <div className={cn("connection-status-indicator", { "connected": connected, "disconnected": !connected })}>
+                    <span className="material-symbols-outlined connection-status-icon">
+                      {connected ? "wifi" : "wifi_off"}
+                    </span>
+                    <span className="connection-status-text">
+                      {connected ? "Connected" : "Disconnected"}
+                    </span>
+                  </div>
+                  <ThemeToggleButton />
               </div>
-              {/* Add other header actions here if needed */}
             </div>
-          </div>
-        </header>
+            </header>
 
-        {/* Changed from "streaming-console" to "app-container" and added "container-fluid" for full width */}
         <div className="app-container container-fluid">
           <div className="row">
-            {/* SidePanel wrapped in an aside and grid column, now responsive */}
             <aside className="app-sidebar col-12 col-md-3">
               <SidePanel
                 collapsed={sidebarCollapsed}
-                onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+                onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
               />
             </aside>
 
-            {/* Main content area wrapped in main and grid column, now responsive */}
             <main className="main-content col-12 col-md-9">
-              {/* Changed from "main-app-area" to "workspace" */}
               <div className="workspace">
-                {/* Added primary-content div for general app content */}
                 <div className="primary-content">
                   <h2>Primary Content Area</h2>
                   <p>Other application content will go here.</p>
-                  {/* TODO: Replace with actual application content components */}
+                  {/* TODO: Implement ShortcutsHelp modal triggered by shortcutsHelpOpen state */}
+                  {shortcutsHelpOpen && (
+                    <div className="modal-placeholder"> {/* Replace with actual modal */}
+                      <h3>Keyboard Shortcuts</h3>
+                      <p>Meta+Shift+L: Toggle Theme</p>
+                      <p>Meta+,: Toggle Settings</p>
+                      <p>Meta+B: Toggle Sidebar</p>
+                      <p>Meta+D: Toggle Mic (TODO)</p>
+                      <p>Meta+Enter: Send Message (TODO)</p>
+                      <p>Meta+K: Focus Log Search (TODO)</p>
+                      <p>?: Toggle Shortcuts Help</p>
+                      <button onClick={() => setShortcutsHelpOpen(false)}>Close</button>
+                    </div>
+                  )}
                 </div>
                 <div className={cn("media-container", {
-                  // "active" class could be used if there are specific styles when videoStream is present
-                  // For now, visibility is handled by cn({ hidden: ... }) on video-stream itself.
-                  // active: !!videoStream,
                   "picture-in-picture": isPipMode
                 })}>
                   <video
@@ -154,8 +205,7 @@ function App() {
                     playsInline
                   />
                   <div className="media-controls">
-                    {/* PiP Toggle Button, only show if PiP is supported and video is active */}
-                    {document.pictureInPictureEnabled && videoStream && (
+                    {typeof document !== 'undefined' && document.pictureInPictureEnabled && videoStream && (
                       <ControlButton
                         icon={isPipMode ? "fullscreen_exit" : "picture_in_picture_alt"}
                         label={isPipMode ? "Exit Picture-in-Picture" : "Enter Picture-in-Picture"}
@@ -163,24 +213,25 @@ function App() {
                         active={isPipMode}
                       />
                     )}
-                    {/* Other media controls can go here */}
                   </div>
                 </div>
               </div>
 
+              {/* Pass settings state and toggle function to ControlTray */}
               <ControlTray
                 videoRef={videoRef}
                 supportsVideo={true}
                 onVideoStreamChange={setVideoStream}
-                enableEditingSettings={true}
+                enableEditingSettings={true} // This prop might now be redundant if button is in ControlTray
+                settingsOpen={settingsOpen}
+                toggleSettings={() => setSettingsOpen(prev => !prev)}
               >
-                {/* put your own buttons here */}
-              </ControlTray>
             </main>
           </div>
         </div>
       </LiveAPIProvider>
-      <ToastContainer /> {/* Place ToastContainer here */}
+      <ToastContainer />
+      <ShortcutsHelp isOpen={shortcutsHelpOpen} onClose={() => setShortcutsHelpOpen(false)} /> {/* Add ShortcutsHelp */}
     </div>
   </ToastProvider>
   );

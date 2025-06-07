@@ -2,53 +2,43 @@
 
 .audioPulse {
   display: flex;
-  width: 32px; // Adjusted width for 5 lines
+  width: 32px;
   justify-content: space-evenly;
   align-items: center;
-  transition: all 0.5s;
+  transition: opacity $default-transition-duration $default-transition-timing-function; // Use animation vars
 
   & > div {
-    background-color: var(--audio-pulse-inactive-color, $light-gray); // Default when not active or volume is zero
-    border-radius: 1000px; // Keep it very rounded
+    background-color: var(--audio-pulse-inactive-color);
+    border-radius: 1000px;
     width: 4px;
-    min-height: 4px; // from original component's logic
-    transition: height 0.1s, background-color 0.2s ease-in-out; // Added background-color transition
+    min-height: 4px;
+    transition: height 0.1s $default-transition-timing-function, // Use animation var for timing
+                background-color $default-transition-duration $default-transition-timing-function;
   }
 
-  &.hover > div {
-    // animation: hover 1.4s infinite alternate ease-in-out; // Keep if hover animation is desired
-    // For now, focusing on volume-based color, hover can be added back if needed.
-  }
+  // &.hover > div { // Hover animation removed for now, can be added back with themed colors if needed
+  // }
 
-  // height: 4px; // This was on .audioPulse, likely for alignment. Let content define height.
-  transition: opacity 0.333s;
+  transition: opacity $default-transition-duration $default-transition-timing-function;
 
   &.active {
     opacity: 1;
 
-    // Default active color (also for volume-low if volume > 0)
-    & > div {
-      background-color: var(--audio-pulse-low-color, $primary-color); // Example: Use primary for low/default active
+    & > div { // Default for .active or .volume-low
+      background-color: var(--audio-pulse-low-color);
     }
-    // If specific .volume-low class is used and needs different color:
-    // &.volume-low > div {
-    //   background-color: var(--audio-pulse-low-color, $success-color);
-    // }
 
-    // Override for medium volume
     &.volume-medium > div {
-      background-color: var(--audio-pulse-medium-color, $warning-color);
+      background-color: var(--audio-pulse-medium-color);
     }
 
-    // Override for high volume
     &.volume-high > div {
-      background-color: var(--audio-pulse-high-color, $danger-color);
+      background-color: var(--audio-pulse-high-color);
     }
   }
-  // Ensure inactive state (no .active class) has a clear, muted color
   &:not(.active) > div {
-    background-color: var(--audio-pulse-inactive-color, $light-gray); // Same as default above
-    opacity: 0.5; // Make inactive lines more subtle
+    background-color: var(--audio-pulse-inactive-color);
+    opacity: 0.5;
   }
 }
 

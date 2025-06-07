@@ -3,15 +3,15 @@
 
 .loader-spinner {
   @extend .anim-spin; // Use the existing spin animation
-  display: inline-block; // Changed from block to inline-block for better flow with text
-  width: $spacing-xl;    // e.g., 32px
-  height: $spacing-xl;   // e.g., 32px
-  border-width: 3px;     // Thickness of the spinner ring
+  display: inline-block;
+  width: $spacing-xl;
+  height: $spacing-xl;
+  border-width: 3px;
   border-style: solid;
-  border-color: var(--primary-color, $primary-color); // Color of the main ring, themeable
-  border-bottom-color: transparent; // Creates the "gap" in the ring
+  border-color: var(--primary-color, $primary-color);
+  border-bottom-color: transparent;
   border-radius: 50%;
-  animation-duration: 0.75s; // Adjust speed if needed from default .anim-spin
+  animation-duration: 0.75s;
 }
 
 // Optional: Sizes
@@ -39,7 +39,7 @@
 
 .loader-text {
   font-size: $font-size-base;
-  color: var(--text-color-muted, $dark-gray); // Themeable
+  color: var(--text-muted-color, $dark-gray); // Use the consistent --text-muted-color
 }
 
 // Basic accessibility class (ideally global)

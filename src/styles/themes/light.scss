@@ -1,88 +1,102 @@
+@import '../tokens'; // To access base SCSS variables like $primary-color, $light-gray etc.
+
 // Light Theme Styles
-// This file defines color tokens specifically for a light theme.
-// It's useful if `tokens.scss` is considered a base/default and you want an explicit light theme
-// or if `tokens.scss` might evolve to be theme-agnostic.
-
-// Light Theme Color Palette (Primarily reusing default token values)
-// These are placeholders; they should ideally match your initial $primary-color etc. from tokens.scss
-$primary-color-light: #007bff; // Default primary
-$secondary-color-light: #6c757d; // Default secondary
-$success-color-light: #28a745;
-$danger-color-light: #dc3545;
-$warning-color-light: #ffc107;
-$info-color-light: #17a2b8;
-
-// Base background and text colors for light theme
-$background-color-light: #ffffff; // White background
-$surface-color-light: #f8f9fa;   // Light gray for surfaces like cards, panels (Bootstrap's $light)
-$on-background-light: #212529;   // Dark gray for text on $background-color-light (Bootstrap's $dark)
-$on-surface-light: #343a40;    // Slightly lighter dark gray for text on $surface-color-light
+// If .theme-light is applied, it ensures these CSS custom properties are set.
+// These values should match the defaults set in :root in tokens.scss.
+// This class is useful if the default state (no theme class) is different,
+// or for explicit theme switching.
 
 .theme-light {
+  color-scheme: light;
+
   // Core Colors
-  --primary-color: #{$primary-color-light};
-  --secondary-color: #{$secondary-color-light};
-  --success-color: #{$success-color-light};
-  --danger-color: #{$danger-color-light};
-  --warning-color: #{$warning-color-light};
-  --info-color: #{$info-color-light};
+  --primary-color: #{$primary-color}; // Uses base $primary-color from tokens.scss
+  --secondary-color: #{$secondary-color};
+  --success-color: #{$success-color};
+  --danger-color: #{$danger-color};
+  --warning-color: #{$warning-color};
+  --info-color: #{$info-color};
 
   // Backgrounds & Surfaces
-  --background-color: #{$background-color-light};
-  --surface-color: #{$surface-color-light};
-  --light-gray: #f8f9fa; // Standard light gray
-  --dark-gray: #343a40;    // Standard dark gray
+  --background-color-main: #fff; // As defined in :root
+  --surface-color: #{$light-gray}; // As defined in :root
 
   // Text Colors
-  --text-color: #{$on-background-light};
-  --text-on-surface-color: #{$on-surface-light};
-  --text-muted: #6c757d; // Standard muted text (Bootstrap's $gray-600)
+  --text-color: #{$dark-gray};
+  --text-on-surface-color: #{$dark-gray};
+  // --text-muted-color: #{lighten($dark-gray, 25%)}; // Old single
+  --text-muted-on-bg-color: #6c757d;
+  --text-muted-on-surface-color: #5a6268;
+  --text-color-headings: #{$dark-gray};
 
   // Borders
-  --border-color: #dee2e6; // Standard border color (Bootstrap's $gray-300)
-  --border-radius: 4px;
-  --border-width: 1px;
+  --border-color: #{$border-color}; // $border-color is $light-gray from tokens.scss
 
-  // Shadows (Standard shadows for light theme)
-  --box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  --box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  // Non-color tokens (these are typically not themed but set for consistency)
+  --border-radius: #{$border-radius};
+  --border-radius-lg: calc(#{$border-radius} * 2);
+  --border-width: #{$border-width};
 
-  // Apply to global elements
-  color-scheme: light; // Informs browser about the theme
+  --box-shadow-sm: #{$box-shadow-sm};
+  --box-shadow: #{$box-shadow};
+  --box-shadow-lg: #{$box-shadow-lg};
 
-  // Redefine SCSS variables if components directly use them and are compiled under .theme-light scope
-  // This ensures that if `tokens.scss` defaults were different or if it becomes theme-agnostic,
-  // the light theme explicitly sets its values.
-  $primary-color: var(--primary-color);
-  $secondary-color: var(--secondary-color);
-  $success-color: var(--success-color);
-  $danger-color: var(--danger-color);
-  $warning-color: var(--warning-color);
-  $info-color: var(--info-color);
-  $light-gray: var(--light-gray);
-  $dark-gray: var(--dark-gray);
-  $border-color: var(--border-color);
-  $box-shadow-sm: var(--box-shadow-sm);
-  $box-shadow: var(--box-shadow);
-  $box-shadow-lg: var(--box-shadow-lg);
+  // Input specific colors
+  --input-background-color: #fff;
+  --input-text-color: #{$dark-gray};
+  --input-border-color: #{$border-color};
+  --input-focus-border-color: #{lighten($primary-color, 25%)};
+  --input-focus-box-shadow: 0 0 0 0.2rem #{rgba($primary-color, 0.25)};
+  --input-placeholder-color: #{lighten($dark-gray, 40%)};
 
-  // Base HTML element styling for light theme
-  background-color: var(--background-color);
-  color: var(--text-color);
+  // Specific component colors (examples)
+  --dialog-bg-color: var(--surface-color);
+  --dialog-border-color: var(--border-color);
+  --media-background-color: #000;
+  --media-border-color: var(--border-color);
 
-  // Component variable overrides for light theme (if they were different from default tokens)
-  // $button-primary-bg: var(--primary-color);
-  // $button-primary-text: #fff;
-  // $panel-bg: var(--surface-color);
-  // $panel-border-color: var(--border-color);
-  // $input-bg: var(--background-color); // e.g., inputs might be same as main background
-  // $input-border-color: var(--border-color);
-  // $input-color: var(--text-color);
-  // $input-placeholder-color: var(--text-muted);
+  // Activity Indicator colors
+  --audio-pulse-inactive-color: #{lighten($dark-gray, 50%)};
+  --audio-pulse-low-color: #{$primary-color};
+  --audio-pulse-medium-color: #{$warning-color};
+  --audio-pulse-high-color: #{$danger-color};
+
+  // Tooltip
+  --tooltip-bg-color: #{$dark-gray};
+  --tooltip-text-color: #{$light-gray};
+
+  --border-color-soft: #{lighten($border-color, 5%)}; // From tokens.scss
+
+  // Interactive States (matching :root defaults from tokens.scss)
+  --primary-color-hover: #{darken($primary-color, 7.5%)};
+  --primary-color-active: #{darken($primary-color, 10%)};
+  --primary-color-focus-shadow: #{rgba($primary-color, 0.25)};
+  --secondary-color-hover: #{darken($secondary-color, 7.5%)};
+  --secondary-color-active: #{darken($secondary-color, 10%)};
+  --success-color-hover: #{darken($success-color, 7.5%)};
+  --success-color-active: #{darken($success-color, 10%)};
+  --danger-color-hover: #{darken($danger-color, 7.5%)};
+  --danger-color-active: #{darken($danger-color, 10%)};
+  --warning-color-hover: #{darken($warning-color, 7.5%)};
+  --warning-color-active: #{darken($warning-color, 10%)};
+  --info-color-hover: #{darken($info-color, 7.5%)};
+  --info-color-active: #{darken($info-color, 10%)};
+  --surface-hover-color: #{rgba(0,0,0,0.03)};
+  --surface-active-color: #{rgba(0,0,0,0.05)};
+  --surface-selected-color: #{mix($primary-color, $light-gray, 15%)};
+  --text-color-on-primary: #{$white};
+  --text-color-on-secondary: #{$white};
+  --text-color-on-success: #{$white};
+  --text-color-on-danger: #{$white};
+  --text-color-on-warning: #{$dark-gray};
+  --text-color-on-info: #{$white};
+  --text-color-on-primary-hover: #{darken(#fff, 15%)};
+  --surface-hover-on-primary: #{rgba(#fff, 0.1)};
+
+  // Any SCSS variable redefinitions like `$primary-color: var(--primary-color);` are removed.
+  // Components should use `var(--primary-color)` directly, or SCSS functions that consume these CSS vars if needed.
 }
 
-// If `tokens.scss` *is* the light theme by default, and components already use its variables,
-// then applying `.theme-light` might not change much unless specific overrides are added here
-// that differ from the initial `tokens.scss` values.
-// This file serves as an explicit declaration of the light theme.
+// If `tokens.scss` :root provides the light theme by default, this .theme-light class
+// primarily serves to explicitly apply light theme settings if needed, or if there's a possibility
+// of a different default (e.g., system preference, or no theme applied means basic browser styles).

@@ -6,13 +6,13 @@
   align-items: center;
   padding: $spacing-md;
   margin-bottom: $spacing-md; // For stacking multiple toasts if managed by a container
-  border-radius: $border-radius;
-  border: 1px solid transparent;
-  box-shadow: $box-shadow-lg; // Prominent shadow for floating elements
-  color: $white; // Default text color for toasts, assuming colored backgrounds for types
-  min-width: 280px; // Slightly adjusted from 250px
-  max-width: 420px; // Slightly adjusted from 400px
-  // Add enter/exit animations later if desired using classes like .toast-enter, .toast-exit
+  border-radius: var(--border-radius, $border-radius);
+  border: 1px solid transparent; // Border color will come from type-specific styles
+  box-shadow: var(--box-shadow-lg, $box-shadow-lg);
+  // Color is set by type-specific styles primarily for text on colored backgrounds
+  // color: var(--text-color-on-primary); // Example, but each type defines its own best contrast
+  min-width: 280px;
+  max-width: 420px;
   // Example:
   // opacity: 0;
   // transform: translateY(20px);
@@ -24,29 +24,29 @@
 
   .toast-icon {
     margin-right: $spacing-md;
-    font-size: $font-size-xl; // Icon size (e.g., 24px)
-    flex-shrink: 0; // Prevent icon from shrinking
+    font-size: $font-size-xl;
+    flex-shrink: 0;
   }
 
   .toast-message {
     flex-grow: 1;
-    margin: 0; // Reset paragraph margin
+    margin: 0;
     font-size: $font-size-base;
     line-height: $line-height-base;
-    word-break: break-word; // Ensure long messages wrap
+    word-break: break-word;
   }
 
   .toast-close-button {
     background: none;
     border: none;
-    color: inherit; // Inherits from .toast parent (e.g. white or specific type color)
+    color: inherit;
     opacity: 0.7;
     cursor: pointer;
-    margin-left: $spacing-lg; // Space between message and close button
-    padding: $spacing-xs; // Clickable area
-    font-size: $font-size-lg; // Close icon size (e.g., 20px)
-    line-height: 1; // Ensure icon is centered
-    flex-shrink: 0; // Prevent button from shrinking
+    margin-left: $spacing-lg;
+    padding: $spacing-xs;
+    font-size: $font-size-lg;
+    line-height: 1;
+    flex-shrink: 0;
 
     &:hover {
       opacity: 1;
@@ -55,25 +55,27 @@
 
   // Type-specific styles
   &.toast-success {
-    background-color: $success-color;
-    border-color: darken($success-color, 10%);
-    // Icon color will be $white by default due to .toast color
+    background-color: var(--success-color, $success-color);
+    border-color: var(--success-color-active, #{darken($success-color, 10%)}); // Use active/darkened as border
+    color: var(--text-color-on-success, #{$white});
   }
   &.toast-error {
-    background-color: $danger-color;
-    border-color: darken($danger-color, 10%);
+    background-color: var(--danger-color, $danger-color);
+    border-color: var(--danger-color-active, #{darken($danger-color, 10%)});
+    color: var(--text-color-on-danger, #{$white});
   }
   &.toast-warning {
-    background-color: $warning-color;
-    border-color: darken($warning-color, 10%);
-    color: $dark-gray; // Warning yellow typically needs dark text for contrast
+    background-color: var(--warning-color, $warning-color);
+    border-color: var(--warning-color-active, #{darken($warning-color, 10%)});
+    color: var(--text-color-on-warning, #{$dark-gray});
 
-    .toast-close-button, .toast-icon { // Ensure icon also uses dark color for contrast
-       color: inherit; // Inherits $dark-gray from .toast.toast-warning
+    .toast-close-button, .toast-icon {
+       color: inherit;
     }
   }
   &.toast-info {
-    background-color: $info-color;
-    border-color: darken($info-color, 10%);
+    background-color: var(--info-color, $info-color);
+    border-color: var(--info-color-active, #{darken($info-color, 10%)});
+    color: var(--text-color-on-info, #{$white});
   }
 }

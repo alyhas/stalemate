@@ -1,0 +1,118 @@
+@import '../../styles/tokens';
+// Import base dialog styles if they were extracted to a common file e.g. _dialog-base.scss
+// @import '../../styles/components/dialog-base';
+// For now, assuming .dialog, .dialog-open, .dialog-backdrop classes from settings-dialog.scss are global enough
+// or we are relying on browser default for <dialog> if those classes are not globally applied.
+
+// Specific styles for the ShortcutsHelp dialog content
+.shortcuts-help-dialog {
+  // If not extending/using global .dialog styles, basic modal shell here:
+  // background-color: var(--surface-color);
+  // border: 1px solid var(--border-color);
+  // border-radius: $border-radius-lg;
+  // box-shadow: $box-shadow-lg;
+  // padding: 0; // Header/content will have padding
+  // max-width: 500px;
+  // width: 80vw;
+  // z-index: 1050;
+  // These are likely covered by the global .dialog class from settings-dialog.scss.
+  // Add transition if not inherited from a global .dialog style that has it.
+  // transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0s linear 0.2s;
+
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    border-bottom: 1px solid var(--border-color);
+    // Ensure header text color is themed
+    color: var(--text-color-headings); // Or var(--text-on-surface-color) if dialog bg is surface
+
+    .dialog-title {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      // color: var(--text-color); // Inherits from .dialog-header
+    }
+    .shortcuts-close-button {
+      background: none;
+      border: none;
+      color: var(--text-muted-color); // Use muted color for less emphasis than primary
+      cursor: pointer;
+      font-size: $font-size-xl * 1.2;
+      padding: $spacing-xs;
+      line-height: 1;
+      transition: color $default-transition-duration $default-transition-timing-function;
+      &:hover {
+        color: var(--text-color); // Darken/lighten on hover
+      }
+    }
+  }
+
+  .dialog-content {
+    padding: $spacing-lg;
+    max-height: 60vh;
+    overflow-y: auto;
+    color: var(--text-color); // Base text color for content
+  }
+
+  .shortcuts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md 0;
+    border-bottom: 1px solid var(--border-color-soft, #{lighten($border-color, 10%)});
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .shortcut-keys {
+    display: flex;
+    gap: $spacing-xs;
+  }
+
+  .shortcut-key {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius;
+    font-family: $font-family-monospace;
+    font-size: $font-size-sm;
+    box-shadow: $box-shadow-sm;
+    color: var(--text-on-surface-color); // Text color for keys
+  }
+
+  .shortcut-description {
+    font-size: $font-size-base;
+    // color: var(--text-color); // Inherits from .dialog-content
+    margin-left: $spacing-lg;
+    text-align: right;
+  }
+}
+
+// Ensure backdrop styles are available (copied/adapted from settings-dialog.scss if not global)
+// If .dialog-backdrop is globally styled, this is not needed.
+// .dialog-backdrop {
+//   position: fixed;
+//   top: 0; left: 0;
+//   width: 100vw; height: 100vh;
+//   background-color: var(--backdrop-bg-color, #{rgba($black, 0.3)});
+//   z-index: 1040;
+//   opacity: 0;
+//   visibility: hidden;
+//   transition: opacity $default-transition-duration ease-out, visibility 0s linear $default-transition-duration;
+//   &.active {
+//     opacity: 1;
+//     visibility: visible;
+//     transition-delay: 0s;
+//   }
+// }

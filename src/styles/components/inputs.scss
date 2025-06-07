@@ -11,34 +11,38 @@
   font-size: $font-size-base;
   font-weight: $font-weight-normal;
   line-height: $line-height-base;
-  color: $dark-gray;
-  background-color: #fff;
+  color: var(--input-text-color, $dark-gray);
+  background-color: var(--input-background-color, #fff);
   background-clip: padding-box;
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow-sm; // Subtle shadow
+  border: $border-width solid var(--input-border-color, $border-color);
+  border-radius: var(--border-radius, $border-radius); // Use CSS var for border-radius
+  box-shadow: var(--box-shadow-sm, $box-shadow-sm); // Use CSS var for box-shadow
   // Using variables from animations.scss for consistency, keeping 0.15s duration for inputs
   transition: border-color 0.15s $default-transition-timing-function,
               box-shadow 0.15s $default-transition-timing-function,
-              background-color 0.15s $default-transition-timing-function; // Added background-color
+              background-color 0.15s $default-transition-timing-function;
 
   &::placeholder {
-    color: lighten($dark-gray, 25%);
+    color: var(--input-placeholder-color, #{lighten($dark-gray, 25%)});
     opacity: 1; // Override Firefox's lower default opacity
   }
 
   &:focus {
-    color: $dark-gray;
-    background-color: #fff;
-    border-color: lighten($primary-color, 25%);
+    color: var(--input-text-color, $dark-gray); // Text color on focus usually same as default
+    background-color: var(--input-background-color, #fff); // BG on focus usually same
+    border-color: var(--input-focus-border-color, #{lighten($primary-color, 25%)});
     outline: 0;
-    box-shadow: $box-shadow-sm, 0 0 0 0.2rem rgba($primary-color, 0.25);
+    // Combine existing shadow with focus shadow for a layered effect if desired, or just use focus shadow
+    box-shadow: var(--box-shadow-sm, $box-shadow-sm), var(--input-focus-box-shadow, 0 0 0 0.2rem #{rgba($primary-color, 0.25)});
   }
 
   &:disabled, &[readonly] {
-    background-color: $light-gray;
-    opacity: 0.75; // Slightly more visible than buttons
+    background-color: var(--input-disabled-bg-color, $light-gray); // Specific var for disabled bg
+    border-color: var(--input-disabled-border-color, $border-color); // Specific var for disabled border
+    opacity: 0.65; // Adjusted opacity to match buttons
     cursor: not-allowed;
+    // Ensure text color is also muted for disabled state
+    color: var(--input-disabled-text-color, #{lighten($dark-gray, 15%)});
   }
 }
 
@@ -106,7 +110,7 @@ select.form-control {
 .form-check-input {
   position: absolute;
   opacity: 0;
-  width: 1px; // Avoid layout issues
+  width: 1px;
   height: 1px;
   margin: -1px;
   padding: 0;
@@ -117,40 +121,41 @@ select.form-control {
   // Custom appearance for the label or a generated ::before/::after element
   + .form-check-label {
     position: relative;
-    padding-left: $spacing-lg; // Space for custom checkbox/radio
+    padding-left: $spacing-lg;
     cursor: pointer;
     user-select: none;
     display: inline-block;
-    margin-bottom: $spacing-xs; // Align with other form elements
+    margin-bottom: $spacing-xs;
+    color: var(--text-color, $dark-gray); // Label text color
 
     &::before { // Custom checkbox/radio box
       content: "";
       position: absolute;
       left: 0;
-      top: ($line-height-base * 1em - $spacing-md) / 2; // Vertically center
-      width: $spacing-md; // 16px
+      top: ($line-height-base * 1em - $spacing-md) / 2;
+      width: $spacing-md;
       height: $spacing-md;
-      border: $border-width solid $border-color;
-      border-radius: $border-radius * 0.5; // Slightly less rounded for checkboxes
-      background-color: #fff;
-      transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+      border: $border-width solid var(--input-border-color, $border-color);
+      border-radius: $border-radius * 0.5;
+      background-color: var(--input-background-color, #fff);
+      transition: background-color 0.15s $default-transition-timing-function, border-color 0.15s $default-transition-timing-function;
     }
 
     &::after { // Checkmark/dot
       content: "";
       position: absolute;
-      left: ($spacing-md - 8px) / 2; // Center the checkmark/dot (assuming 8px wide)
-      top: (($line-height-base * 1em - $spacing-md) / 2) + ($spacing-md - 8px) / 2 - 2px; // Adjust for checkmark shape
+      left: ($spacing-md - 8px) / 2;
+      top: (($line-height-base * 1em - $spacing-md) / 2) + ($spacing-md - 8px) / 2 - 2px;
       width: 8px;
       height: 8px;
       opacity: 0;
-      transition: opacity 0.15s ease-in-out;
+      transition: opacity 0.15s $default-transition-timing-function;
     }
   }
 
   &:checked + .form-check-label::before {
-    background-color: $primary-color;
-    border-color: $primary-color;
+    background-color: var(--primary-color, $primary-color);
+    border-color: var(--primary-color, $primary-color);
   }
 
   &:checked + .form-check-label::after {
@@ -159,14 +164,13 @@ select.form-control {
 
   // Checkbox specific (checkmark)
   &[type="checkbox"] + .form-check-label::after {
-    // Simple checkmark using border
-    border: solid #fff;
+    border: solid var(--text-color-on-primary, #fff); // Checkmark color (on primary bg)
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
-    width: 5px; // Adjust for visual balance
+    width: 5px;
     height: 10px;
-    left: 5px; // Adjust
-    top: (($line-height-base * 1em - $spacing-md) / 2) + 2px; // Adjust
+    left: 5px;
+    top: (($line-height-base * 1em - $spacing-md) / 2) + 2px;
   }
 
   // Radio specific (dot)
@@ -174,29 +178,31 @@ select.form-control {
     border-radius: 50%; // Radios are round
   }
   &[type="radio"] + .form-check-label::after {
-    background-color: #fff;
+    background-color: var(--text-color-on-primary, #fff); // Dot color (on primary bg)
     border-radius: 50%;
-    width: $spacing-sm; // 8px dot
+    width: $spacing-sm;
     height: $spacing-sm;
-    left: $spacing-xs; // 4px from edge
-    top: (($line-height-base * 1em - $spacing-md) / 2) + $spacing-xs; // 4px from edge
+    left: $spacing-xs;
+    top: (($line-height-base * 1em - $spacing-md) / 2) + $spacing-xs;
   }
 
   &:focus + .form-check-label::before {
-    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+    // Use the standard input focus shadow, but on the custom checkbox
+    box-shadow: var(--input-focus-box-shadow, 0 0 0 0.2rem #{rgba($primary-color, 0.25)});
+    border-color: var(--input-focus-border-color, #{lighten($primary-color, 25%)}); // Match focus border color if needed
   }
 
   &:disabled + .form-check-label {
-    color: lighten($dark-gray, 25%);
+    color: var(--input-disabled-text-color, #{lighten($dark-gray, 15%)});
     cursor: not-allowed;
     &::before {
-      background-color: $light-gray;
-      border-color: lighten($border-color, 10%);
+      background-color: var(--input-disabled-bg-color, $light-gray);
+      border-color: var(--input-disabled-border-color, #{lighten($border-color, 10%)});
     }
   }
   &:disabled:checked + .form-check-label::before {
-    background-color: lighten($primary-color, 20%);
-    border-color: lighten($primary-color, 20%);
+    background-color: var(--primary-color-disabled, #{lighten($primary-color, 20%)}); // Need a disabled primary color
+    border-color: var(--primary-color-disabled, #{lighten($primary-color, 20%)});
   }
 }
 
@@ -243,9 +249,9 @@ select.form-control {
   color: $dark-gray;
   text-align: center;
   white-space: nowrap;
-  background-color: $light-gray;
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
+  background-color: var(--surface-color, $light-gray); // Use surface for addons
+  border: $border-width solid var(--input-border-color, $border-color);
+  border-radius: var(--border-radius, $border-radius);
 }
 
 .input-group-prepend .input-group-text {
@@ -260,17 +266,19 @@ select.form-control {
 
 // Validation States
 .is-valid {
-  border-color: $success-color !important; // Override specificity
+  border-color: var(--success-color, $success-color) !important;
   &:focus {
-    box-shadow: 0 0 0 0.2rem rgba($success-color, 0.25);
+    box-shadow: 0 0 0 0.2rem var(--success-color-focus-shadow, #{rgba($success-color, 0.25)});
+    // border-color: var(--success-color, $success-color) !important; // Ensure focus border is also success
   }
-  // Optional: Add feedback icon
+  // Optional: Add feedback icon (e.g. background-image)
 }
 
 .is-invalid {
-  border-color: $danger-color !important;
+  border-color: var(--danger-color, $danger-color) !important;
   &:focus {
-    box-shadow: 0 0 0 0.2rem rgba($danger-color, 0.25);
+    box-shadow: 0 0 0 0.2rem var(--danger-color-focus-shadow, #{rgba($danger-color, 0.25)});
+    // border-color: var(--danger-color, $danger-color) !important; // Ensure focus border is also danger
   }
 }
 
@@ -283,21 +291,21 @@ select.form-control {
 }
 
 .valid-feedback {
-  color: $success-color;
+  color: var(--success-color, $success-color);
 }
-.is-valid ~ .valid-feedback { // Show feedback if input is valid and feedback element exists
+.is-valid ~ .valid-feedback {
   display: block;
 }
 
 .invalid-feedback {
-  color: $danger-color;
+  color: var(--danger-color, $danger-color);
 }
-.is-invalid ~ .invalid-feedback { // Show feedback if input is invalid and feedback element exists
+.is-invalid ~ .invalid-feedback {
   display: block;
 }
 
 
-// Form groups for layout
+// Form groups for layout (spacing already uses tokens)
 .form-group {
   margin-bottom: $spacing-md;
 }

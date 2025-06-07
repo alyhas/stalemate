@@ -3,9 +3,14 @@
 
 // Main Content Area
 .main-content {
-  padding: $spacing-lg; // Default padding around the content area
+  padding: $spacing-lg;
+  // background-color: var(--background-color-main); // Assuming this is the main content area background
+  // transition: background-color $default-transition-duration $default-transition-timing-function;
+  // The body already has this background, so main-content might not need its own unless it's visually distinct.
+  // For now, no direct background set here, it will be transparent to body's background.
+
   // The following margin-left assumes a fixed sidebar. Adjust as needed.
-  // margin-left: 250px; // Default: Same as $sidebar-width if sidebar is fixed and always visible
+  // margin-left: 250px;
   // transition: margin-left 0.3s ease-in-out; // Smooth transition if sidebar collapses
 
   // If header is fixed, add padding to top to prevent content from being obscured
@@ -76,21 +81,25 @@
     flex-direction: column; // Stack video and controls
     justify-content: center; // Center video vertically if it doesn't fill height
     align-items: center; // Center video horizontally
-    min-height: 200px; // Example minimum height
-    background-color: var(--surface-color, $light-gray); // Use theme variable or fallback
-    padding: $spacing-md; // Padding for the frame around the video
-    border-radius: $border-radius;
-    border: $border-width solid var(--border-color, $border-color);
+    min-height: 200px;
+    background-color: var(--surface-color);
+    padding: $spacing-md;
+    border-radius: var(--border-radius, $border-radius);
+    border: var(--border-width, $border-width) solid var(--border-color);
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function;
   }
 
   .primary-content {
-    background-color: var(--surface-color, $light-gray); // Use theme variable or fallback
+    background-color: var(--surface-color);
     padding: $spacing-md;
-    border-radius: $border-radius;
-    border: $border-width solid var(--border-color, $border-color);
+    border-radius: var(--border-radius, $border-radius);
+    border: var(--border-width, $border-width) solid var(--border-color);
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function;
 
-    h2 { // Already styled globally by typography.scss, but can add specific margin if needed
-      margin-top: 0; // Common practice for titles within a content block
+    h2 {
+      margin-top: 0;
       margin-bottom: $spacing-md;
     }
     // Add styles for h3, p within primary-content if needed

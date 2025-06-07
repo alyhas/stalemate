@@ -3,12 +3,14 @@
 
 // Control Tray / Action Bar
 .control-tray {
-  background-color: $light-gray; // Example background
+  background-color: var(--surface-color);
   padding: $spacing-md $spacing-lg;
-  border-top: $border-width solid $border-color; // Or box-shadow for separation
-  // box-shadow: 0 -2px 5px rgba(0,0,0,0.05); // Alternative to border
+  border-top: var(--border-width, $border-width) solid var(--border-color);
+  // box-shadow: var(--box-shadow-sm);
   display: flex;
-  align-items: center; // Vertically align items in the tray
+  align-items: center;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function;
   justify-content: flex-end; // Default: align controls to the right
 
   // Positioning options:

@@ -2,33 +2,42 @@
 
 // Base Panel Style
 .panel {
-  margin-bottom: $spacing-lg; // Default spacing between panels
-  background-color: #fff; // Default background
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow-sm; // Default subtle shadow
+  margin-bottom: $spacing-lg;
+  background-color: var(--surface-color);
+  border: var(--border-width, $border-width) solid var(--border-color);
+  border-radius: var(--border-radius, $border-radius);
+  box-shadow: var(--box-shadow-sm, $box-shadow-sm);
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function,
+              box-shadow $default-transition-duration $default-transition-timing-function;
 
   // Panel Header
   .panel-header {
-    padding: $spacing-md $spacing-lg; // Generous padding for header
-    border-bottom: $border-width solid $border-color;
-    background-color: $light-gray; // Slight distinction for header background
-    border-top-left-radius: calc(#{$border-radius} - #{$border-width}); // Match panel's border-radius
-    border-top-right-radius: calc(#{$border-radius} - #{$border-width});
+    padding: $spacing-md $spacing-lg;
+    border-bottom: var(--border-width, $border-width) solid var(--border-color);
+    background-color: var(--surface-header-color, var(--surface-color));
+    color: var(--text-on-surface-color);
+    border-top-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-top-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
 
-    // If using heading tags within panel-header
     h1, h2, h3, h4, h5, h6 {
       margin-top: 0;
       margin-bottom: 0;
-      font-size: $font-size-lg; // Example: Larger font for panel titles
+      font-size: $font-size-lg;
+      color: inherit; // Inherit from .panel-header color
     }
   }
 
   // Panel Body
   .panel-body {
-    padding: $spacing-lg; // Content padding
+    padding: $spacing-lg;
+    color: var(--text-on-surface-color);
+    // No background transition needed if it's transparent to panel's bg, color transition for text.
+    transition: color $default-transition-duration $default-transition-timing-function;
 
-    // Clearfix for floated content within panel body
     &::after {
       content: "";
       clear: both;
@@ -39,71 +48,73 @@
   // Panel Footer
   .panel-footer {
     padding: $spacing-md $spacing-lg;
-    border-top: $border-width solid $border-color;
-    background-color: $light-gray;
-    border-bottom-left-radius: calc(#{$border-radius} - #{$border-width});
-    border-bottom-right-radius: calc(#{$border-radius} - #{$border-width});
+    border-top: var(--border-width, $border-width) solid var(--border-color);
+    background-color: var(--surface-header-color, var(--surface-color));
+    color: var(--text-on-surface-color);
+    border-bottom-left-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    border-bottom-right-radius: calc(var(--border-radius, #{$border-radius}) - var(--border-width, #{$border-width}));
+    transition: background-color $default-transition-duration $default-transition-timing-function,
+                border-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
 
-    // Often used for action buttons or meta information
-    // Example: Align buttons to the right
     .btn-group, .text-right {
       text-align: right;
     }
   }
 }
 
-// Contextual Panel Variants (using color tokens)
+// Contextual Panel Variants
 .panel-primary {
-  border-color: $primary-color;
+  border-color: var(--primary-color, $primary-color);
   .panel-header {
-    background-color: $primary-color;
-    color: #fff; // White text on primary color
-    border-color: $primary-color; // Ensure header border matches
+    background-color: var(--primary-color, $primary-color);
+    color: var(--text-color-on-primary, #{$white});
+    border-color: var(--primary-color, $primary-color);
   }
 }
 
 .panel-secondary {
-  border-color: $secondary-color;
+  border-color: var(--secondary-color, $secondary-color);
   .panel-header {
-    background-color: $secondary-color;
-    color: #fff;
-    border-color: $secondary-color;
+    background-color: var(--secondary-color, $secondary-color);
+    color: var(--text-color-on-secondary, #{$white});
+    border-color: var(--secondary-color, $secondary-color);
   }
 }
 
 .panel-success {
-  border-color: $success-color;
+  border-color: var(--success-color, $success-color);
   .panel-header {
-    background-color: $success-color;
-    color: #fff;
-    border-color: $success-color;
+    background-color: var(--success-color, $success-color);
+    color: var(--text-color-on-success, #{$white});
+    border-color: var(--success-color, $success-color);
   }
 }
 
 .panel-danger {
-  border-color: $danger-color;
+  border-color: var(--danger-color, $danger-color);
   .panel-header {
-    background-color: $danger-color;
-    color: #fff;
-    border-color: $danger-color;
+    background-color: var(--danger-color, $danger-color);
+    color: var(--text-color-on-danger, #{$white});
+    border-color: var(--danger-color, $danger-color);
   }
 }
 
 .panel-warning {
-  border-color: $warning-color;
+  border-color: var(--warning-color, $warning-color);
   .panel-header {
-    background-color: $warning-color;
-    color: $dark-gray; // Warning color might be light, use dark text
-    border-color: $warning-color;
+    background-color: var(--warning-color, $warning-color);
+    color: var(--text-color-on-warning, #{$dark-gray});
+    border-color: var(--warning-color, $warning-color);
   }
 }
 
 .panel-info {
-  border-color: $info-color;
+  border-color: var(--info-color, $info-color);
   .panel-header {
-    background-color: $info-color;
-    color: #fff;
-    border-color: $info-color;
+    background-color: var(--info-color, $info-color);
+    color: var(--text-color-on-info, #{$white});
+    border-color: var(--info-color, $info-color);
   }
 }
 
@@ -112,15 +123,15 @@
   box-shadow: none;
 }
 
-// Panel with larger shadow
+// Panel with larger shadow (uses CSS var, which defaults to SCSS var)
 .panel-shadow-lg {
-  box-shadow: $box-shadow-lg;
+  box-shadow: var(--box-shadow-lg, $box-shadow-lg);
 }
 
 // Panel with no border
 .panel-no-border {
-  border: none;
+  border: none !important; // Use important if it needs to override contextual panel borders
   .panel-header, .panel-footer {
-    border-color: transparent; // Remove internal borders too if panel has no border
+    border-color: transparent !important;
   }
 }

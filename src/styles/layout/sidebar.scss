@@ -3,30 +3,28 @@
 
 // Main Sidebar / Side Panel
 .app-sidebar {
-  width: 250px; // Default sidebar width, can be made variable
-  background-color: $light-gray; // Example: Light gray background
-  border-right: $border-width solid $border-color;
+  background-color: var(--surface-color);
+  border-right: var(--border-width, $border-width) solid var(--border-color);
   padding: $spacing-lg $spacing-md;
-  height: 100vh; // Example: Full viewport height
-  // position: fixed; // Uncomment if a fixed sidebar is desired
-  // left: 0;
-  // top: 0; // Adjust if header is also fixed
-  // bottom: 0;
-  // z-index: 1020; // Below header if header is fixed
-  overflow-y: auto; // Allow scrolling if content exceeds height
-  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; // For collapsible sidebar
+  height: 100vh;
+  overflow-y: auto;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              border-color $default-transition-duration $default-transition-timing-function,
+              transform $default-transition-duration $default-transition-timing-function,
+              width $default-transition-duration $default-transition-timing-function;
 
   // Sidebar Header (optional, e.g., for logo or title within sidebar)
   .sidebar-header {
     margin-bottom: $spacing-lg;
     padding-bottom: $spacing-lg;
-    border-bottom: $border-width solid lighten($border-color, 5%);
+    border-bottom: var(--border-width, $border-width) solid var(--border-color);
+    transition: border-color $default-transition-duration $default-transition-timing-function;
 
     .sidebar-title {
       font-size: $font-size-lg;
       font-weight: $font-weight-bold;
-      color: $dark-gray;
-      // Add any other styling for the title
+      color: var(--text-on-surface-color);
+      transition: color $default-transition-duration $default-transition-timing-function;
     }
   }
 
@@ -39,59 +37,58 @@
     }
 
     li {
-      margin-bottom: $spacing-xs; // Spacing between nav items
+      margin-bottom: $spacing-xs;
     }
 
     a {
-      display: block; // Make links take full width for easier clicking
+      display: block;
       padding: $spacing-sm $spacing-md;
-      color: $dark-gray; // Link color
+      color: var(--text-on-surface-color);
       text-decoration: none;
-      border-radius: $border-radius;
+      border-radius: var(--border-radius, $border-radius);
       font-size: $font-size-base;
-      transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+      // Transitions for background-color and color are already quite specific (0.15s).
+      // Keeping them as is, or could change to $default-transition-duration if preferred.
+      // For this exercise, let's make them consistent with the default.
+      transition: background-color $default-transition-duration $default-transition-timing-function,
+                  color $default-transition-duration $default-transition-timing-function;
 
       &:hover {
-        background-color: darken($light-gray, 5%);
-        color: $primary-color;
+        background-color: var(--surface-hover-color);
+        color: var(--primary-color);
       }
 
-      &.active { // Style for the active navigation link
-        background-color: $primary-color;
-        color: #fff;
+      &.active {
+        background-color: var(--primary-color);
+        color: var(--text-color-on-primary);
         font-weight: $font-weight-normal;
-
-        // Optional: Add an icon or indicator for active state
-        // i, .icon {
-        //   color: #fff;
-        // }
       }
 
-      // For icons within nav links
-      i, .icon {
+      i, .icon { // For icons within nav links
         margin-right: $spacing-sm;
-        width: 1.25em; // Ensure consistent icon spacing
+        width: 1.25em;
         text-align: center;
+        // Icon color should inherit or be set based on link color
       }
     }
 
-    // Nested navigation (submenus)
-    ul ul {
-      margin-left: $spacing-md; // Indent submenus
+    ul ul { // Nested navigation
+      margin-left: $spacing-md;
       margin-top: $spacing-xs;
-      font-size: $font-size-sm; // Slightly smaller font for sub-items
+      font-size: $font-size-sm;
     }
   }
 
-  // Sidebar Footer (optional, e.g., for settings or logout link)
+  // Sidebar Footer (optional)
   .sidebar-footer {
     margin-top: $spacing-xl;
     padding-top: $spacing-lg;
-    border-top: $border-width solid lighten($border-color, 5%);
+    border-top: var(--border-width, $border-width) solid var(--border-color);
     font-size: $font-size-sm;
-    color: lighten($dark-gray, 20%);
+    color: var(--text-muted-color);
+    transition: border-color $default-transition-duration $default-transition-timing-function,
+                color $default-transition-duration $default-transition-timing-function;
 
-    // Example: Small text or links
     small {
       display: block;
       margin-bottom: $spacing-xs;
