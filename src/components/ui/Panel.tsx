@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, memo } from "react";
 import cn from "classnames";
 import "./panel.scss";
 
@@ -6,13 +6,16 @@ export type PanelProps = {
   title?: ReactNode;
   children?: ReactNode;
   className?: string;
+  hoverable?: boolean;
 };
 
-export default function Panel({ title, children, className }: PanelProps) {
+function Panel({ title, children, className, hoverable = false }: PanelProps) {
   return (
-    <section className={cn("panel", className)}>
+    <section className={cn("panel", { hoverable }, className)}>
       {title && <header className="panel-header">{title}</header>}
       <div className="panel-body">{children}</div>
     </section>
   );
 }
+
+export default memo(Panel);

@@ -94,7 +94,10 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
         aria-modal="true"
         aria-label="Settings"
       >
-        <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
+        <Panel
+          className={`dialog-container ${connected ? "disabled" : ""}`}
+          hoverable
+        >
           {connected && (
             <div className="connected-indicator">
               <p>
