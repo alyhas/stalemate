@@ -17,9 +17,13 @@
 import "./logger.scss";
 
 import cn from "classnames";
-import { memo, ReactNode, useState } from "react"; // Added useState
+import React, { memo, ReactNode, useState, MouseEvent as ReactMouseEvent, useEffect, useRef } from "react"; // Added useEffect, useRef
 import { useLoggerStore } from "../../lib/store-logger";
-import CollapsibleContent from "./CollapsibleContent"; // Import CollapsibleContent
+import CollapsibleContent from "./CollapsibleContent";
+import { useContextMenu } from "../../contexts/ContextMenuContext";
+import { MenuItem } from "../context-menu/ContextMenu";
+import { useToast } from "../../contexts/ToastContext";
+import { FixedSizeList as List } from 'react-window'; // Import react-window list
 // Use Prism version for wider language support if needed, or keep default SyntaxHighlighter
 // For this task, let's use the default (hljs) version if specific languages aren't an issue,
 // or switch to Prism if more language grammars are needed.
@@ -50,10 +54,12 @@ const LogEntry = memo(
   ({
     log,
     MessageComponent,
-    logKey, // Added logKey prop
+    logKey,
+    onContextMenu,
+    style, // Added style prop for react-window
   }: {
     log: StreamingLog;
-    MessageComponent: ({ // Updated MessageComponent prop type
+    MessageComponent: ({
       message,
       logKey,
       expandedEntries,
@@ -64,9 +70,13 @@ const LogEntry = memo(
       expandedEntries: Set<ExpandedEntryKey>;
       toggleEntry: (key: ExpandedEntryKey) => void;
     }) => ReactNode;
-    logKey: ExpandedEntryKey; // Added logKey prop
+    logKey: ExpandedEntryKey;
+    onContextMenu: (event: ReactMouseEvent) => void;
+    style?: React.CSSProperties; // style prop for react-window
   }): JSX.Element => (
     <li
+      style={style} // Apply style from react-window here
+      onContextMenu={onContextMenu}
       className={cn(
         `plain-log`,
         `source-${log.type.slice(0, log.type.indexOf("."))}`,
@@ -375,9 +385,170 @@ const component = (log: StreamingLog) => {
   return AnyMessage;
 };
 
-export default function Logger({ filter = "none" }: LoggerProps) {
-  const { logs } = useLoggerStore();
+const ESTIMATED_ITEM_HEIGHT = 40; // Adjust based on typical log entry height (e.g. 2 lines of text + padding)
+
+const Logger: React.FC<LoggerProps> = ({ filter = "none", searchTerm }) => {
+  const { logs } = useLoggerStore(); // Raw logs from store
   const [expandedEntries, setExpandedEntries] = useState<Set<ExpandedEntryKey>>(new Set());
+  const { showContextMenu } = useContextMenu();
+  const { addToast } = useToast();
+
+  const [listHeight, setListHeight] = useState(300);
+  const [listWidth, setListWidth] = useState(300);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<List>(null);
+
+  // Effect to measure container for list dimensions
+  useEffect(() => {
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      const measure = () => {
+        setListHeight(currentContainer.clientHeight);
+        setListWidth(currentContainer.clientWidth);
+      };
+      measure(); // Initial measurement
+
+      const resizeObserver = new ResizeObserver(measure);
+      resizeObserver.observe(currentContainer);
+      return () => resizeObserver.unobserve(currentContainer);
+    }
+  }, []); // Run once on mount
+
+  // Filter logs based on tab and search term
+  const filterFn = filters[filter];
+  let logsToDisplay = logs.filter(filterFn);
+
+  if (searchTerm && searchTerm.trim() !== '') {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    logsToDisplay = logsToDisplay.filter(logEntry => {
+      if (logEntry.type && logEntry.type.toLowerCase().includes(lowerSearchTerm)) return true;
+      if (logEntry.message && typeof logEntry.message === 'string' && logEntry.message.toLowerCase().includes(lowerSearchTerm)) return true;
+      if (logEntry.message && typeof logEntry.message === 'object') {
+        try {
+          if (JSON.stringify(logEntry.message).toLowerCase().includes(lowerSearchTerm)) return true;
+        } catch (e) { /* Ignore */ }
+      }
+      if (logEntry.message && (logEntry.message as ClientContentLogType).turns) {
+        const clientContent = logEntry.message as ClientContentLogType;
+        return clientContent.turns.some(turn =>
+          turn.parts?.some(part =>
+            (part.text && part.text.toLowerCase().includes(lowerSearchTerm)) ||
+            (part.executableCode?.code && part.executableCode.code.toLowerCase().includes(lowerSearchTerm))
+          )
+        );
+      }
+      if (logEntry.message && (logEntry.message as { serverContent: LiveServerContent })?.serverContent?.modelTurn?.parts) {
+        const modelContent = (logEntry.message as { serverContent: LiveServerContent }).serverContent.modelTurn;
+        return modelContent.parts.some(part =>
+          (part.text && part.text.toLowerCase().includes(lowerSearchTerm)) ||
+          (part.executableCode?.code && part.executableCode.code.toLowerCase().includes(lowerSearchTerm))
+        );
+      }
+      if (logEntry.message && (logEntry.message as { toolCall: LiveServerToolCall })?.toolCall?.functionCalls) {
+        const toolCallContent = (logEntry.message as { toolCall: LiveServerToolCall }).toolCall;
+        return toolCallContent.functionCalls.some(fc =>
+          fc.name.toLowerCase().includes(lowerSearchTerm) ||
+          (fc.args && JSON.stringify(fc.args).toLowerCase().includes(lowerSearchTerm))
+        );
+      }
+       if (logEntry.message && (logEntry.message as LiveClientToolResponse)?.functionResponses) {
+        const toolResponseContent = (logEntry.message as LiveClientToolResponse);
+        return toolResponseContent.functionResponses.some(fr =>
+            fr.id.toLowerCase().includes(lowerSearchTerm) ||
+            (fr.response && JSON.stringify(fr.response).toLowerCase().includes(lowerSearchTerm))
+        );
+      }
+      return false;
+    });
+  }
+
+  // Effect for scrolling to bottom
+  useEffect(() => {
+    if (listRef.current && logsToDisplay.length > 0) {
+      listRef.current.scrollToItem(logsToDisplay.length - 1, 'end');
+    }
+  }, [logsToDisplay.length]);
+
+
+  // Helper to extract primary text from various log structures for "Copy Message"
+  const getPrimaryLogText = (logData: StreamingLog): string => {
+    const message = logData.message;
+    if (typeof message === 'string') return message;
+
+    // Attempt to find text in common structures
+    if (message && typeof message === 'object') {
+      if ('text' in message && typeof (message as any).text === 'string') return (message as any).text;
+
+      // For ClientContentLogType (array of turns, each with parts)
+      if ((message as ClientContentLogType).turns) {
+        return (message as ClientContentLogType).turns
+          .flatMap(turn => turn.parts?.map(part => part.text || (part.executableCode?.code ? `[Code: ${part.executableCode.language}]` : '')) || [])
+          .join(' ')
+          .trim();
+      }
+      // For ModelTurnLog (serverContent.modelTurn.parts)
+      if ((message as { serverContent: LiveServerContent })?.serverContent?.modelTurn?.parts) {
+        return ((message as { serverContent: LiveServerContent }).serverContent.modelTurn.parts || [])
+          .map(part => part.text || (part.executableCode?.code ? `[Code: ${part.executableCode.language}]` : ''))
+          .join(' ')
+          .trim();
+      }
+    }
+    // Fallback: stringify the whole message object if no simple text found
+    try {
+      return JSON.stringify(message, null, 2); // Pretty print if it's an object
+    } catch {
+      return 'Unable to extract message content.';
+    }
+  };
+
+
+  const handleLogEntryContextMenu = (event: ReactMouseEvent, logEntryData: StreamingLog) => {
+    event.preventDefault();
+
+    const getMenuItemsForLog = (logData: StreamingLog): MenuItem[] => {
+      const items: MenuItem[] = [];
+      const primaryText = getPrimaryLogText(logData);
+
+      items.push({
+        id: 'copy-message',
+        label: 'Copy Message',
+        icon: 'content_copy',
+        action: async () => {
+          try {
+            await navigator.clipboard.writeText(primaryText);
+            addToast('Message copied!', 'success');
+          } catch (err) {
+            console.error('Failed to copy message: ', err);
+            addToast('Failed to copy message.', 'error');
+          }
+        },
+        disabled: !primaryText || primaryText === 'Unable to extract message content.',
+      });
+
+      items.push({
+        id: 'copy-json',
+        label: 'Copy as JSON',
+        icon: 'data_object',
+        action: async () => {
+          try {
+            const jsonString = JSON.stringify(logData, null, 2);
+            await navigator.clipboard.writeText(jsonString);
+            addToast('Log entry copied as JSON!', 'success');
+          } catch (err) {
+            console.error('Failed to copy JSON: ', err);
+            addToast('Failed to copy as JSON.', 'error');
+          }
+        },
+      });
+      return items;
+    };
+
+    const menuItems = getMenuItemsForLog(logEntryData);
+    if (menuItems.length > 0) {
+      showContextMenu(event.clientX, event.clientY, menuItems);
+    }
+  };
 
   const toggleEntry = (key: ExpandedEntryKey) => {
     setExpandedEntries(prev => {
@@ -468,23 +639,62 @@ export default function Logger({ filter = "none" }: LoggerProps) {
     });
   }
 
+  // Define LogRow for react-window
+  const LogRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    const logEntryData = logsToDisplay[index]; // logsToDisplay is the filtered and searched list
+    if (!logEntryData) return null;
+
+    const logEntryKey = `log-${index}`; // Consistent key generation
+
+    // LogEntry is already designed to render a single log.
+    // We pass the style prop to its root element (which is an <li>).
+    // LogEntry itself needs to be modified to accept and apply this style.
+    // For now, let's assume LogEntry is refactored or we create a wrapper here.
+    // The `LogEntry` component already returns an `<li>`. We need to pass `style` to it.
+    // This requires LogEntry to accept a `style` prop.
+
+    // Quick Fix: Wrap LogEntry's output or modify LogEntry. For now, wrap.
+    // This is not ideal as LogEntry returns <li> which shouldn't be wrapped by div for ul > li.
+    // The correct way is to modify LogEntry to accept and apply the style prop.
+    // Assuming LogEntry is modified to accept `style` prop.
+    return (
+       <LogEntry
+          MessageComponent={component(logEntryData)}
+          log={logEntryData}
+          // key={logEntryKey} // key is handled by react-window's list items
+          logKey={logEntryKey}
+          onContextMenu={(e) => handleLogEntryContextMenu(e, logEntryData)}
+          style={style} // Pass style to LogEntry
+        />
+    );
+  };
+
+
   return (
+    // Assign containerRef to the element whose dimensions will constrain the List
+    // This is likely the .panel-body, or a new div inside it that excludes padding.
+    // For now, assuming .panel-body is the direct scrollable container for the list.
     <div className="logger panel">
-      <div className="panel-body">
-        <ul className="logger-list">
-          {logsToDisplay.map((log, index) => { // Use logsToDisplay and index for key
-            const logEntryKey = `log-${index}`; // Create a base key for the log entry
-            return (
-              <LogEntry
-                MessageComponent={component(log)}
-                log={log}
-                key={logEntryKey}
-                logKey={logEntryKey} // Pass the key to LogEntry
-              />
-            );
-          })}
-        </ul>
+      <div ref={containerRef} className="panel-body">
+        {listHeight > 0 && listWidth > 0 && logsToDisplay.length > 0 && (
+          <List
+            ref={listRef}
+            height={listHeight}
+            itemCount={logsToDisplay.length}
+            itemSize={ESTIMATED_ITEM_HEIGHT}
+            width={listWidth}
+            className="logger-list-virtualized" // For potential specific styling of the list container
+            itemKey={(index) => `log-${index}`} // Use a stable key if available, e.g. log.id
+          >
+            {LogRow}
+          </List>
+        )}
+        {logsToDisplay.length === 0 && (
+          <div className="logger-empty-state">No logs to display.</div>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(Logger);

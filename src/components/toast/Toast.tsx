@@ -32,7 +32,7 @@ export type ToastProps = ToastMessage & {
   onClose: (id: string) => void;
 };
 
-const Toast: React.FC<ToastProps> = ({ id, message, type, onClose }) => {
+const Toast: React.FC<ToastProps> = React.memo(({ id, message, type, onClose }) => { // Wrapped with React.memo
   const getIconName = (): string => {
     switch (type) {
       case 'success': return 'check_circle';
@@ -58,4 +58,4 @@ const Toast: React.FC<ToastProps> = ({ id, message, type, onClose }) => {
   );
 };
 
-export default Toast;
+export default Toast; // No change to export if already memoized at definition

@@ -23,29 +23,11 @@ type ShortcutsHelpProps = {
   onClose: () => void;
 };
 
-const shortcutsList = [
-  { keys: ['⌘', 'Shift', 'L'], description: 'Toggle Light/Dark Theme' },
-  { keys: ['⌘', ','], description: 'Open Settings Dialog' },
-  { keys: ['⌘', 'B'], description: 'Toggle Sidebar Collapse' },
-  { keys: ['⌘', 'D'], description: 'Toggle Microphone Mute (Control Tray)' },
-  { keys: ['⌘', 'Enter'], description: 'Send Message (from SidePanel input)' },
-  { keys: ['⌘', 'K'], description: 'Focus Log Search (SidePanel)' },
-  { keys: ['?'], description: 'Open This Shortcuts Help Screen' },
-  { keys: ['Esc'], description: 'Close active dialog (Settings, Help)' },
-];
-// For Windows/Linux users, display Ctrl instead of Meta/⌘
-const isMac = typeof navigator !== 'undefined' ? /Mac|iPod|iPhone|iPad/.test(navigator.platform) : false;
-const metaKeyDisplay = isMac ? '⌘' : 'Ctrl';
-
-const shortcuts = shortcutsList.map(s => ({
-    ...s,
-    keys: s.keys.map(k => k === 'Meta' ? metaKeyDisplay : k)
-}));
-
-
-const ShortcutsHelp: React.FC<ShortcutsHelpProps> = ({ isOpen, onClose }) => {
+// Using React.memo for this component
+const ShortcutsHelp: React.FC<ShortcutsHelpProps> = React.memo(({ isOpen, onClose }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // useEffect for focus and keyboard handling (Escape, Tab)
   useEffect(() => {
     const dialogNode = dialogRef.current;
     if (isOpen && dialogNode) {
@@ -54,10 +36,6 @@ const ShortcutsHelp: React.FC<ShortcutsHelpProps> = ({ isOpen, onClose }) => {
 
       if (closeButton) {
         closeButton.focus();
-      } else {
-        // Fallback for non-interactive dialog, make dialog itself focusable
-        // dialogNode.setAttribute('tabindex', '-1');
-        // dialogNode.focus();
       }
 
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -67,14 +45,13 @@ const ShortcutsHelp: React.FC<ShortcutsHelpProps> = ({ isOpen, onClose }) => {
           const focusables = Array.from(dialogNode.querySelectorAll<HTMLElement>(focusableElementsQuery))
                                 .filter(el => el.offsetParent !== null && !el.hasAttribute('disabled'));
 
-          if (focusables.length <= 1 && closeButton) { // Only close button is focusable
+          if (focusables.length <= 1 && closeButton) {
              if (document.activeElement === closeButton) {
-                event.preventDefault(); // Prevent tabbing out if only one element
+                event.preventDefault();
              }
              return;
           }
 
-          // Simplified trap for now if more elements are added later
           if (focusables.length > 1) {
             const firstFocusableElement = focusables[0];
             const lastFocusableElement = focusables[focusables.length - 1];
@@ -100,6 +77,27 @@ const ShortcutsHelp: React.FC<ShortcutsHelpProps> = ({ isOpen, onClose }) => {
       };
     }
   }, [isOpen, onClose]);
+
+  const shortcutsList = [
+  { keys: ['⌘', 'Shift', 'L'], description: 'Toggle Light/Dark Theme' },
+  { keys: ['⌘', ','], description: 'Open Settings Dialog' },
+  { keys: ['⌘', 'B'], description: 'Toggle Sidebar Collapse' },
+  { keys: ['⌘', 'D'], description: 'Toggle Microphone Mute (Control Tray)' },
+  { keys: ['⌘', 'Enter'], description: 'Send Message (from SidePanel input)' },
+  { keys: ['⌘', 'K'], description: 'Focus Log Search (SidePanel)' },
+  { keys: ['?'], description: 'Open This Shortcuts Help Screen' },
+  { keys: ['Esc'], description: 'Close active dialog (Settings, Help)' },
+];
+// For Windows/Linux users, display Ctrl instead of Meta/⌘
+const isMac = typeof navigator !== 'undefined' ? /Mac|iPod|iPhone|iPad/.test(navigator.platform) : false;
+const metaKeyDisplay = isMac ? '⌘' : 'Ctrl';
+
+const shortcuts = shortcutsList.map(s => ({
+    ...s,
+    keys: s.keys.map(k => k === 'Meta' ? metaKeyDisplay : k)
+}));
+
+
 
   return (
     // Use a React Fragment as settings-dialog-modal-wrapper might not be appropriate here
@@ -135,6 +133,6 @@ const ShortcutsHelp: React.FC<ShortcutsHelpProps> = ({ isOpen, onClose }) => {
       </dialog>
     </>
   );
-};
+});
 
 export default ShortcutsHelp;

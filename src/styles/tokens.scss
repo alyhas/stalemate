@@ -133,4 +133,13 @@ $box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
 
   --text-color-on-primary-hover: #{darken(#fff, 15%)}; // Already defined, ensure it's used if needed
   --surface-hover-on-primary: #{rgba(#fff, 0.1)}; // Already defined
+
+  // Context Menu Specific
+  --surface-elevated-color: #{$white}; // For light theme, elevated might be same as main bg or slightly off-white
+  --border-color-strong: #{darken($border-color, 15%)}; // Darker border for pop-out elements
+  // --primary-color-hover is already defined, but context menu might use a different shade for item hover
+  --menu-item-hover-bg-color: #{lighten($primary-color, 40%)}; // Very light primary for item hover background
+  --menu-item-hover-text-color: #{$primary-color};          // Primary color for text on that hover
+  --icon-color: #{$dark-gray}; // Default icon color, can be overridden by var(--text-muted-color) if preferred
+  --text-disabled-color: #{lighten($dark-gray, 40%)}; // For disabled menu items
 }

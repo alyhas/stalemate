@@ -11,19 +11,35 @@
   transition: background-color $default-transition-duration $default-transition-timing-function;
 
 
-  .panel-body {
-    overflow-y: auto;
+  .panel-body { // This is the containerRef for react-window
+    overflow: hidden; // react-window's List will handle its own scrolling
     flex-grow: 1;
-    padding: $spacing-md;
+    padding: 0; // Remove padding, List will fill this. Inner items get padding.
     color: var(--text-color);
     transition: color $default-transition-duration $default-transition-timing-function;
+    position: relative; // For absolute positioning of empty state message
   }
 
-  .logger-list {
+  // Remove old .logger-list as react-window provides its own structure
+  // .logger-list { ... }
+
+  .logger-list-virtualized {
+    // This is the outer div of react-window's List.
+    // No specific styles needed usually, unless overriding default react-window styles.
+    // Ensure it doesn't have browser default ul/li styling if it renders those.
     list-style-type: none;
     padding: 0;
     margin: 0;
-    width: 100%;
+    // overflow: visible !important; // Helps if items have box-shadows or outlines that get clipped
+  }
+
+  .logger-empty-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-muted-color);
+    font-style: italic;
   }
 
   // Color updates using CSS variables
@@ -112,6 +128,7 @@
 }
 
 // Styling for individual log list items (li elements, which are .plain-log)
+// This class is on the LogEntry's root <li> element.
 .logger li.plain-log {
   display: block;
   padding: $spacing-xs $spacing-sm;
@@ -121,6 +138,8 @@
   border-bottom: 1px solid var(--border-color);
   transition: color $default-transition-duration $default-transition-timing-function,
               border-color $default-transition-duration $default-transition-timing-function;
+  box-sizing: border-box; // Important for react-window item sizing
+
   &:last-child {
     border-bottom: none;
   }

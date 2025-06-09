@@ -20,7 +20,8 @@ export interface SettingsDialogProps {
   onClose: () => void;
 }
 
-export default function SettingsDialog({ isOpen, onClose }: SettingsDialogProps) {
+// Changed to a named function expression and wrapped with React.memo
+const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
@@ -254,4 +255,6 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
       </dialog>
     </div>
   );
-}
+};
+
+export default React.memo(SettingsDialog);

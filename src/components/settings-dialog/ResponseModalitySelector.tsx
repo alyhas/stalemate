@@ -8,7 +8,7 @@ const responseOptions = [
   { value: "text", label: "text" },
 ];
 
-export default function ResponseModalitySelector() {
+const ResponseModalitySelector: React.FC = () => { // Changed to const for memo
   const { config, setConfig } = useLiveAPIContext();
 
   const [selectedOption, setSelectedOption] = useState<{
@@ -78,4 +78,6 @@ export default function ResponseModalitySelector() {
       />
     </div>
   );
-}
+};
+
+export default React.memo(ResponseModalitySelector); // Wrapped with React.memo

@@ -205,5 +205,5 @@ const SidePanel = forwardRef<SidePanelHandle, SidePanelProps>(({ collapsed, onTo
   );
 });
 
-export default SidePanel; // Keep default export if that's the convention
+export default React.memo(SidePanel); // Wrap with React.memo
 // If memoization is needed: export default React.memo(SidePanel);

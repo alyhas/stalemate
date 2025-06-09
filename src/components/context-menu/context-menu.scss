@@ -1,0 +1,85 @@
+@import '../../styles/tokens';
+@import '../../styles/animations'; // For potential future animations
+
+.context-menu {
+  position: fixed;
+  min-width: 180px;
+  max-width: 280px;
+  background-color: var(--surface-elevated-color, var(--surface-color));
+  border: 1px solid var(--border-color-strong, var(--border-color));
+  border-radius: $border-radius; // Use standard border-radius from tokens
+  box-shadow: var(--box-shadow-lg, $box-shadow-lg);
+  padding: $spacing-xs 0;
+  z-index: 2100;
+  font-size: $font-size-base;
+  // Initial state for animation (if any - not implemented in this subtask, but good placeholder)
+  // opacity: 0;
+  // transform: scale(0.95);
+  // transition: opacity $default-transition-duration ease, transform $default-transition-duration ease;
+
+  // &.open { // Class to trigger open animation
+  //   opacity: 1;
+  //   transform: scale(1);
+  // }
+}
+
+.context-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  color: var(--text-color); // Text color on the elevated surface
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color $default-transition-duration $default-transition-timing-function,
+              color $default-transition-duration $default-transition-timing-function;
+
+  &:focus, &:focus-visible { // Consistent focus style
+    outline: none;
+    background-color: var(--menu-item-hover-bg-color);
+    color: var(--menu-item-hover-text-color);
+  }
+
+  &:hover:not(.disabled) {
+    background-color: var(--menu-item-hover-bg-color);
+    color: var(--menu-item-hover-text-color);
+  }
+
+  &.disabled {
+    color: var(--text-disabled-color); // Use specific disabled text color
+    cursor: not-allowed;
+  }
+
+  .context-menu-item-icon {
+    margin-right: $spacing-md;
+    font-size: $font-size-lg;
+    color: var(--icon-color); // Use general icon color token
+    // Transition for icon color if it changes on hover separately from text
+    transition: color $default-transition-duration $default-transition-timing-function;
+  }
+
+  &.disabled .context-menu-item-icon {
+    color: var(--text-disabled-color); // Ensure icon is also muted
+  }
+
+  &:hover:not(.disabled) .context-menu-item-icon,
+  &:focus:not(.disabled) .context-menu-item-icon,
+  &:focus-visible:not(.disabled) .context-menu-item-icon {
+    color: var(--menu-item-hover-text-color); // Icon color matches text on hover/focus
+  }
+
+  .context-menu-item-label {
+    flex-grow: 1;
+  }
+}
+
+.context-menu-separator {
+  height: 1px;
+  background-color: var(--border-color); // Use standard border color for separators
+  margin: $spacing-xs 0;
+}

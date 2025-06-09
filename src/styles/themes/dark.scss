@@ -117,9 +117,16 @@ $box-shadow-lg-dark: 0 1rem 3rem rgba(0, 0, 0, 0.5);
   --text-color-on-warning: #{$background-color-main-dark};
   --text-color-on-info: #{$background-color-main-dark};
 
-  --text-color-on-primary-hover: #{darken($text-on-surface-dark, 15%)}; // Assuming text on primary is light (e.g. text-on-surface)
-  --surface-hover-on-primary: #{rgba(0,0,0,0.2)}; // If primary-color-dark is light, this darkens; if primary-color-dark is dark, this is subtle on top.
-                                                  // Let's assume $primary-color-dark is a relatively saturated color, so a semi-transparent black overlay is a decent hover.
+  --text-color-on-primary-hover: #{darken($text-on-surface-dark, 15%)};
+  --surface-hover-on-primary: #{rgba(0,0,0,0.2)};
+
+  // Context Menu Specific for Dark Theme
+  --surface-elevated-color: #{lighten($surface-color-dark, 5%)}; // e.g. #2a2a2a if surface is #1e1e1e
+  --border-color-strong: #{lighten($border-color-dark, 10%)};   // e.g. #4e555b if border is #444950
+  --menu-item-hover-bg-color: #{rgba($primary-color-dark, 0.15)}; // Subtle primary color wash for item hover
+  --menu-item-hover-text-color: #{$primary-color-dark};          // Primary color for text on that hover
+  --icon-color: #{$text-muted-color-dark}; // Use dark theme's muted text for icons
+  --text-disabled-color: #{darken($text-muted-color-dark, 15%)}; // Darker muted for disabled items
 
   // Removed SCSS variable redefinitions like `$primary-color: var(--primary-color);`
   // Components should use `var(--css-custom-property)` for theming.

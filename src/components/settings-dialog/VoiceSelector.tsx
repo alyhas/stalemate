@@ -11,7 +11,7 @@ const voiceOptions = [
   {value: "Zephyr", label: "Zephyr"},
 ];
 
-export default function VoiceSelector() {
+const VoiceSelector: React.FC = () => { // Changed to const for memo
   const { config, setConfig } = useLiveAPIContext();
 
   const [selectedOption, setSelectedOption] = useState<{
@@ -99,4 +99,6 @@ export default function VoiceSelector() {
       />
     </div>
   );
-}
+};
+
+export default React.memo(VoiceSelector); // Wrapped with React.memo

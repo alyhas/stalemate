@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { useRef, useState, ChangeEvent, useEffect } from "react";
+import { useRef, useState, ChangeEvent, useEffect, useCallback, useMemo } from "react"; // Added useMemo
 import "./App.scss";
 import { LiveAPIProvider, useLiveAPIContext } from "./contexts/LiveAPIContext";
-import SidePanel, { SidePanelHandle } from "./components/side-panel/SidePanel"; // Updated import
+import SidePanel, { SidePanelHandle } from "./components/side-panel/SidePanel";
 import ControlTray /*, { ControlTrayProps } */ from "./components/control-tray/ControlTray"; // Removed ControlTrayProps as not used in this file
 import ControlButton from "./components/control-button/ControlButton";
 import cn from "classnames";
@@ -27,7 +27,9 @@ import ToastContainer from "./components/toast/ToastContainer";
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import ThemeToggleButton from './components/theme-toggle-button/ThemeToggleButton';
 import { useKeyboardShortcuts, ShortcutConfig } from './hooks/useKeyboardShortcuts';
-import ShortcutsHelp from './components/shortcuts-help/ShortcutsHelp'; // Import ShortcutsHelp
+import ShortcutsHelp from './components/shortcuts-help/ShortcutsHelp';
+import { ContextMenuProvider } from './contexts/ContextMenuContext'; // Import ContextMenuProvider
+import ContextMenuContainer from './components/context-menu/ContextMenuContainer'; // Import ContextMenuContainer
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -74,21 +76,36 @@ function App() {
   const { toggleTheme } = useTheme();
   const sidePanelRef = useRef<SidePanelHandle>(null);
 
-  const shortcutsConfig: ShortcutConfig = {
-    'meta+shift+l': toggleTheme,
-    'meta+,': () => setSettingsOpen(prev => !prev),
-    'meta+b': () => setSidebarCollapsed(prev => !prev),
-    'meta+d': () => setMicMuted(prev => !prev),
-    'meta+enter': () => sidePanelRef.current?.triggerSendMessage(), // Use ref
-    'meta+k': () => sidePanelRef.current?.focusSearchInput(),   // Use ref
-    'shift+?': () => setShortcutsHelpOpen(prev => !prev),
-  };
+  // Memoized callbacks for props
+  const handleToggleSidebar = useCallback(() => setSidebarCollapsed(prev => !prev), []);
+  const handleToggleSettings = useCallback(() => setSettingsOpen(prev => !prev), []);
+  const handleCloseSettings = useCallback(() => setSettingsOpen(false), []);
+  const handleToggleMicMute = useCallback(() => setMicMuted(prev => !prev), []);
+  const handleToggleShortcutsHelp = useCallback(() => setShortcutsHelpOpen(prev => !prev), []);
+  const handleCloseShortcutsHelp = useCallback(() => setShortcutsHelpOpen(false), []); // setShortcutsHelpOpen is stable
 
-  // Add sidePanelRef.current to dependencies if its methods rely on App.tsx states
-  // However, the methods exposed (focus, submit) are internal to SidePanel.
-  // The config object itself changes if any of its functions change.
-  // setMicMuted etc are stable. toggleTheme is stable if memoized.
-  useKeyboardShortcuts(shortcutsConfig, [toggleTheme, setMicMuted, setSettingsOpen, setSidebarCollapsed, setShortcutsHelpOpen]);
+  const shortcutsConfig: ShortcutConfig = useMemo(() => ({
+    'meta+shift+l': toggleTheme, // From useTheme, assumed stable
+    'meta+,': handleToggleSettings,
+    'meta+b': handleToggleSidebar,
+    'meta+d': handleToggleMicMute,
+    'meta+enter': () => sidePanelRef.current?.triggerSendMessage(),
+    'meta+k': () => sidePanelRef.current?.focusSearchInput(),
+    'shift+?': handleToggleShortcutsHelp,
+  }), [
+    toggleTheme,
+    handleToggleSettings,
+    handleToggleSidebar,
+    handleToggleMicMute,
+    handleToggleShortcutsHelp
+    // sidePanelRef is stable, its .current property changes do not trigger re-memoization here.
+    // The functions calling sidePanelRef.current methods are created within this useMemo.
+  ]);
+
+  // The dependencies for useKeyboardShortcuts hook itself.
+  // Since shortcutsConfig is now memoized, this will re-run less often.
+  // The actions inside shortcutsConfig are already memoized or stable.
+  useKeyboardShortcuts(shortcutsConfig, [shortcutsConfig]); // Now only depends on the memoized config object
 
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -183,12 +200,13 @@ function App() {
             // The effect runs once to attach/detach listeners. Content of ref can change without re-running effect.
 
   return (
-    <ThemeProvider> {/* ThemeProvider is now the outermost provider */}
+    <ThemeProvider>
       <ToastProvider>
-        <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}>
-          <LiveAPIProvider options={apiOptions}>
-            <header className="app-header">
-              <div className="container">
+        <ContextMenuProvider> {/* ContextMenuProvider wraps the main app div */}
+          <div className={cn("app", { "sidebar-collapsed": sidebarCollapsed })}>
+            <LiveAPIProvider options={apiOptions}>
+              <header className="app-header">
+                <div className="container">
                 <div className="header-brand">
                   <h1>Logo</h1>
                 </div>
@@ -209,11 +227,8 @@ function App() {
         <div className="app-container container-fluid">
           <div className="row"> {/* This row is display: flex */}
             <aside
-              className="app-sidebar" // Removed col-* classes for width, will be handled by style + SCSS
+              className="app-sidebar"
               style={
-                // Inline style sets width for resizable and collapsed states on larger screens.
-                // SCSS media queries will override for small screens (stacking).
-                // SCSS for .app.sidebar-collapsed .app-sidebar will set fixed collapsed width.
                 sidebarCollapsed
                   ? { flex: `0 0 ${COLLAPSED_SIDEBAR_WIDTH}px` }
                   : { flex: `0 0 ${sidebarWidth}px` }
@@ -222,7 +237,7 @@ function App() {
               <SidePanel
                 ref={sidePanelRef}
                 collapsed={sidebarCollapsed}
-                onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
+                onToggleCollapse={handleToggleSidebar} // Use memoized handler
               />
             </aside>
 
@@ -283,16 +298,17 @@ function App() {
                 onVideoStreamChange={setVideoStream}
                 enableEditingSettings={true}
                 settingsOpen={settingsOpen}
-                toggleSettings={() => setSettingsOpen(prev => !prev)}
-                muted={micMuted} // Pass micMuted state
-                onToggleMute={() => setMicMuted(prev => !prev)} // Pass toggle function
+                toggleSettings={handleToggleSettings} // Use memoized handler
+                muted={micMuted}
+                onToggleMute={handleToggleMicMute} // Use memoized handler
               >
             </main>
           </div>
         </div>
       </LiveAPIProvider>
       <ToastContainer />
-      <ShortcutsHelp isOpen={shortcutsHelpOpen} onClose={() => setShortcutsHelpOpen(false)} /> {/* Add ShortcutsHelp */}
+      <ShortcutsHelp isOpen={shortcutsHelpOpen} onClose={handleCloseShortcutsHelp} /> {/* Use memoized handler */}
+      <ContextMenuContainer />
     </div>
   </ToastProvider>
   );

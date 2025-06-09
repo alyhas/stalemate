@@ -25,10 +25,10 @@ export interface ControlButtonProps {
   label: string;
   onClick: () => void;
   disabled?: boolean; // Added disabled as it's a common button prop
-  className?: string; // Allow passing additional classes
+  className?: string;
 }
 
-const ControlButton: React.FC<ControlButtonProps> = (props) => {
+const ControlButton: React.FC<ControlButtonProps> = React.memo((props) => { // Wrapped with React.memo
   return (
     <button
       className={cn(
@@ -49,4 +49,4 @@ const ControlButton: React.FC<ControlButtonProps> = (props) => {
   );
 };
 
-export default ControlButton;
+export default ControlButton; // No change to export if already memoized at definition
