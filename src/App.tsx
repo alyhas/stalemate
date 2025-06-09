@@ -70,7 +70,10 @@ function App() {
           <div className="side-area col-span-12 md:col-span-4 lg:col-span-3">
             <SidePanel side={panelSide} onToggleSide={togglePanelSide} />
           </div>
-          <main className="main-area col-span-12 md:col-span-8 lg:col-span-9">
+          <main
+            id="main-content"
+            className="main-area col-span-12 md:col-span-8 lg:col-span-9"
+          >
             <div className="main-app-area">
               {/* APP goes here */}
               <ResizableVideo videoRef={videoRef} stream={videoStream} />
