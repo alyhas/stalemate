@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, memo } from "react";
+import usePrefersReducedMotion from "../../hooks/use-prefers-reduced-motion";
 import "./audio-visualizer.scss";
 
 export type AudioVisualizerProps = {
@@ -9,9 +10,10 @@ export type AudioVisualizerProps = {
 
 function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!analyser || !active) return;
+    if (!analyser || !active || reduceMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
@@ -87,7 +89,7 @@ function AudioVisualizer({ analyser, active, mode = "bars" }: AudioVisualizerPro
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [analyser, active, mode]);
+  }, [analyser, active, mode, reduceMotion]);
 
   const width = mode === "circle" || mode === "radar" ? 40 : 80;
   const height = mode === "circle" || mode === "radar" ? 40 : 24;
