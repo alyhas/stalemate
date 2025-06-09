@@ -97,6 +97,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
         <Panel
           className={`dialog-container ${connected ? "disabled" : ""}`}
           hoverable
+          animated
         >
           {connected && (
             <div className="connected-indicator">

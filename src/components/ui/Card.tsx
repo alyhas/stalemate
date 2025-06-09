@@ -4,10 +4,18 @@ import "./card.scss";
 
 export type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   hoverable?: boolean;
+  animated?: boolean;
 };
 
-function Card({ className, hoverable = false, ...props }: CardProps) {
-  return <div className={cn("card", { hoverable }, className)} {...props} />;
+function Card({
+  className,
+  hoverable = false,
+  animated = false,
+  ...props
+}: CardProps) {
+  return (
+    <div className={cn("card", { hoverable, animated }, className)} {...props} />
+  );
 }
 
 export default memo(Card);

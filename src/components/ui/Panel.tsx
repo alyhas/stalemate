@@ -7,11 +7,18 @@ export type PanelProps = {
   children?: ReactNode;
   className?: string;
   hoverable?: boolean;
+  animated?: boolean;
 };
 
-function Panel({ title, children, className, hoverable = false }: PanelProps) {
+function Panel({
+  title,
+  children,
+  className,
+  hoverable = false,
+  animated = false,
+}: PanelProps) {
   return (
-    <section className={cn("panel", { hoverable }, className)}>
+    <section className={cn("panel", { hoverable, animated }, className)}>
       {title && <header className="panel-header">{title}</header>}
       <div className="panel-body">{children}</div>
     </section>
