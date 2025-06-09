@@ -318,6 +318,12 @@
   width: 8px;
   height: 100%;
   cursor: col-resize;
+  outline: none;
+
+  &:focus {
+    outline: 2px solid var(--Blue-500);
+    outline-offset: -2px;
+  }
 }
 
 .side-panel[data-side="left"]:not(.open) {

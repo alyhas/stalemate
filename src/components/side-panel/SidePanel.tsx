@@ -183,6 +183,20 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
     window.addEventListener("mouseup", onUp);
   };
 
+  const adjustWidth = (delta: number) =>
+    setWidth((w) => Math.min(600, Math.max(200, w + delta)));
+
+  const handleResizeKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowLeft") {
+      adjustWidth(-10);
+    } else if (e.key === "ArrowRight") {
+      adjustWidth(10);
+    } else {
+      return;
+    }
+    e.preventDefault();
+  };
+
   const startMove = (e: React.MouseEvent) => {
     if (!onToggleSide) return;
     const startX = e.clientX;
@@ -360,7 +374,20 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
           </button>
         </div>
       </div>
-      {open && <div className="resize-handle" onMouseDown={startResize} />}
+      {open && (
+        <div
+          className="resize-handle"
+          onMouseDown={startResize}
+          onKeyDown={handleResizeKey}
+          role="separator"
+          aria-orientation="vertical"
+          aria-valuemin={200}
+          aria-valuemax={600}
+          aria-valuenow={width}
+          aria-label="Resize side panel"
+          tabIndex={0}
+        />
+      )}
     </div>
   );
 }
