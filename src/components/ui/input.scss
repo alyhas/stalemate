@@ -1,0 +1,26 @@
+@import "../../styles/tokens.scss";
+
+.text-input {
+  background: var(--Neutral-10);
+  border: 1px solid var(--Neutral-20);
+  border-radius: 6px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  transition: border-color var(--duration-fast) ease-in-out;
+
+  &:focus {
+    outline: none;
+    border-color: var(--Blue-500);
+  }
+
+  &.block {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}

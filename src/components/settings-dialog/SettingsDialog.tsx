@@ -10,6 +10,7 @@ import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
 import Panel from "../ui/Panel";
 import Button from "../ui/Button";
+import Input from "../ui/Input";
 import useFocusTrap from "../../hooks/use-focus-trap";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
@@ -114,22 +115,24 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
 
           <div className="custom-instructions">
             <label htmlFor="product-name">Product Name:</label>
-            <input
+            <Input
               id="product-name"
               type="text"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               onBlur={updateSystemInstruction}
               disabled={connected}
+              block
             />
             <label htmlFor="language">Language:</label>
-            <input
+            <Input
               id="language"
               type="text"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               onBlur={updateSystemInstruction}
               disabled={connected}
+              block
             />
             <label htmlFor="agent-gender">Agent Gender:</label>
             <input
@@ -146,7 +149,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
           </div>
           <div className="log-settings">
             <label htmlFor="max-logs">Max log entries:</label>
-            <input
+            <Input
               id="max-logs"
               type="number"
               min="50"
@@ -168,7 +171,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
                       )
                     )}
                   </span>
-                  <input
+                  <Input
                     key={`fd-${fd.description}`}
                     className="fd-row-description"
                     type="text"

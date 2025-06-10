@@ -22,6 +22,7 @@ import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
 import Logger, { LoggerFilterType } from "../logger/Logger";
 import Button from "../ui/Button";
+import Input from "../ui/Input";
 import "./side-panel.scss";
 
 const tabs: { value: LoggerFilterType; label: string }[] = [
@@ -305,7 +306,7 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
             </button>
           ))}
         </nav>
-        <input
+        <Input
           type="text"
           className="log-search"
           aria-label="Search logs"
@@ -313,6 +314,7 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           ref={searchRef}
+          block
         />
         <div className={cn("streaming-indicator", { connected })}>
           {connected
