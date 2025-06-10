@@ -5,6 +5,11 @@
   border-radius: 16px;
   overflow: hidden;
   background: var(--color-surface);
+  transition: outline var(--duration-fast) ease-in-out;
+
+  &.resizing {
+    outline: 2px dashed var(--Blue-500);
+  }
 
   video {
     width: 100%;
@@ -22,5 +27,11 @@
     cursor: nwse-resize;
     background: var(--Neutral-50);
     opacity: 0.5;
+    outline: none;
+
+    &:focus {
+      outline: 2px solid var(--Blue-500);
+      outline-offset: -2px;
+    }
   }
 }

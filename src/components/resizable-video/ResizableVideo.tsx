@@ -25,6 +25,7 @@ export default memo(function ResizableVideo({
   const startY = useRef(0);
   const startW = useRef(size.width);
   const startH = useRef(size.height);
+  const [resizing, setResizing] = useState(false);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -48,6 +49,7 @@ export default memo(function ResizableVideo({
     startY.current = e.clientY;
     startW.current = size.width;
     startH.current = size.height;
+    setResizing(true);
 
     const onMove = (ev: MouseEvent) => {
       const width = Math.max(160, startW.current + ev.clientX - startX.current);
@@ -57,6 +59,7 @@ export default memo(function ResizableVideo({
     const onUp = () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      setResizing(false);
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
@@ -84,7 +87,7 @@ export default memo(function ResizableVideo({
 
   return (
     <div
-      className="resizable-video"
+      className={cn("resizable-video", { resizing })}
       style={{ width: size.width, height: size.height }}
     >
       <video
