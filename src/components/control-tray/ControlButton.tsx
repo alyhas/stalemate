@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import useRipple from "../../hooks/use-ripple";
 
 export type ControlButtonProps =
@@ -10,13 +10,14 @@ export type ControlButtonProps =
     className?: string;
   };
 
-const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
-  ({ icon, label, active = false, className, onPointerDown, ...props }, ref) => {
-    const ripple = useRipple();
-    const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-      ripple(e);
-      onPointerDown?.(e);
-    };
+const ControlButton = memo(
+  forwardRef<HTMLButtonElement, ControlButtonProps>(
+    ({ icon, label, active = false, className, onPointerDown, ...props }, ref) => {
+      const ripple = useRipple();
+      const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+        ripple(e);
+        onPointerDown?.(e);
+      };
 
     return (
       <button
@@ -28,10 +29,12 @@ const ControlButton = forwardRef<HTMLButtonElement, ControlButtonProps>(
         onPointerDown={handlePointerDown}
         {...props}
       >
-        <span className="material-symbols-outlined filled">{icon}</span>
+        <span className="material-symbols-outlined filled" aria-hidden="true">
+          {icon}
+        </span>
       </button>
     );
-  }
+  })
 );
 
 export default ControlButton;
