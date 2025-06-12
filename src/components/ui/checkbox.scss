@@ -1,0 +1,68 @@
+@import "../../styles/tokens.scss";
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-family: var(--font-family-base);
+  cursor: pointer;
+  position: relative;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .checkmark {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--Neutral-20);
+    border-radius: 4px;
+    background: var(--Neutral-10);
+    transition:
+      background var(--duration-fast) ease-in-out,
+      border-color var(--duration-fast) ease-in-out;
+    display: inline-block;
+  }
+
+  input:focus + .checkmark {
+    outline: 2px solid var(--Blue-500);
+    outline-offset: 2px;
+  }
+
+  input:checked + .checkmark {
+    background: var(--Blue-500);
+    border-color: var(--Blue-500);
+  }
+
+  input:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: solid var(--color-primary-text);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    animation: checkmark-draw var(--duration-fast) ease-out;
+  }
+
+  &.block {
+    display: flex;
+  }
+
+  input:disabled + .checkmark {
+    opacity: 0.6;
+  }
+}
+
+@keyframes checkmark-draw {
+  from {
+    transform: scale(0) rotate(45deg);
+  }
+  to {
+    transform: scale(1) rotate(45deg);
+  }
+}

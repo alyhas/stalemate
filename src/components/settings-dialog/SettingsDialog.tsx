@@ -11,6 +11,7 @@ import "./settings-dialog.scss";
 import Panel from "../ui/Panel";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import Checkbox from "../ui/Checkbox";
 import useFocusTrap from "../../hooks/use-focus-trap";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
@@ -135,17 +136,16 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
               block
             />
             <label htmlFor="agent-gender">Agent Gender:</label>
-            <input
+            <Checkbox
               id="agent-gender"
-              type="checkbox"
               checked={isFemale}
               onChange={(e) => {
                 setIsFemale(e.target.checked);
                 updateSystemInstruction();
               }}
               disabled={connected}
+              label={isFemale ? "Female" : "Male"}
             />
-            <span>{isFemale ? "Female" : "Male"}</span>
           </div>
           <div className="log-settings">
             <label htmlFor="max-logs">Max log entries:</label>

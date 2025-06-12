@@ -68,6 +68,7 @@
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --duration-fast: 0.15s;
   --duration-medium: 0.3s;
+  --duration-slow: 0.45s;
 
 }
 
@@ -102,11 +103,13 @@
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --duration-fast: 0.15s;
   --duration-medium: 0.3s;
+  --duration-slow: 0.45s;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0s;
     --duration-medium: 0s;
+    --duration-slow: 0s;
   }
 }
