@@ -22,6 +22,7 @@ import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { useLoggerStore } from "../../lib/store-logger";
 import Logger, { LoggerFilterType } from "../logger/Logger";
 import Button from "../ui/Button";
+import Tooltip from "../ui/Tooltip";
 import Input from "../ui/Input";
 import "./side-panel.scss";
 
@@ -254,34 +255,40 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
       <header className="top" onMouseDown={startMove}>
         <h2 id="side-panel-title">Console</h2>
         {open ? (
-          <button
-            className="opener"
-            aria-label="Collapse side panel"
-            aria-expanded={true}
-            aria-controls="side-panel-container"
-            onClick={() => setOpen(false)}
-          >
-            <RiSidebarFoldLine color="#b4b8bb" />
-          </button>
+          <Tooltip text="Collapse">
+            <button
+              className="opener"
+              aria-label="Collapse side panel"
+              aria-expanded={true}
+              aria-controls="side-panel-container"
+              onClick={() => setOpen(false)}
+            >
+              <RiSidebarFoldLine color="#b4b8bb" />
+            </button>
+          </Tooltip>
         ) : (
-          <button
-            className="opener"
-            aria-label="Expand side panel"
-            aria-expanded={false}
-            aria-controls="side-panel-container"
-            onClick={() => setOpen(true)}
-          >
-            <RiSidebarUnfoldLine color="#b4b8bb" />
-          </button>
+          <Tooltip text="Expand">
+            <button
+              className="opener"
+              aria-label="Expand side panel"
+              aria-expanded={false}
+              aria-controls="side-panel-container"
+              onClick={() => setOpen(true)}
+            >
+              <RiSidebarUnfoldLine color="#b4b8bb" />
+            </button>
+          </Tooltip>
         )}
         {onToggleSide && (
-          <Button
-            variant="ghost"
-            className="swap-side"
-            icon="swap_horiz"
-            aria-label="Move side panel"
-            onClick={onToggleSide}
-          />
+          <Tooltip text="Move side panel">
+            <Button
+              variant="ghost"
+              className="swap-side"
+              icon="swap_horiz"
+              aria-label="Move side panel"
+              onClick={onToggleSide}
+            />
+          </Tooltip>
         )}
       </header>
       <section className="indicators">
@@ -321,13 +328,15 @@ function SidePanel({ side = "left", onToggleSide }: SidePanelProps) {
             ? `🔵${open ? " Streaming" : ""}`
             : `⏸️${open ? " Paused" : ""}`}
         </div>
-        <Button
-          variant="icon"
-          className="clear-button button--danger"
-          icon="delete"
-          aria-label="Clear logs"
-          onClick={clearLogs}
-        />
+        <Tooltip text="Clear logs">
+          <Button
+            variant="icon"
+            className="clear-button button--danger"
+            icon="delete"
+            aria-label="Clear logs"
+            onClick={clearLogs}
+          />
+        </Tooltip>
       </section>
       <div
         id="side-panel-container"
