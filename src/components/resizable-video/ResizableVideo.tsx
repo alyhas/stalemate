@@ -25,18 +25,20 @@ export default memo(function ResizableVideo({
   const startY = useRef(0);
   const startW = useRef(size.width);
   const startH = useRef(size.height);
+  const startTop = useRef(0);
+  const startLeft = useRef(0);
   const [resizing, setResizing] = useState(false);
-  const [position, setPosition] = useState<
-    "top-left" | "top-right" | "bottom-left" | "bottom-right"
-  >(() => {
+  const [position, setPosition] = useState(() => {
     const stored = localStorage.getItem("videoPosition");
-    return (
-      (stored as
-        | "top-left"
-        | "top-right"
-        | "bottom-left"
-        | "bottom-right") || "bottom-right"
-    );
+    if (stored) {
+      try {
+        const { top, left } = JSON.parse(stored);
+        return { top, left } as { top: number; left: number };
+      } catch {
+        return { top: 0, left: 0 };
+      }
+    }
+    return { top: 0, left: 0 };
   });
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default memo(function ResizableVideo({
   }, [size]);
 
   useEffect(() => {
-    localStorage.setItem("videoPosition", position);
+    localStorage.setItem("videoPosition", JSON.stringify(position));
   }, [position]);
 
   const adjustSize = (dx: number, dy: number) =>
@@ -101,32 +103,23 @@ export default memo(function ResizableVideo({
     e.preventDefault();
   };
 
+  const clamp = (val: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, val));
+
   const startMove = (e: React.MouseEvent) => {
     e.preventDefault();
-    let pos = position;
-    let startX = e.clientX;
-    let startY = e.clientY;
+    startX.current = e.clientX;
+    startY.current = e.clientY;
+    startTop.current = position.top;
+    startLeft.current = position.left;
+    const container = (e.currentTarget.parentElement as HTMLElement).parentElement as HTMLElement;
+    const rect = container.getBoundingClientRect();
     const onMove = (ev: MouseEvent) => {
-      const dx = ev.clientX - startX;
-      const dy = ev.clientY - startY;
-      if (dx > 80 && pos.includes("left")) {
-        pos = pos.replace("left", "right") as typeof pos;
-        setPosition(pos);
-        startX = ev.clientX;
-      } else if (dx < -80 && pos.includes("right")) {
-        pos = pos.replace("right", "left") as typeof pos;
-        setPosition(pos);
-        startX = ev.clientX;
-      }
-      if (dy > 80 && pos.includes("top")) {
-        pos = pos.replace("top", "bottom") as typeof pos;
-        setPosition(pos);
-        startY = ev.clientY;
-      } else if (dy < -80 && pos.includes("bottom")) {
-        pos = pos.replace("bottom", "top") as typeof pos;
-        setPosition(pos);
-        startY = ev.clientY;
-      }
+      const dx = ev.clientX - startX.current;
+      const dy = ev.clientY - startY.current;
+      const top = clamp(startTop.current + dy, 0, rect.height - size.height);
+      const left = clamp(startLeft.current + dx, 0, rect.width - size.width);
+      setPosition({ top, left });
     };
     const stop = () => {
       window.removeEventListener("mousemove", onMove);
@@ -137,26 +130,42 @@ export default memo(function ResizableVideo({
   };
 
   const handleMoveKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    let next = position;
-    if (e.key === "ArrowLeft" && next.includes("right")) {
-      next = next.replace("right", "left") as typeof next;
-    } else if (e.key === "ArrowRight" && next.includes("left")) {
-      next = next.replace("left", "right") as typeof next;
-    } else if (e.key === "ArrowUp" && next.includes("bottom")) {
-      next = next.replace("bottom", "top") as typeof next;
-    } else if (e.key === "ArrowDown" && next.includes("top")) {
-      next = next.replace("top", "bottom") as typeof next;
-    } else {
-      return;
+    const container = (e.currentTarget.parentElement as HTMLElement).parentElement as HTMLElement;
+    const rect = container.getBoundingClientRect();
+    const step = 10;
+    let { top, left } = position;
+    switch (e.key) {
+      case "ArrowLeft":
+        left -= step;
+        break;
+      case "ArrowRight":
+        left += step;
+        break;
+      case "ArrowUp":
+        top -= step;
+        break;
+      case "ArrowDown":
+        top += step;
+        break;
+      default:
+        return;
     }
     e.preventDefault();
-    setPosition(next);
+    setPosition({
+      top: clamp(top, 0, rect.height - size.height),
+      left: clamp(left, 0, rect.width - size.width),
+    });
   };
 
   return (
     <div
-      className={cn("resizable-video", `position-${position}`, { resizing })}
-      style={{ width: size.width, height: size.height }}
+      className={cn("resizable-video", { resizing })}
+      style={{
+        width: size.width,
+        height: size.height,
+        top: position.top,
+        left: position.left,
+      }}
     >
       <video
         ref={videoRef}
