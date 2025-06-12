@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { forwardRef, memo } from "react";
 import useRipple from "../../hooks/use-ripple";
+import Tooltip from "../ui/Tooltip";
 
 export type ControlButtonProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -20,19 +21,20 @@ const ControlButton = memo(
       };
 
     return (
-      <button
-        ref={ref}
-        className={cn("control-button action-button", className, { active })}
-        aria-label={label}
-        aria-pressed={active}
-        data-tooltip={label}
-        onPointerDown={handlePointerDown}
-        {...props}
-      >
-        <span className="material-symbols-outlined filled" aria-hidden="true">
-          {icon}
-        </span>
-      </button>
+      <Tooltip text={label}>
+        <button
+          ref={ref}
+          className={cn("control-button action-button", className, { active })}
+          aria-label={label}
+          aria-pressed={active}
+          onPointerDown={handlePointerDown}
+          {...props}
+        >
+          <span className="material-symbols-outlined filled" aria-hidden="true">
+            {icon}
+          </span>
+        </button>
+      </Tooltip>
     );
   })
 );

@@ -1,0 +1,29 @@
+@import "../../styles/tokens.scss";
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + var(--spacing-xs));
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--Neutral-20);
+    color: var(--Neutral-90);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) ease-in-out;
+    box-shadow: var(--shadow-sm);
+    z-index: 20;
+  }
+
+  &:hover .tooltip,
+  &:focus-within .tooltip {
+    opacity: 1;
+  }
+}
