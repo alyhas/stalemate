@@ -32,3 +32,10 @@ code {
     animation-iteration-count: 1 !important;
   }
 }
+
+.theme-transition,
+.theme-transition * {
+  transition: background-color var(--duration-medium) ease,
+    color var(--duration-medium) ease,
+    border-color var(--duration-medium) ease;
+}

@@ -31,7 +31,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
+    document.documentElement.classList.add("theme-transition");
     setTheme((t) => (t === "light" ? "dark" : "light"));
+    window.setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 300);
   };
 
   return (
