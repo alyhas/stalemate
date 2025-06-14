@@ -17,10 +17,23 @@
 import "./logger.scss";
 
 import cn from "classnames";
-import { memo, ReactNode } from "react";
+import {
+  memo,
+  ReactNode,
+  useState,
+  forwardRef,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  ComponentPropsWithoutRef,
+} from "react";
+import { VariableSizeList as List } from "react-window";
 import { useLoggerStore } from "../../lib/store-logger";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs2015 as dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import ContextMenu from "./ContextMenu";
+import { useToast } from "../../contexts/ToastContext";
 import {
   ClientContentLog as ClientContentLogType,
   StreamingLog,
@@ -37,34 +50,56 @@ import {
 const formatTime = (d: Date) => d.toLocaleTimeString().slice(0, -3);
 
 const LogEntry = memo(
-  ({
-    log,
-    MessageComponent,
-  }: {
-    log: StreamingLog;
-    MessageComponent: ({
-      message,
-    }: {
-      message: StreamingLog["message"];
-    }) => ReactNode;
-  }): JSX.Element => (
-    <li
-      className={cn(
-        `plain-log`,
-        `source-${log.type.slice(0, log.type.indexOf("."))}`,
-        {
-          receive: log.type.includes("receive"),
-          send: log.type.includes("send"),
-        }
-      )}
-    >
-      <span className="timestamp">{formatTime(log.date)}</span>
-      <span className="source">{log.type}</span>
-      <span className="message">
-        <MessageComponent message={log.message} />
-      </span>
-      {log.count && <span className="count">{log.count}</span>}
-    </li>
+  forwardRef(
+    (
+      {
+        log,
+        MessageComponent,
+        onContextMenu,
+        style,
+      }: {
+        log: StreamingLog;
+        MessageComponent: ({
+          message,
+        }: {
+          message: StreamingLog["message"];
+        }) => ReactNode;
+        onContextMenu: (e: React.MouseEvent, log: StreamingLog) => void;
+        style?: React.CSSProperties;
+      },
+      ref: React.ForwardedRef<HTMLLIElement>
+    ): JSX.Element => {
+      const isObject = typeof log.message === "object";
+      return (
+        <li
+          ref={ref}
+          style={style}
+          className={cn(
+            `plain-log`,
+            `source-${log.type.slice(0, log.type.indexOf("."))}`,
+            {
+              receive: log.type.includes("receive"),
+              send: log.type.includes("send"),
+            }
+          )}
+          onContextMenu={(e) => onContextMenu(e, log)}
+        >
+          <span className="timestamp">{formatTime(log.date)}</span>
+          <span className="source">{log.type}</span>
+          {isObject ? (
+            <details className="message-details">
+              <summary>details</summary>
+              <MessageComponent message={log.message} />
+            </details>
+          ) : (
+            <span className="message">
+              <MessageComponent message={log.message} />
+            </span>
+          )}
+          {log.count && <span className="count">{log.count}</span>}
+        </li>
+      );
+    }
   )
 );
 
@@ -214,6 +249,7 @@ export type LoggerFilterType = "conversations" | "tools" | "none";
 
 export type LoggerProps = {
   filter: LoggerFilterType;
+  search?: string;
 };
 
 const filters: Record<LoggerFilterType, (log: StreamingLog) => boolean> = {
@@ -260,20 +296,131 @@ const component = (log: StreamingLog) => {
   return AnyMessage;
 };
 
-export default function Logger({ filter = "none" }: LoggerProps) {
+export default function Logger({ filter = "none", search = "" }: LoggerProps) {
   const { logs } = useLoggerStore();
+  const { showToast } = useToast();
+
+  const [menu, setMenu] = useState<
+    | { x: number; y: number; text: string }
+    | null
+  >(null);
 
   const filterFn = filters[filter];
+  const searchLower = search.toLowerCase();
+
+  const filteredLogs = useMemo(() => {
+    return logs
+      .filter(filterFn)
+      .filter((log) => {
+        if (!searchLower) return true;
+        const msgStr =
+          typeof log.message === "string"
+            ? log.message
+            : JSON.stringify(log.message);
+        return (
+          log.type.toLowerCase().includes(searchLower) ||
+          msgStr.toLowerCase().includes(searchLower)
+        );
+      });
+  }, [logs, filterFn, searchLower]);
+
+  const onContextMenu = (log: StreamingLog) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    const text =
+      typeof log.message === "string"
+        ? log.message
+        : JSON.stringify(log.message, null, "  ");
+    setMenu({ x: e.clientX, y: e.clientY, text });
+  };
+
+  const listRef = useRef<List>(null);
+  const sizeMap = useRef<Record<number, number>>({});
+  const setSize = useCallback((index: number, size: number) => {
+    if (sizeMap.current[index] !== size) {
+      sizeMap.current[index] = size;
+      listRef.current?.resetAfterIndex(index);
+    }
+  }, []);
+  const getSize = useCallback(
+    (index: number) => sizeMap.current[index] ?? 50,
+    []
+  );
+
+  const Outer = forwardRef<HTMLUListElement, ComponentPropsWithoutRef<"ul">>(
+    (props, ref) => (
+      <ul
+        {...props}
+        ref={ref}
+        role="log"
+        aria-live="polite"
+        aria-label="Logs"
+      />
+    )
+  );
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+    const update = () => setHeight(el.clientHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    const log = filteredLogs[index];
+    const rowRef = useCallback(
+      (el: HTMLLIElement | null) => {
+        if (el) setSize(index, el.getBoundingClientRect().height);
+      },
+      [index]
+    );
+    return (
+      <LogEntry
+        style={style}
+        ref={rowRef}
+        log={log}
+        MessageComponent={component(log)}
+        onContextMenu={onContextMenu(log)}
+      />
+    );
+  };
 
   return (
-    <div className="logger">
-      <ul className="logger-list">
-        {logs.filter(filterFn).map((log, key) => {
-          return (
-            <LogEntry MessageComponent={component(log)} log={log} key={key} />
-          );
-        })}
-      </ul>
+    <div className="logger" ref={containerRef}>
+      {height > 0 && (
+        <List
+          height={height}
+          itemCount={filteredLogs.length}
+          itemSize={getSize}
+          width="100%"
+          outerElementType={Outer}
+          className="logger-list"
+          overscanCount={10}
+          ref={listRef}
+        >
+          {Row}
+        </List>
+      )}
+      {menu && (
+        <ContextMenu
+          x={menu.x}
+          y={menu.y}
+          items={[
+            {
+              label: "Copy message",
+              onClick: () => {
+                navigator.clipboard.writeText(menu.text);
+                showToast("Copied");
+              },
+            },
+          ]}
+          onClose={() => setMenu(null)}
+        />
+      )}
     </div>
   );
 }

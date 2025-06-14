@@ -1,0 +1,28 @@
+@mixin fluid-font($min, $max, $min-vw: 400px, $max-vw: 1600px) {
+  font-size: clamp(
+    #{$min},
+    calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$min-vw}) / (#{$max-vw} - #{$min-vw}))),
+    #{$max}
+  );
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+h1 {
+  @include fluid-font(var(--font-size-h1), 2.75rem);
+  line-height: 1.1;
+}
+
+h2 {
+  @include fluid-font(var(--font-size-h2), 2.25rem);
+  line-height: 1.2;
+}
+
+h3 {
+  @include fluid-font(var(--font-size-h3), 1.75rem);
+  line-height: 1.3;
+}

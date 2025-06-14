@@ -114,3 +114,17 @@
   flex-grow: 1;
   color: var(--Neutral-50);
 }
+
+.logger li details.message-details {
+  flex-grow: 1;
+  color: var(--Neutral-50);
+  cursor: pointer;
+
+  summary {
+    list-style: none;
+  }
+
+  pre {
+    margin: 4px 0 0 0;
+  }
+}

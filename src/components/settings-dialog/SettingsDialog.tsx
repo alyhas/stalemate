@@ -1,9 +1,13 @@
+import cn from "classnames";
 import {
   useCallback,
   useMemo,
   useState,
 } from "react";
+import { useLoggerStore } from "../../lib/store-logger";
 import "./settings-dialog.scss";
+import Panel from "../ui/Panel";
+import Button from "../ui/Button";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import VoiceSelector from "./VoiceSelector";
 import ResponseModalitySelector from "./ResponseModalitySelector";
@@ -15,6 +19,7 @@ type FunctionDeclarationsTool = Tool & {
 
 export default function SettingsDialog() {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const { config, setConfig, connected } = useLiveAPIContext();
   const functionDeclarations: FunctionDeclaration[] = useMemo(() => {
     if (!Array.isArray(config.tools)) {
@@ -32,6 +37,10 @@ export default function SettingsDialog() {
   const [productName, setProductName] = useState<string>("");
   const [language, setLanguage] = useState<string>("");
   const [isFemale, setIsFemale] = useState<boolean>(true);
+  const { maxLogs, setMaxLogs } = useLoggerStore((s) => ({
+    maxLogs: s.maxLogs,
+    setMaxLogs: s.setMaxLogs,
+  }));
 
   const updateSystemInstruction = useCallback(() => {
     const genderText = isFemale ? "Female" : "Male";
@@ -68,14 +77,28 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
 
   return (
     <div className="settings-dialog">
-      <button
-        className="action-button material-symbols-outlined"
-        onClick={() => setOpen(!open)}
+      <Button
+        variant="icon"
+        icon="settings"
+        onClick={() => {
+          if (open) {
+            setClosing(true);
+          } else {
+            setOpen(true);
+          }
+        }}
+        aria-label="Open settings"
+      />
+      <dialog
+        className={cn("dialog", { open, closing })}
+        onAnimationEnd={() => {
+          if (closing) {
+            setClosing(false);
+            setOpen(false);
+          }
+        }}
       >
-        settings
-      </button>
-      <dialog className="dialog" style={{ display: open ? "block" : "none" }}>
-        <div className={`dialog-container ${connected ? "disabled" : ""}`}>
+        <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
           {connected && (
             <div className="connected-indicator">
               <p>
@@ -121,6 +144,17 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
             />
             <span>{isFemale ? "Female" : "Male"}</span>
           </div>
+          <div className="log-settings">
+            <label htmlFor="max-logs">Max log entries:</label>
+            <input
+              id="max-logs"
+              type="number"
+              min="50"
+              max="1000"
+              value={maxLogs}
+              onChange={(e) => setMaxLogs(parseInt(e.target.value, 10))}
+            />
+          </div>
           <h4>Function declarations</h4>
           <div className="function-declarations">
             <div className="fd-rows">
@@ -147,7 +181,7 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
               ))}
             </div>
           </div>
-        </div>
+        </Panel>
       </dialog>
     </div>
   );

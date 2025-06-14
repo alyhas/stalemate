@@ -1,15 +1,16 @@
 .side-panel {
-  background: var(--Neutral-00);
+  position: relative;
+  background: var(--color-background);
   width: 40px;
   /* when closed */
   display: flex;
   flex-direction: column;
   height: 100vh;
   transition: all 0.2s ease-in;
-  font-family: Arial, sans-serif;
-  border-right: 1px solid var(--gray-600);
-  color: var(--Neutral-90, #e1e2e3);
-  font-family: var(--font-family);
+  font-family: var(--font-family-base);
+  border-right: 1px solid var(--Neutral-20);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
@@ -37,10 +38,15 @@
     align-items: center;
     padding: 12px 20px 12px 25px;
     border-bottom: 1px solid var(--Neutral-20);
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     h2 {
       position: relative;
-      color: var(--Neutral-90, #e1e2e3);
+      color: var(--color-text);
       font-family: "Google Sans";
       font-size: 21px;
       font-style: normal;
@@ -67,6 +73,16 @@
   .opener {
     height: 30px;
     transition: transform 0.2s ease-in;
+  }
+
+  .swap-side {
+    font-size: 20px;
+    color: var(--color-muted);
+    margin-left: 4px;
+
+    &:hover {
+      color: var(--color-text);
+    }
   }
 
   &:not(.open) {
@@ -99,6 +115,46 @@
     justify-content: flex-end;
     gap: 21px;
 
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .tab-button {
+      background: none;
+      border: 0;
+      padding: 4px 8px;
+      color: var(--color-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-family-base);
+      font-size: 14px;
+      &:focus-visible {
+        outline: none;
+        border-color: var(--color-focus-ring);
+      }
+
+      &.active {
+        color: var(--color-text);
+        border-color: var(--Blue-500);
+      }
+    }
+
+    .log-search {
+      flex: 1;
+      background: var(--Neutral-10);
+      border: 1px solid var(--Neutral-20);
+      border-radius: 6px;
+      padding: 4px 8px;
+      color: var(--color-text);
+      outline: none;
+
+      &:focus {
+        border-color: var(--Blue-500);
+      }
+    }
+
     .streaming-indicator {
       user-select: none;
       border-radius: 4px;
@@ -113,7 +169,7 @@
       gap: 6px;
       flex-shrink: 0;
       text-align: center;
-      font-family: "Space Mono";
+      font-family: var(--font-family-base);
       font-size: 14px;
       font-style: normal;
       font-weight: 400;
@@ -122,6 +178,20 @@
 
       &.connected {
         color: var(--Blue-500, #0d9c53);
+      }
+    }
+
+    .clear-button {
+      background: none;
+      border: 0;
+      color: var(--color-muted);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      padding: 4px;
+
+      &:hover {
+        color: var(--color-text);
       }
     }
   }
@@ -158,19 +228,19 @@
         transform: translate(0, -50%);
         background: none;
         border: 0;
-        color: var(--Neutral-20);
+        color: var(--color-muted);
         cursor: pointer;
         transition: color 0.1s ease-in;
         z-index: 2;
 
         &:hover {
-          color: var(--Neutral-60);
+          color: var(--color-text);
         }
       }
 
       .input-area {
         background: none;
-        color: var(--Neutral-90);
+        color: var(--color-text);
         field-sizing: content;
         position: absolute;
         top: 0;
@@ -178,7 +248,8 @@
         z-index: 2;
         display: inline-block;
         width: calc(100% - 72px);
-        max-height: 20px;
+        min-height: 20px;
+        max-height: 200px;
         outline: none;
         --webkit-box-flex: 1;
         flex: 1;
@@ -208,7 +279,6 @@
 }
 
 .side-panel.open {
-  width: 400px;
   height: 100vh;
 }
 
@@ -241,4 +311,39 @@
   font-size: 1.25rem;
   line-height: 1.75rem;
   padding: 4px;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.streaming-console.left-side &.open {
+  animation: slide-in-left 0.25s ease-out;
+}
+
+.streaming-console.left-side &.closing {
+  animation: slide-out-left 0.2s ease-in forwards;
+}
+
+.streaming-console.right-side &.open {
+  animation: slide-in-right 0.25s ease-out;
+}
+
+.streaming-console.right-side &.closing {
+  animation: slide-out-right 0.2s ease-in forwards;
+}
+
+.streaming-console.right-side & {
+  border-right: none;
+  border-left: 1px solid var(--Neutral-20);
+
+  .resize-handle {
+    right: auto;
+    left: -4px;
+  }
 }

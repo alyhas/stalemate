@@ -1,0 +1,60 @@
+@import "../../styles/tokens.scss";
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    margin-right: var(--spacing-xs);
+  }
+}
+
+.button--primary {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.button--primary:hover {
+  background: var(--Blue-400);
+}
+
+.button--secondary {
+  background: var(--color-secondary);
+  color: var(--color-secondary-text);
+}
+
+.button--secondary:hover {
+  background: var(--Neutral-15);
+}
+
+.button--icon {
+  background: none;
+  padding: var(--spacing-xs);
+  color: var(--color-text);
+
+  .material-symbols-outlined {
+    margin-right: 0;
+  }
+}
+
+.button--icon:hover {
+  background: var(--Neutral-10);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
