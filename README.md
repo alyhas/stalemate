@@ -94,6 +94,18 @@ export function Altair() {
 
 ## development
 
+### Keyboard Shortcuts
+
+Use `Ctrl+/` to view all available shortcuts in the app. Common ones include:
+
+- `Ctrl+B` Toggle the side panel
+- `Ctrl+1` Show all logs
+- `Ctrl+2` Show conversations
+- `Ctrl+3` Show tool logs
+- `Ctrl+K` Focus the log search
+- `Ctrl+E` Focus the message input
+- `Ctrl+Enter` Send a message
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 Project consists of:
 
@@ -122,5 +134,9 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run a11y`
+
+Runs an accessibility scan using [axe-core](https://github.com/dequelabs/axe-core).
 
 _This is an experiment showcasing the Live API, not an official Google product. We’ll do our best to support and maintain this experiment but your mileage may vary. We encourage open sourcing projects as a way of learning from each other. Please respect our and other creators' rights, including copyright and trademark rights when present, when sharing these works and creating derivative work. If you want more info on Google's policy, you can find that [here](https://developers.google.com/terms/site-policies)._
