@@ -30,7 +30,6 @@ export type UseLiveAPIResults = {
   model: string;
   setModel: (model: string) => void;
   connected: boolean;
-  connecting: boolean;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
@@ -43,7 +42,6 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   const [model, setModel] = useState<string>("models/gemini-2.5-flash-preview-native-audio-dialog");
   const [config, setConfig] = useState(defaultConfig);
   const [connected, setConnected] = useState(false);
-  const [connecting, setConnecting] = useState(false);
   const [volume, setVolume] = useState(0);
 
   // register audio for streaming server -> speakers
@@ -65,12 +63,10 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   useEffect(() => {
     const onOpen = () => {
       setConnected(true);
-      setConnecting(false);
     };
 
     const onClose = () => {
       setConnected(false);
-      setConnecting(false);
     };
 
     const onError = (error: ErrorEvent) => {
@@ -105,17 +101,12 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
       throw new Error("config has not been set");
     }
     client.disconnect();
-    setConnecting(true);
-    const success = await client.connect(model, config);
-    if (!success) {
-      setConnecting(false);
-    }
+    await client.connect(model, config);
   }, [client, config, model]);
 
   const disconnect = useCallback(async () => {
     client.disconnect();
     setConnected(false);
-    setConnecting(false);
   }, [setConnected, client]);
 
   return {
@@ -125,7 +116,6 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
     model,
     setModel,
     connected,
-    connecting,
     connect,
     disconnect,
     volume,

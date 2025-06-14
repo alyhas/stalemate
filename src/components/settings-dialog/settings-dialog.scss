@@ -75,18 +75,6 @@
     width: 696px;
     height: 593px;
     transform: translate(-25%, -50%);
-    display: none;
-    opacity: 0;
-
-    &.open {
-      display: block;
-      animation: fade-in 0.25s ease-out forwards;
-    }
-
-    &.closing {
-      display: block;
-      animation: fade-out 0.25s ease-in forwards;
-    }
   }
 
   .dialog-container {
@@ -105,13 +93,6 @@
     display: flex;
     gap: 1rem;
     padding: 8px 0;
-  }
-
-  .log-settings {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin: 8px 0;
   }
 
   textarea.system {

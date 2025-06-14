@@ -1,5 +1,4 @@
 .audioPulse {
-  --pulse-color: var(--Neutral-80);
   display: flex;
   width: 24px;
   justify-content: space-evenly;
@@ -26,7 +25,7 @@
     opacity: 1;
 
     & > div {
-      background-color: var(--pulse-color);
+      background-color: var(--Neutral-80);
     }
   }
 }

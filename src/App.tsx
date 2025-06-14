@@ -19,8 +19,8 @@ import "./App.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 import SidePanel from "./components/side-panel/SidePanel";
 import ControlTray from "./components/control-tray/ControlTray";
+import cn from "classnames";
 import { LiveClientOptions } from "./types";
-import ResizableVideo from "./components/resizable-video/ResizableVideo";
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -37,57 +37,34 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
-  const [panelSide, setPanelSide] = useState<'left' | 'right'>(() => {
-    const stored = localStorage.getItem('panelSide');
-    return stored === 'right' ? 'right' : 'left';
-  });
-
-  const [trayPosition, setTrayPosition] = useState<'top' | 'bottom'>(() => {
-    const stored = localStorage.getItem('trayPosition');
-    return stored === 'top' ? 'top' : 'bottom';
-  });
-
-  const togglePanelSide = () => {
-    setPanelSide((s) => {
-      const next = s === 'left' ? 'right' : 'left';
-      localStorage.setItem('panelSide', next);
-      return next;
-    });
-  };
-
-  const toggleTrayPosition = () => {
-    setTrayPosition((p) => {
-      const next = p === 'bottom' ? 'top' : 'bottom';
-      localStorage.setItem('trayPosition', next);
-      return next;
-    });
-  };
 
   return (
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
-        <div className={`streaming-console grid ${panelSide}-side tray-${trayPosition}`}>
-          <div className="side-area col-span-12 md:col-span-4 lg:col-span-3">
-            <SidePanel side={panelSide} onToggleSide={togglePanelSide} />
-          </div>
-          <main className="main-area col-span-12 md:col-span-8 lg:col-span-9">
+        <div className="streaming-console">
+          <SidePanel />
+          <main>
             <div className="main-app-area">
               {/* APP goes here */}
-              <ResizableVideo videoRef={videoRef} stream={videoStream} />
+                      <video
+                className={cn("stream", {
+                  hidden: !videoRef.current || !videoStream,
+                })}
+                ref={videoRef}
+                autoPlay
+                playsInline
+              />
             </div>
-          </main>
-          <div className="tray-area col-span-12">
+
             <ControlTray
               videoRef={videoRef}
               supportsVideo={true}
               onVideoStreamChange={setVideoStream}
               enableEditingSettings={true}
-              trayPosition={trayPosition}
-              onToggleTrayPosition={toggleTrayPosition}
             >
               {/* put your own buttons here */}
             </ControlTray>
-          </div>
+          </main>
         </div>
       </LiveAPIProvider>
     </div>

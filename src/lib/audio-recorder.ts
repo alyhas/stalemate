@@ -38,7 +38,6 @@ export class AudioRecorder extends EventEmitter {
   recording: boolean = false;
   recordingWorklet: AudioWorkletNode | undefined;
   vuWorklet: AudioWorkletNode | undefined;
-  analyser: AnalyserNode | undefined;
 
   private starting: Promise<void> | null = null;
 
@@ -55,10 +54,6 @@ export class AudioRecorder extends EventEmitter {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.audioContext = await audioContext({ sampleRate: this.sampleRate });
       this.source = this.audioContext.createMediaStreamSource(this.stream);
-
-      this.analyser = this.audioContext.createAnalyser();
-      this.analyser.fftSize = 64;
-      this.source.connect(this.analyser);
 
       const workletName = "audio-recorder-worklet";
       const src = createWorketFromSrc(workletName, AudioRecordingWorklet);
@@ -112,14 +107,5 @@ export class AudioRecorder extends EventEmitter {
       return;
     }
     handleStop();
-  }
-
-  getFrequencyData() {
-    if (!this.analyser) {
-      return new Uint8Array(0);
-    }
-    const data = new Uint8Array(this.analyser.frequencyBinCount);
-    this.analyser.getByteFrequencyData(data);
-    return data;
   }
 }
