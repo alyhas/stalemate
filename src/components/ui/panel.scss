@@ -6,6 +6,17 @@
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+  transition: box-shadow var(--timing-medium) ease,
+    transform var(--timing-fast) ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .panel-header {

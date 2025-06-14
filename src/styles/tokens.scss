@@ -25,6 +25,13 @@
   --Green-500: #0d9c53;
   --Green-700: #025022;
 
+  --Yellow-400: #ffcf33;
+  --Yellow-500: #f4b400;
+
+  --timing-fast: 0.1s;
+  --timing-medium: 0.2s;
+  --timing-slow: 0.3s;
+
   --Red-400: #ff9c7a;
   --Red-500: #ff4600;
   --Red-600: #e03c00;
@@ -58,6 +65,7 @@
   --color-border: var(--Neutral-20);
   --color-success: var(--Green-500);
   --color-error: var(--Red-500);
+  --color-warning: var(--Yellow-500);
   
   --color-primary: var(--Blue-500);
   --color-primary-text: var(--Neutral-5);
@@ -78,6 +86,8 @@
   --Neutral-90: #111111;
   --Blue-500: #1a73e8;
   --accent-red: #d93025;
+  --Yellow-400: #ffe066;
+  --Yellow-500: #f9ab00;
 
   --color-text: var(--Neutral-80);
   --color-muted: var(--Neutral-60);
@@ -88,6 +98,7 @@
   --color-border: var(--Neutral-20);
   --color-success: var(--Green-500);
   --color-error: var(--accent-red);
+  --color-warning: var(--Yellow-500);
   --color-primary: var(--Blue-500);
   --color-primary-text: var(--Neutral-5);
   --color-secondary: var(--Neutral-20);

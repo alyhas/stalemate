@@ -10,7 +10,9 @@
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background var(--timing-medium) ease-in-out,
+    color var(--timing-medium) ease-in-out,
+    transform var(--timing-fast) ease-in-out;
   &:focus-visible {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
@@ -20,6 +22,10 @@
     font-size: 20px;
     margin-right: var(--spacing-xs);
   }
+}
+
+.button:active {
+  transform: scale(0.98);
 }
 
 .button--primary {
@@ -38,6 +44,24 @@
 
 .button--secondary:hover {
   background: var(--Neutral-15);
+}
+
+.button--success {
+  background: var(--color-success);
+  color: var(--color-primary-text);
+}
+
+.button--success:hover {
+  background: lighten(var(--color-success), 10%);
+}
+
+.button--warning {
+  background: var(--color-warning);
+  color: var(--color-primary-text);
+}
+
+.button--warning:hover {
+  background: lighten(var(--color-warning), 10%);
 }
 
 .button--icon {
