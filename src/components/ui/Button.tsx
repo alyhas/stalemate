@@ -3,7 +3,7 @@ import cn from "classnames";
 import "./button.scss";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "icon";
+  variant?: "primary" | "secondary" | "icon" | "success" | "warning";
   icon?: string;
 };
 
