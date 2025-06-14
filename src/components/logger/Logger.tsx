@@ -370,7 +370,7 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
     return () => ro.disconnect();
   }, []);
 
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+  const Row = memo(({ index, style }: { index: number; style: React.CSSProperties }) => {
     const log = filteredLogs[index];
     const rowRef = useCallback(
       (el: HTMLLIElement | null) => {
@@ -387,7 +387,7 @@ export default function Logger({ filter = "none", search = "" }: LoggerProps) {
         onContextMenu={onContextMenu(log)}
       />
     );
-  };
+  });
 
   return (
     <div className="logger" ref={containerRef}>

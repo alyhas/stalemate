@@ -91,6 +91,9 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
       />
       <dialog
         className={cn("dialog", { open, closing })}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
         onAnimationEnd={() => {
           if (closing) {
             setClosing(false);
@@ -98,7 +101,10 @@ You are a ${genderText} TikTok Live Selling Affiliate speaking in ${language}. Y
           }
         }}
       >
-        <Panel className={`dialog-container ${connected ? "disabled" : ""}`}>
+        <Panel
+          className={`dialog-container ${connected ? "disabled" : ""}`}
+          title={<h3 id="settings-title">Settings</h3>}
+        >
           {connected && (
             <div className="connected-indicator">
               <p>
