@@ -22,6 +22,7 @@ import { ErrorBoundaryWithToast } from './components/ErrorBoundary';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { LayoutProvider } from './contexts/LayoutContext';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -41,7 +42,9 @@ root.render(
             clientId={clientId}
             authorizationParams={{ redirect_uri: window.location.origin }}
           >
-            <App />
+            <LayoutProvider>
+              <App />
+            </LayoutProvider>
           </Auth0Provider>
         </ErrorBoundaryWithToast>
       </ToastProvider>
